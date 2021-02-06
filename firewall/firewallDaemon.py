@@ -1,9 +1,19 @@
 import os
+import json
 from datetime import datetime
 from os import listdir, walk
 from os.path import isfile, join
 from crontabs import Cron, Tab
 
+# Apply all the rules
+
+def applyEbtable(IPlist):
+    for i in range(len(IPlist)):
+        res = os.system("sudo ebtables -t filter -A FORWARD -p IPv4 --ip-dst " + IPlist[i] + " -j DROP")
+    res = os.system("sudo ebtables-nft-save >> /PASTA-Box/firewall/rulesBackup.txt")
+
+
+# Get all files in the repo blocklist-ipsets
 
 def fileList(source):
     files = []
@@ -12,35 +22,52 @@ def fileList(source):
             files.append(os.path.join(root, filename))
     return files
 
-# Schedule a single job
 
-def my_job(*args, **kwargs):
-    #print('args={} kwargs={} running at {}'.format(args, kwargs, datetime.now()))
+# Fetch all ip adresses
+
+def fetchIP(*args, **kwargs):
+    # print('args={} kwargs={} running at {}'.format(args, kwargs, datetime.now()))
     res = os.system("cd blocklist-ipsets && git fetch")
     listFiles = fileList("blocklist-ipsets/")
     dataIP = []
 
     for i in range(len(listFiles)):
-        with open(listFiles[i], encoding="utf8", errors='ignore') as IPfile:
+        with open(listFiles[i], encoding="utf8", errors="ignore") as IPfile:
             data = IPfile.readlines()
             IPfile.close()
 
         for j in range(len(data)):
-            if(data[j].find("#") == -1):
+            if data[j].find("#") == -1:
                 dataIP.append(data[j])
 
-    print(len(dataIP))
     dataIP = list(dict.fromkeys(dataIP))
-    print(len(dataIP))
-    # for l in range(len(dataIP)):
-    #     print(dataIP[l])  
-
-# Will run with a 5 second interval synced to the top of the minute
-Cron().schedule(
-    Tab(name='run_my_job').every(seconds=30).run(
-        my_job, 'my_arg', my_kwarg='hello')
-).go()
 
 
+###### Beginning of the program ######
 
+config = "config.json"
+with open(config, encoding="utf8", errors="ignore") as configFile:
+    configData = configFile.read()
+    configFile.close()
 
+jsonData = json.loads(configData)
+if jsonData["Mode"] == 1: # Monthly job
+    Cron().schedule(
+        Tab(name="fetchIPAddr")
+        .every(months=jsonData["Duration"])
+        .run(fetchIP, "my_arg", my_kwarg="hello")
+    ).go()
+elif jsonData["Mode"] == 2: # Weekly job
+    Cron().schedule(
+        Tab(name="fetchIPAddr")
+        .every(days=jsonData["Duration"] * 7)
+        .run(fetchIP, "my_arg", my_kwarg="hello")
+    ).go()
+else:
+    Cron().schedule(
+        Tab(name="fetchIPAddr") # Daily job
+        .every(days=jsonData["Duration"])
+        .run(fetchIP, "my_arg", my_kwarg="hello")
+    ).go()
+
+# fetchIP()

@@ -8,3 +8,5 @@ web/routes/__pycache__/
 secret/
 
 database/__pycache__/db_manager.cpython-37.pyc
+
+.vscode/

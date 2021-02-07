@@ -7,9 +7,15 @@ from crontabs import Cron, Tab
 
 # Apply all the rules
 
-def applyEbtable(IPlist):
+def applyEbtable(IPlist, mode):
+
+    if(mode == True):
+        res = os.system("sudo ebtables -F")
+
     for i in range(len(IPlist)):
-        res = os.system("sudo ebtables -t filter -A FORWARD -p IPv4 --ip-dst " + IPlist[i] + " -j DROP")
+        cmd = "sudo ebtables -t filter -A FORWARD -p IPv4 --ip-dst " + \
+            IPlist[i].replace('\n', '') + " -j DROP"
+        res = os.system(cmd)
     res = os.system("sudo ebtables-nft-save >> /PASTA-Box/firewall/rulesBackup.txt")
 
 
@@ -41,6 +47,7 @@ def fetchIP(*args, **kwargs):
                 dataIP.append(data[j])
 
     dataIP = list(dict.fromkeys(dataIP))
+    applyEbtable(dataIP, True)
 
 
 ###### Beginning of the program ######
@@ -70,4 +77,4 @@ else:
         .run(fetchIP, "my_arg", my_kwarg="hello")
     ).go()
 
-# fetchIP()
+#fetchIP()

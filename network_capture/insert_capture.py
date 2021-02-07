@@ -15,6 +15,11 @@ dbManager = db_manager.DbManager(
 
 # Insert information
 count = 0
+srcport = ""
+dstport = ""
+protocol = ""
+applicationLayer = ""
+
 for line in sys.stdin:
     # dbManager.queryInsert("INSERT INTO Frame (portSource) VALUES (?)", (line.split(" ")))
     # print(line.split(","))
@@ -23,17 +28,45 @@ for line in sys.stdin:
     frame = line.split(",")
     # print(frame)
 
+    if frame[0]:
+        srcport = frame[0]
+        dstport = frame[1]
+    else:
+        srcport = frame[2]
+        dstport = frame[3]
+
+    protocol = frame[8].split(":")
+    
+    applicationLayer = protocol[4] if len(protocol) == 5 else None
+
+
+
+    # print(protocol[2])
+
+    # print(srcport+" "+
+    #       dstport + " " +
+    #       frame[4] +" "+  # ip src
+    #       frame[5] +" "+  # ip dst
+    #       frame[6] +" "+  # mac src
+    #       frame[7] + " " +  # mac dst
+    #       str(applicationLayer) + " " +  # application layer
+    #       frame[9] + " " +  # transport layer
+    #       protocol[2] + " " +  # network layer
+    #       frame[10]  # DNS query
+    # )
+
     dbManager.queryInsert(
-        "INSERT INTO `Frame` (`portSource`, `portDest`, `ipSource`, `ipDest`, `macAddrSource`, `macAddrDest`, `protocolLayerApplication`, `protocolLayerTransport`, `protocolLayerNetwork`, `date`, `domain`) VALUES(?, ?, ?, ?,?, ?, NULL, ?, ?, NULL, ?)",
-        (frame[0],
-         frame[1],
-         frame[2],
-         frame[3],
-         frame[4],
-         frame[5],
-         frame[6],
-         frame[7],
-         frame[8]
+        "INSERT INTO `Frame` (`portSource`, `portDest`, `ipSource`, `ipDest`, `macAddrSource`, `macAddrDest`, `protocolLayerApplication`, `protocolLayerTransport`, `protocolLayerNetwork`, `date`, `domain`) VALUES(%s, %s, %s, %s,%s, %s, %s, %s, %s, NULL, %s)",
+        (srcport,
+         dstport,
+         frame[4],#ip src
+         frame[5],#ip dst
+         frame[6],#mac src
+         frame[7],#mac dst
+         applicationLayer,#application layer
+         frame[9],#transport layer
+         protocol[2],#network layer
+         frame[10]#DNS query
          )
     )
 

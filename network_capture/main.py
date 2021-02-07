@@ -14,8 +14,8 @@ fields = [
     # "udp.port",
     "tcp.srcport",
     "tcp.dstport",
-    # "udp.srcport",
-    # "udp.dstport",
+    "udp.srcport",
+    "udp.dstport",
 
     # IP@ DONE
     # "ip.addr",
@@ -31,13 +31,14 @@ fields = [
     # NOTE DONE
 
     # Transport Layer DONE UDP or TCP
+    "frame.protocols",
     "ip.proto",
     
     # Network layer
-    "_ws.col.Protocol",
+    # "_ws.col.Protocol",
     
     # "timestamp"
-    # "frame.time"date
+    # "frame.time",
 
 
     # Domaine name DONE
@@ -73,7 +74,6 @@ def main():
     except KeyboardInterrupt:
         sys.stdout.flush()
         pass
-
 
 if __name__ == "__main__":
     main()

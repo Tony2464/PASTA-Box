@@ -16,7 +16,10 @@ def applyEbtable(IPlist, mode):
         cmd = "sudo ebtables -t filter -A FORWARD -p IPv4 --ip-dst " + \
             IPlist[i].replace('\n', '') + " -j DROP"
         res = os.system(cmd)
-    res = os.system("sudo ebtables-nft-save >> /PASTA-Box/firewall/rulesBackup.txt")
+        cmd = "sudo ebtables -t filter -A FORWARD -p IPv4 --ip-src " + \
+            IPlist[i].replace('\n', '') + " -j DROP"
+        res = os.system(cmd)
+    res = os.system("sudo ebtables-nft-save > /PASTA-Box/firewall/rulesBackup.txt")
 
 
 # Get all files in the repo blocklist-ipsets

@@ -5,7 +5,7 @@ sys.path.append("..")
 from secret import secret
 
 # CAPTURE
-interface = "eth0"
+interface = "eth1"
 bufferSize = "200"  # Default's Tshark 2 Mb
 
 # DATABASE

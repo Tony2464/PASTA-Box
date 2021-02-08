@@ -19,8 +19,11 @@ srcport = ""
 dstport = ""
 protocol = ""
 applicationLayer = ""
+srcIp = ""
+dstIp = ""
 
 for line in sys.stdin:
+    count+=1
     # dbManager.queryInsert("INSERT INTO Frame (portSource) VALUES (?)", (line.split(" ")))
     # print(line.split(","))
     # print(line)
@@ -28,18 +31,25 @@ for line in sys.stdin:
     frame = line.split(",")
     # print(frame)
 
-    if frame[0]:
+    # Determine tcp port or udp port
+    if frame[0]: # Tcp port
         srcport = frame[0]
         dstport = frame[1]
-    else:
+    else: # Udp port
         srcport = frame[2]
         dstport = frame[3]
 
-    protocol = frame[8].split(":")
+    # Determine ipv4 or ipv6
+    if frame[4]: #ipv4
+        srcIp = frame[4]
+        dstIp = frame[5]
+    else:
+        srcIp = frame[6]
+        dstIp = frame[7]
+
+    protocol = frame[10].split(":")
     
     applicationLayer = protocol[4] if len(protocol) == 5 else None
-
-
 
     # print(protocol[2])
 
@@ -55,21 +65,26 @@ for line in sys.stdin:
     #       frame[10]  # DNS query
     # )
 
+    # print(str(frame[11])+ ":"+str(protocol))
+    # print(srcport + dstport + srcIp + dstIp + frame[8] + frame[9] + str(applicationLayer) + str(frame[11]) + str(protocol[2]) + str(frame[12]))
+
     dbManager.queryInsert(
         "INSERT INTO `Frame` (`portSource`, `portDest`, `ipSource`, `ipDest`, `macAddrSource`, `macAddrDest`, `protocolLayerApplication`, `protocolLayerTransport`, `protocolLayerNetwork`, `date`, `domain`) VALUES(%s, %s, %s, %s,%s, %s, %s, %s, %s, NULL, %s)",
         (srcport,
          dstport,
-         frame[4],#ip src
-         frame[5],#ip dst
-         frame[6],#mac src
-         frame[7],#mac dst
+         srcIp,  # ip src
+         dstIp,  # ip dst
+         frame[8],#mac src
+         frame[9],#mac dst
          applicationLayer,#application layer
-         frame[9],#transport layer
+         frame[11],#transport layer
          protocol[2],#network layer
-         frame[10]#DNS query
+         frame[12]#DNS query
          )
     )
 
+
+    print(count)
     # print(frame[0],
     #       frame[1],
     #       frame[2],

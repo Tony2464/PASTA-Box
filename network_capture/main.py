@@ -21,6 +21,8 @@ fields = [
     # "ip.addr",
     "ip.src",
     "ip.dst",
+    "ipv6.src",
+    "ipv6.dst", 
 
     # MAC @ DONE
     # "eth.addr",
@@ -70,6 +72,7 @@ def main():
         os.system("sudo tshark " + buffer + " -i " + config.interface +
                   " -T fields -E separator='" + separator + "' " +
                   formattedFields
+                #   )
                  + " | " + "python3 " + insertProgram)
     except KeyboardInterrupt:
         sys.stdout.flush()

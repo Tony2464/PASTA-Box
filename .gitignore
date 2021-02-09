@@ -10,3 +10,5 @@ secret/
 database/__pycache__/db_manager.cpython-37.pyc
 
 .vscode/
+
+firewall/__pycache__/getIpAdresses.cpython-37.pyc

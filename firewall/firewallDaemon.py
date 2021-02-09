@@ -31,5 +31,3 @@ else:
         .every(days=int(jsonData["Duration"]))
         .run(getIpAdresses.fetchIP)
     ).go()
-
-#fetchIP()

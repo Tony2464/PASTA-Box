@@ -1,9 +1,9 @@
 import os
+import IpFiles
 
 # Apply all the rules
 
 def applyEbtable(IPlist, mode):
-
     if(mode == True):
         res = os.system("sudo ebtables -F")
 
@@ -17,14 +17,16 @@ def applyEbtable(IPlist, mode):
     res = os.system(
         "sudo ebtables-nft-save > /PASTA-Box/firewall/rulesBackup.txt")
 
-# Get all files in the repo blocklist-ipsets
 
+# Get all files in the repo blocklist-ipsets
 
 def fileList(source):
     files = []
     for root, dirnames, filenames in os.walk(source):
         for filename in filenames:
-            files.append(os.path.join(root, filename))
+            for i in range(len(IpFiles.dbAdresses)):
+                if filename.find(IpFiles.dbAdresses[i]) != -1:
+                    files.append(os.path.join(root, filename))
     return files
 
 
@@ -46,3 +48,9 @@ def fetchIP():
 
     dataIP = list(dict.fromkeys(dataIP))
     applyEbtable(dataIP, True)
+
+    # backup = open("test.txt", "a")
+    # backup.writelines(dataIP)
+    # backup.close()
+
+fetchIP()

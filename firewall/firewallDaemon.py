@@ -34,7 +34,7 @@ def fileList(source):
 
 # Fetch all ip adresses
 
-def fetchIP(*args, **kwargs):
+def fetchIP():
     # print('args={} kwargs={} running at {}'.format(args, kwargs, datetime.now()))
     res = os.system("cd blocklist-ipsets && git fetch")
     listFiles = fileList("blocklist-ipsets/")
@@ -63,21 +63,21 @@ with open(config, encoding="utf8", errors="ignore") as configFile:
 jsonData = json.loads(configData)
 if jsonData["Mode"] == 1: # Monthly job
     Cron().schedule(
-        Tab(name="fetchIPAddr")
-        .every(months=jsonData["Duration"])
-        .run(fetchIP, "my_arg", my_kwarg="hello")
+        Tab(name="fetchIP")
+        .every(months=int(jsonData["Duration"]))
+        .run(fetchIP)
     ).go()
 elif jsonData["Mode"] == 2: # Weekly job
     Cron().schedule(
-        Tab(name="fetchIPAddr")
-        .every(days=jsonData["Duration"] * 7)
-        .run(fetchIP, "my_arg", my_kwarg="hello")
+        Tab(name="fetchIP")
+        .every(weeks=int(jsonData["Duration"]))
+        .run(fetchIP)
     ).go()
 else:
     Cron().schedule(
-        Tab(name="fetchIPAddr") # Daily job
-        .every(days=jsonData["Duration"])
-        .run(fetchIP, "my_arg", my_kwarg="hello")
+        Tab(name="fetchIP")  # Daily job
+        .every(days=int(jsonData["Duration"]))
+        .run(fetchIP)
     ).go()
 
 #fetchIP()

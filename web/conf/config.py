@@ -1,9 +1,9 @@
 import sys
-sys.path.append("..")
+sys.path.append("../../")
 from secret import secret
 
 #IP address of the host in the network
-hostConfig = "192.168.1.40"
+hostConfig = "0.0.0.0"
 debugMode = True
 
 dbConfig = {}

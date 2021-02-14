@@ -1,5 +1,22 @@
 import os
 import IpFiles
+import datetime
+import json
+
+
+# Update date in config.json
+
+def updateDate():
+    date = datetime.datetime.now()
+
+    with open("config.json", "r+") as configFile:
+        jsonData = json.load(configFile)
+        jsonData["LastFetch"] = date.strftime("%d/%m/%Y")
+        configFile.seek(0)
+        json.dump(jsonData, configFile, indent=4)
+        configFile.truncate()
+        configFile.close()
+
 
 # Apply all the rules
 
@@ -7,7 +24,7 @@ def applyEbtable(IPlist, mode):
     if(mode == True):
         res = os.system("sudo ebtables -F")
 
-    for i in range(len(IPlist)):
+    for i in range(3):
         cmd = "sudo ebtables -t filter -A FORWARD -p IPv4 --ip-dst " + \
             IPlist[i].replace('\n', '') + " -j DROP"
         res = os.system(cmd)
@@ -33,7 +50,7 @@ def fileList(source):
 # Fetch all ip adresses
 
 def fetchIP():
-    res = os.system("cd blocklist-ipsets && git fetch")
+    res = os.system("cd /PASTA-Box/firewall/blocklist-ipsets && git fetch")
     listFiles = fileList("blocklist-ipsets/")
     dataIP = []
 
@@ -53,4 +70,5 @@ def fetchIP():
     # backup.writelines(dataIP)
     # backup.close()
 
-fetchIP()
+# fetchIP()
+# updateDate()

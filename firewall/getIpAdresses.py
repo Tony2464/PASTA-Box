@@ -24,7 +24,7 @@ def applyEbtable(IPlist, mode):
     if(mode == True):
         res = os.system("sudo ebtables -F")
 
-    for i in range(3):
+    for i in range(len(IPlist)):
         cmd = "sudo ebtables -t filter -A FORWARD -p IPv4 --ip-dst " + \
             IPlist[i].replace('\n', '') + " -j DROP"
         res = os.system(cmd)

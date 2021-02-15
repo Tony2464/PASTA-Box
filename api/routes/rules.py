@@ -1,11 +1,6 @@
 from flask import Blueprint, request, jsonify
 
 # Local
-# from __main__ import app  # For route
-# from main_web import db_manager as db  # For dBmanager
-
-# dbManager = db
-
 import database.db_config as config
 from database import db_manager
 
@@ -18,7 +13,6 @@ dbManager = db_manager.DbManager(
 )
 
 rules = Blueprint("rules", __name__)
-
 
 # GET all rules
 
@@ -62,13 +56,10 @@ def apiRulesCreate():
     if request.json:
         data = request.get_json()
         rule = data[0]
-        dbManager.queryInsert("INSERT INTO `RuleFirewall` (`id`, `ip`, `port`) VALUES (?, ?, ?)",
+        dbManager.queryInsert("INSERT INTO `RuleFirewall` (`ip`, `port`) VALUES (?, ?)",
                               [
-                                  rule["portSource"],
-                                  rule["portDest"],
-                                  rule["ipSource"],
-                                  rule["ipDest"]
-
+                                  rule["ip"],
+                                  rule["port"]
                               ])
         return "Create Success"
     else:

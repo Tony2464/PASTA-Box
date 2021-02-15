@@ -6,7 +6,7 @@ from secret import secret
 
 # CAPTURE
 interface = "eth1"
-bufferSize = "200"  # Default's Tshark 2 Mb
+bufferSize = "200"  # Put 0 for default's Tshark value (2 Mb)
 
 # DATABASE
 dbConfig = {}

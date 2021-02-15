@@ -1,5 +1,3 @@
-# For db connection
-
 import mariadb
 import sys
 
@@ -14,32 +12,31 @@ class DbManager:
         self.port = port
         self.database = database
 
-    def connect(self):
         try:
-            conn = mariadb.connect(
+            self.conn = mariadb.connect(
                 user=self.user,
                 password=self.password,
                 host=self.host,
                 port=self.port,
                 database=self.database
             )
-            return conn
+            return None
         except mariadb.Error as e:
             print(f"Error connecting to MariaDB Platform: {e}")
             sys.exit(1)
 
-    def cursor(self):
-        return self.connect().cursor()
+    def cur(self):
+        return self.conn.cursor()
 
     def queryGet(self, query, params):
-        cur = self.cursor()
+        cur = self.cur()
         cur.execute(query, params)
         data = cur.fetchall()
         return data
 
     def queryInsert(self, query, params):
-        conn = self.connect()
-        cur = conn.cursor()
-        cur.execute(query,params)
-        conn.commit()
+        # conn = self.conn
+        cur = self.cur()
+        cur.execute(query, params)
+        self.conn.commit()
         return 0

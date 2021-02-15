@@ -1,8 +1,14 @@
 
-api/__pycache__/
+web/__pycache__/
 
-api/conf/__pycache__/
+web/conf/__pycache__/
 
-api/routes/__pycache__/
+web/routes/__pycache__/
 
-database/__pycache__/
+secret/
+
+database/__pycache__/db_manager.cpython-37.pyc
+
+*.pyc
+
+.vscode/

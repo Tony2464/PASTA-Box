@@ -2,10 +2,6 @@ import sys
 sys.path.append("..")
 from secret import secret
 
-#IP address of the host in the network
-hostConfig = "192.168.0.52"
-debugMode = True
-
 dbConfig = {}
 dbConfig["user"] = secret.dbLogin
 dbConfig["password"] = secret.dBpassword

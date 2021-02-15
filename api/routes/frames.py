@@ -1,16 +1,28 @@
-import sys
-from flask import Flask, request, jsonify
+from flask import Blueprint, request, jsonify
 
 # Local
-from __main__ import app  # For route
-import main  # For dBmanager
+# from __main__ import app  # For route
+# from main_web import db_manager as db  # For dBmanager
 
-dbManager = main.dbManager
+# dbManager = db
+
+import database.db_config as config
+from database import db_manager
+
+dbManager = db_manager.DbManager(
+    config.dbConfig["user"],
+    config.dbConfig["password"],
+    config.dbConfig["host"],
+    config.dbConfig["port"],
+    config.dbConfig["database"]
+)
+
+frames = Blueprint("frames", __name__)
 
 # GET all frames
 
 
-@app.route('/api/frames', methods=['GET'])
+@frames.route('/frames', methods=['GET'])
 def apiFrames():
     data = dbManager.queryGet("SELECT * FROM Frame", [])
     objects_list = []
@@ -39,8 +51,8 @@ def apiFrames():
 # GET one frame
 
 
-@app.route('/api/frames/', methods=['GET'])
-@app.route('/api/frames/<id>', methods=['GET'])
+@frames.route('/frames/', methods=['GET'])
+@frames.route('/frames/<id>', methods=['GET'])
 def apiFramesId(id=None):
     if id:
         data = dbManager.queryGet("SELECT * FROM Frame WHERE id=?", [id])
@@ -70,7 +82,7 @@ def apiFramesId(id=None):
 
 
 # POST one frame
-@app.route('/api/frames', methods=['POST'])
+@frames.route('/frames', methods=['POST'])
 def apiFramesCreate():
     if request.json:
         data = request.get_json()
@@ -99,8 +111,8 @@ def apiFramesCreate():
 
 
 # Put one frame
-@app.route('/api/frames/', methods=['PUT'])
-@app.route('/api/frames/<id>', methods=['PUT'])
+@frames.route('/frames/', methods=['PUT'])
+@frames.route('/frames/<id>', methods=['PUT'])
 def apiFramesUpdate(id=None):
     if id:
         if request.json:
@@ -134,8 +146,8 @@ def apiFramesUpdate(id=None):
 
 
 # DELETE one frame
-@app.route('/api/frames/', methods=['DELETE'])
-@app.route('/api/frames/<id>', methods=['DELETE'])
+@frames.route('/frames/', methods=['DELETE'])
+@frames.route('/frames/<id>', methods=['DELETE'])
 def apiFramesDelete(id=None):
     if id:
         dbManager.queryInsert(

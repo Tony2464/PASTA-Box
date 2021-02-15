@@ -1,7 +1,6 @@
 import mariadb
 import sys
 
-
 class DbManager:
     conn = 0
 

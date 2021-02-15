@@ -8,7 +8,7 @@ import web.conf.config as config
 from api.routes.frames import frames
 
 app = Flask(__name__)
-app.register_blueprint(frames, url_prefix="/api")
+app.register_blueprint(frames, url_prefix="/api/frames")
 
 @app.route('/')
 def home():

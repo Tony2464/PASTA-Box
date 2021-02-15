@@ -1,11 +1,6 @@
 from flask import Blueprint, request, jsonify
 
 # Local
-# from __main__ import app  # For route
-# from main_web import db_manager as db  # For dBmanager
-
-# dbManager = db
-
 import database.db_config as config
 from database import db_manager
 
@@ -22,7 +17,7 @@ frames = Blueprint("frames", __name__)
 # GET all frames
 
 
-@frames.route('/frames', methods=['GET'])
+@frames.route('/', methods=['GET'])
 def apiFrames():
     data = dbManager.queryGet("SELECT * FROM Frame", [])
     objects_list = []
@@ -51,8 +46,8 @@ def apiFrames():
 # GET one frame
 
 
-@frames.route('/frames/', methods=['GET'])
-@frames.route('/frames/<id>', methods=['GET'])
+@frames.route('/', methods=['GET'])
+@frames.route('/<id>', methods=['GET'])
 def apiFramesId(id=None):
     if id:
         data = dbManager.queryGet("SELECT * FROM Frame WHERE id=?", [id])
@@ -82,7 +77,7 @@ def apiFramesId(id=None):
 
 
 # POST one frame
-@frames.route('/frames', methods=['POST'])
+@frames.route('/', methods=['POST'])
 def apiFramesCreate():
     if request.json:
         data = request.get_json()
@@ -111,8 +106,8 @@ def apiFramesCreate():
 
 
 # Put one frame
-@frames.route('/frames/', methods=['PUT'])
-@frames.route('/frames/<id>', methods=['PUT'])
+@frames.route('/', methods=['PUT'])
+@frames.route('/<id>', methods=['PUT'])
 def apiFramesUpdate(id=None):
     if id:
         if request.json:
@@ -146,8 +141,8 @@ def apiFramesUpdate(id=None):
 
 
 # DELETE one frame
-@frames.route('/frames/', methods=['DELETE'])
-@frames.route('/frames/<id>', methods=['DELETE'])
+@frames.route('/', methods=['DELETE'])
+@frames.route('/<id>', methods=['DELETE'])
 def apiFramesDelete(id=None):
     if id:
         dbManager.queryInsert(

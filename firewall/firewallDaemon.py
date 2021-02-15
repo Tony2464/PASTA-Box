@@ -1,8 +1,7 @@
 import getIpAdresses
 import json
 import datetime
-from os import listdir, walk
-from os.path import isfile, join
+import os
 from crontabs import Cron, Tab
 
 
@@ -34,8 +33,11 @@ with open(config, encoding="utf8", errors="ignore") as configFile:
 jsonData = json.loads(configData)
 sub = subDate(jsonData["LastFetch"])
 
-if(isOutdated(jsonData["Mode"], jsonData["Duration"], sub.days) == False):
+if(isOutdated(jsonData["Mode"], jsonData["Duration"], sub.days) == False or os.path.isfile("/PASTA-Box/firewall/rulesBackup.txt") == False):
     getIpAdresses.fetchIP()
+else:
+    res = os.system(
+        "cat /PASTA-Box/firewall/rulesBackup.txt | sudo ebtables-nft-restore")
 
 if jsonData["Mode"] == "1":  # Monthly job
     Cron().schedule(

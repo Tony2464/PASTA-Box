@@ -16,6 +16,6 @@ web_frames = Blueprint("web_frames", __name__)
 
 @web_frames.route('/')
 def getFrames():
-    r = requests.get('http://192.168.0.52/api/frames')
+    r = requests.get('http://localhost/api/frames')
     data = r.json()
     return render_template('frames.html', content=data)

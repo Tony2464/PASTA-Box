@@ -46,6 +46,7 @@ def apiFrames():
         d["idNetworkSource"] = row[13]
         d["idNetworkDest"] = row[14]
         d["domain"] = row[15]
+        d["info"] = row[16]
         objects_list.append(d)
     dbManager.close()
     return jsonify(objects_list)
@@ -78,6 +79,7 @@ def apiFramesId(id=None):
             d["idNetworkSource"] = row[13]
             d["idNetworkDest"] = row[14]
             d["domain"] = row[15]
+            d["info"] = row[16]
             objects_list.append(d)
         return jsonify(objects_list)
     else:
@@ -90,7 +92,7 @@ def apiFramesCreate():
     if request.json:
         data = request.get_json()
         frame = data[0]
-        dbManager.queryInsert("INSERT INTO `Frame` (`portSource`, `portDest`, `ipSource`, `ipDest`, `macAddrSource`, `macAddrDest`, `protocolLayerApplication`, `protocolLayerTransport`, `protocolLayerNetwork`, `date`, `idDeviceSource`, `idDeviceDest`, `idNetworkSource`, `idNetworkDest`, `domain`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        dbManager.queryInsert("INSERT INTO `Frame` (`portSource`, `portDest`, `ipSource`, `ipDest`, `macAddrSource`, `macAddrDest`, `protocolLayerApplication`, `protocolLayerTransport`, `protocolLayerNetwork`, `date`, `idDeviceSource`, `idDeviceDest`, `idNetworkSource`, `idNetworkDest`, `domain`, `info`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                               [
                                   frame["portSource"],
                                   frame["portDest"],
@@ -106,7 +108,8 @@ def apiFramesCreate():
                                   frame["idDeviceDest"],
                                   frame["idNetworkSource"],
                                   frame["idNetworkDest"],
-                                  frame["domain"]
+                                  frame["domain"],
+                                  frame["info"]
                               ])
         return "Create Success"
     else:
@@ -122,7 +125,7 @@ def apiFramesUpdate(id=None):
             data = request.get_json()
             frame = data[0]
             # UPDATE `Frame` SET `portSource` = '22' WHERE `Frame`.`id` = 1
-            dbManager.queryInsert("UPDATE `Frame` SET `portSource` = ?, `portDest` = ?, `ipSource` = ?, `ipDest` = ?, `macAddrSource` = ?, `macAddrDest` = ?, `protocolLayerApplication` = ?, `protocolLayerTransport` = ?, `protocolLayerNetwork` = ?, `date` = ?, `idDeviceSource` = ?, `idDeviceDest` = ?, `idNetworkSource` = ?, `idNetworkDest` = ?, `domain` = ? WHERE `Frame`.`id` = ?",
+            dbManager.queryInsert("UPDATE `Frame` SET `portSource` = ?, `portDest` = ?, `ipSource` = ?, `ipDest` = ?, `macAddrSource` = ?, `macAddrDest` = ?, `protocolLayerApplication` = ?, `protocolLayerTransport` = ?, `protocolLayerNetwork` = ?, `date` = ?, `idDeviceSource` = ?, `idDeviceDest` = ?, `idNetworkSource` = ?, `idNetworkDest` = ?, `domain` = ?, `info` = ? WHERE `Frame`.`id` = ?",
                                   [
                                       frame["portSource"],
                                       frame["portDest"],
@@ -139,6 +142,7 @@ def apiFramesUpdate(id=None):
                                       frame["idNetworkSource"],
                                       frame["idNetworkDest"],
                                       frame["domain"],
+                                      frame["info"],
                                       id
                                   ])
             return "Update Success"

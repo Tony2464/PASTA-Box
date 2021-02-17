@@ -1,7 +1,6 @@
 import mariadb
 import sys
 
-
 class DbManager:
     conn = 0
 
@@ -39,4 +38,8 @@ class DbManager:
         cur = self.cur()
         cur.execute(query, params)
         self.conn.commit()
+        return 0
+    
+    def close(self):
+        self.conn.close()
         return 0

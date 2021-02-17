@@ -1,0 +1,164 @@
+from flask import Blueprint, request, jsonify
+
+# Local
+import database.db_config as config
+from database import db_manager
+
+dbManager = db_manager.DbManager(
+    config.dbConfig["user"],
+    config.dbConfig["password"],
+    config.dbConfig["host"],
+    config.dbConfig["port"],
+    config.dbConfig["database"]
+)
+
+frames = Blueprint("frames", __name__)
+
+# GET all frames
+
+
+@frames.route('/', methods=['GET'])
+def apiFrames():
+    dbManager = db_manager.DbManager(
+        config.dbConfig["user"],
+        config.dbConfig["password"],
+        config.dbConfig["host"],
+        config.dbConfig["port"],
+        config.dbConfig["database"]
+    )
+    data = dbManager.queryGet("SELECT * FROM Frame", [])
+    objects_list = []
+    for row in data:
+        d = {}
+        d["id"] = row[0]
+        d["portSource"] = row[1]
+        d["portDest"] = row[2]
+        d["ipSource"] = row[3]
+        d["ipDest"] = row[4]
+        d["macAddrSource"] = row[5]
+        d["macAddrDest"] = row[6]
+        d["protocolLayerApplication"] = row[7]
+        d["protocolLayerTransport"] = row[8]
+        d["protocolLayerNetwork"] = row[9]
+        d["date"] = row[10]
+        d["idDeviceSource"] = row[11]
+        d["idDeviceDest"] = row[12]
+        d["idNetworkSource"] = row[13]
+        d["idNetworkDest"] = row[14]
+        d["domain"] = row[15]
+        d["info"] = row[16]
+        objects_list.append(d)
+    dbManager.close()
+    return jsonify(objects_list)
+
+
+# GET one frame
+
+
+@frames.route('/', methods=['GET'])
+@frames.route('/<id>', methods=['GET'])
+def apiFramesId(id=None):
+    if id:
+        data = dbManager.queryGet("SELECT * FROM Frame WHERE id=?", [id])
+        objects_list = []
+        for row in data:
+            d = {}
+            d["id"] = row[0]
+            d["portSource"] = row[1]
+            d["portDest"] = row[2]
+            d["ipSource"] = row[3]
+            d["ipDest"] = row[4]
+            d["macAddrSource"] = row[5]
+            d["macAddrDest"] = row[6]
+            d["protocolLayerApplication"] = row[7]
+            d["protocolLayerTransport"] = row[8]
+            d["protocolLayerNetwork"] = row[9]
+            d["date"] = row[10]
+            d["idDeviceSource"] = row[11]
+            d["idDeviceDest"] = row[12]
+            d["idNetworkSource"] = row[13]
+            d["idNetworkDest"] = row[14]
+            d["domain"] = row[15]
+            d["info"] = row[16]
+            objects_list.append(d)
+        return jsonify(objects_list)
+    else:
+        return "Error : Need an id. "
+
+
+# POST one frame
+@frames.route('/', methods=['POST'])
+def apiFramesCreate():
+    if request.json:
+        data = request.get_json()
+        frame = data[0]
+        dbManager.queryInsert("INSERT INTO `Frame` (`portSource`, `portDest`, `ipSource`, `ipDest`, `macAddrSource`, `macAddrDest`, `protocolLayerApplication`, `protocolLayerTransport`, `protocolLayerNetwork`, `date`, `idDeviceSource`, `idDeviceDest`, `idNetworkSource`, `idNetworkDest`, `domain`, `info`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                              [
+                                  frame["portSource"],
+                                  frame["portDest"],
+                                  frame["ipSource"],
+                                  frame["ipDest"],
+                                  frame["macAddrSource"],
+                                  frame["macAddrDest"],
+                                  frame["protocolLayerApplication"],
+                                  frame["protocolLayerTransport"],
+                                  frame["protocolLayerNetwork"],
+                                  frame["date"],
+                                  frame["idDeviceSource"],
+                                  frame["idDeviceDest"],
+                                  frame["idNetworkSource"],
+                                  frame["idNetworkDest"],
+                                  frame["domain"],
+                                  frame["info"]
+                              ])
+        return "Create Success"
+    else:
+        return "Error : Need json data"
+
+
+# Put one frame
+@frames.route('/', methods=['PUT'])
+@frames.route('/<id>', methods=['PUT'])
+def apiFramesUpdate(id=None):
+    if id:
+        if request.json:
+            data = request.get_json()
+            frame = data[0]
+            # UPDATE `Frame` SET `portSource` = '22' WHERE `Frame`.`id` = 1
+            dbManager.queryInsert("UPDATE `Frame` SET `portSource` = ?, `portDest` = ?, `ipSource` = ?, `ipDest` = ?, `macAddrSource` = ?, `macAddrDest` = ?, `protocolLayerApplication` = ?, `protocolLayerTransport` = ?, `protocolLayerNetwork` = ?, `date` = ?, `idDeviceSource` = ?, `idDeviceDest` = ?, `idNetworkSource` = ?, `idNetworkDest` = ?, `domain` = ?, `info` = ? WHERE `Frame`.`id` = ?",
+                                  [
+                                      frame["portSource"],
+                                      frame["portDest"],
+                                      frame["ipSource"],
+                                      frame["ipDest"],
+                                      frame["macAddrSource"],
+                                      frame["macAddrDest"],
+                                      frame["protocolLayerApplication"],
+                                      frame["protocolLayerTransport"],
+                                      frame["protocolLayerNetwork"],
+                                      frame["date"],
+                                      frame["idDeviceSource"],
+                                      frame["idDeviceDest"],
+                                      frame["idNetworkSource"],
+                                      frame["idNetworkDest"],
+                                      frame["domain"],
+                                      frame["info"],
+                                      id
+                                  ])
+            return "Update Success"
+        else:
+            return "Error : Need json data."
+    else:
+        return "Error : Need an id."
+
+
+# DELETE one frame
+@frames.route('/', methods=['DELETE'])
+@frames.route('/<id>', methods=['DELETE'])
+def apiFramesDelete(id=None):
+    if id:
+        dbManager.queryInsert(
+            "DELETE FROM `Frame` WHERE `Frame`.`id` = ?", [id])
+        return "Delete Success"
+    else:
+        return "Error : Need an id."

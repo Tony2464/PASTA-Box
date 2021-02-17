@@ -8,7 +8,8 @@
 <p>Le body</p>
 
 {% for frame in content %}
-<p>{{frame.id}} | {{frame.ipSource}} | {{frame.ipDest}} | {{frame.macAddrSource}} | {{frame.protocolLayerApplication}}</p>
+<p>{{frame.id}} | {{frame.ipSource}} | {{frame.ipDest}} | {{frame.protocolLayerApplication}} |
+    {{frame.protocolLayerTransport}}| {{frame.protocolLayerNetwork}}</p>
 
 {% endfor %}
 

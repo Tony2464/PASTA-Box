@@ -39,3 +39,7 @@ class DbManager:
         cur.execute(query, params)
         self.conn.commit()
         return 0
+    
+    def close(self):
+        self.conn.close()
+        return 0

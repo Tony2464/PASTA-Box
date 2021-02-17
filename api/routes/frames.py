@@ -19,6 +19,13 @@ frames = Blueprint("frames", __name__)
 
 @frames.route('/', methods=['GET'])
 def apiFrames():
+    dbManager = db_manager.DbManager(
+        config.dbConfig["user"],
+        config.dbConfig["password"],
+        config.dbConfig["host"],
+        config.dbConfig["port"],
+        config.dbConfig["database"]
+    )
     data = dbManager.queryGet("SELECT * FROM Frame", [])
     objects_list = []
     for row in data:
@@ -40,6 +47,7 @@ def apiFrames():
         d["idNetworkDest"] = row[14]
         d["domain"] = row[15]
         objects_list.append(d)
+    dbManager.close()
     return jsonify(objects_list)
 
 

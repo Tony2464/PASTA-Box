@@ -2,7 +2,8 @@ import os
 import IpFiles
 import datetime
 import json
-
+import numpy as np
+import threading
 
 # Update date in config.json
 
@@ -18,12 +19,25 @@ def updateDate():
         configFile.close()
 
 
-# Apply all the rules
+# Organize the rules application
 
 def applyEbtable(IPlist, mode):
     if(mode == True):
         res = os.system("sudo ebtables -F")
+        newIPList = np.array(IPlist)
+        lists = np.array_split(newIPList, 2)
+        t = threading.Thread(target=addEbtableRule, args=(lists[0],))
+        t.start()
+        addEbtableRule(lists[1])
+    else:
+        addEbtableRule(IPlist)
+    res = os.system(
+        "sudo ebtables-nft-save > /PASTA-Box/firewall/rulesBackup.txt")
 
+
+# Apply all the rules
+
+def addEbtableRule(IPlist):
     for i in range(len(IPlist)):
         cmd = "sudo ebtables -t filter -A FORWARD -p IPv4 --ip-dst " + \
             IPlist[i].replace('\n', '') + " -j DROP"
@@ -31,9 +45,7 @@ def applyEbtable(IPlist, mode):
         cmd = "sudo ebtables -t filter -A FORWARD -p IPv4 --ip-src " + \
             IPlist[i].replace('\n', '') + " -j DROP"
         res = os.system(cmd)
-    res = os.system(
-        "sudo ebtables-nft-save > /PASTA-Box/firewall/rulesBackup.txt")
-
+    
 
 # Get all files in the repo blocklist-ipsets
 
@@ -65,10 +77,6 @@ def fetchIP():
 
     dataIP = list(dict.fromkeys(dataIP))
     applyEbtable(dataIP, True)
-
-    # backup = open("test.txt", "a")
-    # backup.writelines(dataIP)
-    # backup.close()
 
 # fetchIP()
 # updateDate()

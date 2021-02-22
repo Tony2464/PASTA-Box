@@ -14,3 +14,9 @@ database/__pycache__/db_manager.cpython-37.pyc
 firewall/__pycache__/
 
 __pycache__/
+
+web/routes/admin/__pycache__/
+
+*.pyc
+
+

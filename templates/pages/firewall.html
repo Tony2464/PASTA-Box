@@ -1,0 +1,94 @@
+{% extends "base/base.html" %}
+{% block title %} Pasta-Box - Firewall {% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="container">
+        <h1 style="text-align: center;">FIREWALL RULES</h1>
+        <div class="divider div-transparent div-arrow-down"></div>
+    </div>
+    <div class="col-md-6 half-body">
+        <h3 style="text-align: center;">Add a rule to the Firewall</h3>
+        <br>
+        <br>
+        <form class="form-inline form-firewall">
+            <div class="form-group mb-2">
+                <label>Enter an IP address : </label>
+            </div>
+            <div class="form-group mx-sm-3 mb-2">
+                <input type="text" class="form-control" placeholder="IP address">
+            </div>
+            <br>
+            <button style="text-align: center;" type="submit" class="btn btn-primary mb-2">Add the rule</button>
+        </form>
+        <br>
+        <br>
+        <form class="form-inline form-firewall">
+            <div class="form-group mb-2">
+                <label>Enter a port : </label>
+            </div>
+            <div class="form-group mx-sm-3 mb-2">
+                <input type="text" class="form-control" placeholder="Port">
+            </div>
+            <br>
+            <button style="text-align: center;" type="submit" class="btn btn-primary mb-2">Add the rule</button>
+        </form>
+    </div><!--
+ --><div class="col-md-6 half-body">
+        <h3 style="text-align: center;">List of the rules</h3>
+        <br>
+        <br>
+        <h5>IP addresses :</h5>
+        <br>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="width: 40%;">N°</th>
+                    <th>IP address</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>192.168.1.30</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>192.5.36.22</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>178.65.200.123</td>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        <br>
+        <h5>Ports :</h5>
+        <br>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="width: 40%;">N°</th>
+                    <th>Port</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>50</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>35</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>33</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+{% block js %} {% endblock %}

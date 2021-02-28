@@ -14,6 +14,7 @@ dbManager = db_manager.DbManager(
 
 rules = Blueprint("rules", __name__)
 
+
 # GET all rules
 
 @rules.route('/', methods=['GET'])
@@ -23,8 +24,11 @@ def apiRules():
     for row in data:
         d = {}
         d["id"] = row[0]
-        d["ip"] = row[1]
-        d["port"] = row[2]
+        d["ipDest"] = row[1]
+        d["ipSource"] = row[2]
+        d["portDest"] = row[3]
+        d["portSource"] = row[4]
+        d["protocol"] = row[5]
         objects_list.append(d)
     return jsonify(objects_list)
 
@@ -41,9 +45,12 @@ def apiRulesId(id=None):
         for row in data:
             d = {}
             d["id"] = row[0]
-            d["ip"] = row[1]
-            d["port"] = row[2]
-            objects_list.append(d)
+            d["ipDest"] = row[1]
+            d["ipSource"] = row[2]
+            d["portDest"] = row[3]
+            d["portSource"] = row[4]
+            d["protocol"] = row[5]
+        objects_list.append(d)
         return jsonify(objects_list)
     else:
         return "Error : Need an id. "
@@ -56,10 +63,13 @@ def apiRulesCreate():
     if request.json:
         data = request.get_json()
         rule = data[0]
-        dbManager.queryInsert("INSERT INTO `RuleFirewall` (`ip`, `port`) VALUES (?, ?)",
+        dbManager.queryInsert("INSERT INTO `RuleFirewall` (`ipDest`, `ipSource`, `portDest`, `portSource`, `protocol`) VALUES (?, ?, ?, ?, ?)",
                               [
-                                  rule["ip"],
-                                  rule["port"]
+                                  rule["ipDest"],
+                                  rule["ipSource"],
+                                  rule["portDest"],
+                                  rule["portSource"],
+                                  rule["protocol"]
                               ])
         return "Create Success"
     else:

@@ -25,7 +25,7 @@ app.register_blueprint(web_frames, url_prefix="/admin/frames")
 
 @app.route('/')
 def home():
-    return render_template("frames.html")
+    return "Index page"
 
 
 if __name__ == "__main__":

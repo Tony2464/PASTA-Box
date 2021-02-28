@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, jsonify
+import requests
 
 # Local
 import database.db_config as config
@@ -16,4 +17,6 @@ firewall = Blueprint("firewall", __name__)
 
 @firewall.route('/')
 def homepage():
-    return render_template('pages/firewall.html')
+    r = requests.get('http://localhost/api/rules')
+    data = r.json()
+    return render_template('pages/firewall.html', content=data)

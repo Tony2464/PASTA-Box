@@ -47,18 +47,14 @@
                 </tr>
             </thead>
             <tbody>
+                {% for rule in content %}
+                {% if rule.port == None %}
                 <tr>
-                    <td>1</td>
-                    <td>192.168.1.30</td>
+                    <td>{{rule.id}}</td>
+                    <td>{{rule.ip}}</td>
                 </tr>
-                <tr>
-                    <td>2</td>
-                    <td>192.5.36.22</td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>178.65.200.123</td>
-                </tr>
+                {% endif %}
+                {% endfor %}
             </tbody>
         </table>
         <br>
@@ -73,18 +69,14 @@
                 </tr>
             </thead>
             <tbody>
+                {% for rule in content %}
+                {% if rule.ip == None %}
                 <tr>
-                    <td>1</td>
-                    <td>50</td>
+                    <td>{{rule.id}}</td>
+                    <td>{{rule.port}}</td>
                 </tr>
-                <tr>
-                    <td>2</td>
-                    <td>35</td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>33</td>
-                </tr>
+                {% endif %}
+                {% endfor %}
             </tbody>
         </table>
     </div>

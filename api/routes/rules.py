@@ -14,6 +14,7 @@ dbManager = db_manager.DbManager(
 
 rules = Blueprint("rules", __name__)
 
+
 # GET all rules
 
 @rules.route('/', methods=['GET'])

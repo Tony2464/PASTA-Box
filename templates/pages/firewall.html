@@ -37,45 +37,65 @@
         <h3 style="text-align: center;">List of the rules</h3>
         <br>
         <br>
-        <h5>IP addresses :</h5>
-        <br>
-        <table class="table">
+        <table style="text-align: center;" class="table">
             <thead>
                 <tr>
-                    <th style="width: 40%;">N°</th>
-                    <th>IP address</th>
+                    <th>N°</th>
+                    <th>IP Dest</th>
+                    <th>IP Source</th>
+                    <th>Port Dest</th>
+                    <th>Port Source</th>
+                    <th>Protocol</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 {% for rule in content %}
-                {% if rule.port == None %}
                 <tr>
-                    <td>{{rule.id}}</td>
-                    <td>{{rule.ip}}</td>
+                    <td>
+                        {{rule.id}}
+                    </td>
+                    <td>
+                        {% if rule.ipDest != None %}
+                        {{rule.ipDest}}
+                        {% else %}
+                        X
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if rule.ipSource != None %}
+                        {{rule.ipSource}}
+                        {% else %}
+                        X
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if rule.portDest != None %}
+                        {{rule.portDest}}
+                        {% else %}
+                        X
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if rule.portSource != None %}
+                        {{rule.portSource}}
+                        {% else %}
+                        X
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if rule.protocol == 0 %}
+                        X
+                        {% elif rule.protocol == 1 %}
+                        tcp
+                        {% elif rule.protocol == 2 %}
+                        udp
+                        {% elif rule.protocol == 3 %}
+                        icmp
+                        {% endif %}
+                    </td>
+                    <td><button type="button" class="btn btn-dark">Delete</button></td>
                 </tr>
-                {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
-        <br>
-        <br>
-        <h5>Ports :</h5>
-        <br>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th style="width: 40%;">N°</th>
-                    <th>Port</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for rule in content %}
-                {% if rule.ip == None %}
-                <tr>
-                    <td>{{rule.id}}</td>
-                    <td>{{rule.port}}</td>
-                </tr>
-                {% endif %}
                 {% endfor %}
             </tbody>
         </table>

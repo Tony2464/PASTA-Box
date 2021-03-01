@@ -1,7 +1,6 @@
 # Interesting files which contain malicious IP adresses
 
 dbAdresses = []
-dbAdresses.append("30d")
 dbAdresses.append("darklist")
 dbAdresses.append("spyware")
 dbAdresses.append("malware")

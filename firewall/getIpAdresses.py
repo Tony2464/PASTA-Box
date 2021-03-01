@@ -4,6 +4,31 @@ import datetime
 import json
 import numpy as np
 import threading
+import re
+
+# Regex IPv4
+ipv4 = '''^(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(  
+            25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(  
+            25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(  
+            25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$'''
+
+# Regex IPv6
+ipv6 = '''(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}| 
+        ([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:) 
+        {1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1 
+        ,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4} 
+        :){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{ 
+        1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA 
+        -F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a 
+        -fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0 
+        -9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0, 
+        4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1} 
+        :){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9 
+        ])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0 
+        -9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4] 
+        |1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4] 
+        |1{0,1}[0-9]){0,1}[0-9]))'''
+
 
 # Update date in config.json
 
@@ -19,33 +44,78 @@ def updateDate():
         configFile.close()
 
 
-# Organize the rules application
+# Check IP version
 
-def applyEbtable(IPlist, mode):
-    if(mode == True):
-        res = os.system("sudo ebtables -F")
-        newIPList = np.array(IPlist)
-        lists = np.array_split(newIPList, 2)
-        t = threading.Thread(target=addEbtableRule, args=(lists[0],))
-        t.start()
-        addEbtableRule(lists[1])
+def checkIP(string):
+    if re.search(ipv4, string):
+        return 1
+    elif re.search(ipv6, string):
+        return 2
     else:
-        addEbtableRule(IPlist)
+        return 3
+
+
+# Check if the rule parameters are correct
+
+def verifyRule(Rule):
+    if(Rule["protocol"] < 0 or Rule["protocol"] > 3):
+        return 2
+
+    if(Rule["protocol"] == 3):
+        if(Rule["ipDst"] == None and Rule["ipSource"] == None):
+            return 3
+
+    if(Rule["portSrc"] == None or Rule["portDst"] == None):
+        if(Rule["ipDst"] == None and Rule["ipSource"] == None):
+            return 4
+
+
+# Apply customized rules from the HMI
+
+def buildCustomRules(Rule):
+    error = verifyRule(Rule)
+    if(error != 0):
+        return error
+
+    if(Rule["ipDst"] != None):
+        version = checkIP(Rule["ipDst"])
+        if(version == 3):
+            return 1
+        else:
+            Rule["IPvDst"] = version
+
+    if(Rule["ipSource"] != None):
+        version = checkIP(Rule["ipSource"])
+        if(version == 3):
+            return 1
+        else:
+            Rule["IPvSrc"] = version
+    #WIP
+
+
+# Organize the rules application in background
+
+def applyEbtableBack(IPlist):
+    res = os.system("sudo ebtables -F")
+    newIPList = np.array(IPlist)
+    lists = np.array_split(newIPList, 2)
+    t = threading.Thread(target=addEbtableRule, args=(lists[0],))
+    t.start()
+    addEbtableRule(lists[1])
     res = os.system(
         "sudo ebtables-nft-save > /PASTA-Box/firewall/rulesBackup.txt")
 
 
-# Apply all the rules
+# Apply the rules from the repo blocklist-ipsets
 
 def addEbtableRule(IPlist):
     for i in range(len(IPlist)):
-        cmd = "sudo ebtables -t filter -A FORWARD -p IPv4 --ip-dst " + \
-            IPlist[i].replace('\n', '') + " -j DROP"
+        ipAddr = IPlist[i].replace('\n', '')
+        cmd = "sudo ebtables -t filter -A FORWARD -p IPv4 --ip-dst " + ipAddr + " -j DROP"
         res = os.system(cmd)
-        cmd = "sudo ebtables -t filter -A FORWARD -p IPv4 --ip-src " + \
-            IPlist[i].replace('\n', '') + " -j DROP"
+        cmd = "sudo ebtables -t filter -A FORWARD -p IPv4 --ip-src " + ipAddr + " -j DROP"
         res = os.system(cmd)
-    
+
 
 # Get all files in the repo blocklist-ipsets
 
@@ -76,7 +146,7 @@ def fetchIP():
                 dataIP.append(data[j])
 
     dataIP = list(dict.fromkeys(dataIP))
-    applyEbtable(dataIP, True)
+    applyEbtableBack(dataIP, True)
 
 # fetchIP()
 # updateDate()

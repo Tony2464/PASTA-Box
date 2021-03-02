@@ -1,0 +1,53 @@
+{% extends 'base/base.html'%}
+{% block title %} Pasta-Box - Frames Live {% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="container" id="content">
+        <div class="row text-center">
+            <h1>Live Frames</h1>
+        </div>
+        <div class="row">
+            <div id="log">
+            </div> <!-- /#log -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js%}
+<script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+
+<script>
+
+
+
+    $(document).ready(function () {
+        //connect to the socket server.
+        var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
+        var numbers_received = [];
+
+        //receive details from server
+        socket.on('newnumber', function (msg) {
+            console.log("Received number" + msg.number);
+            //maintain a list of ten numbers
+            if (numbers_received.length >= 10) {
+                numbers_received.shift()
+            }
+            numbers_received.push(msg.number);
+            numbers_string = '';
+            // for (var i = numbers_received.length; i > 0 ; i--) {
+            // numbers_string = numbers_string + '<p>' + numbers_received[i].toString() + '</p>';
+            // }
+            for (var i = 0; i < numbers_received.length; i++) {
+                numbers_string = numbers_string + '<p>' +
+                numbers_received[i].toString() + '</p>';
+            } $('#log').html(numbers_string);
+        });
+    });
+
+</script>
+
+{% endblock %}

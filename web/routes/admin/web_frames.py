@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, json, render_template
+from flask.helpers import url_for
 import requests
 # Local
 import database.db_config as config
@@ -16,6 +17,13 @@ web_frames = Blueprint("web_frames", __name__)
 
 @web_frames.route('/')
 def getFrames():
-    r = requests.get('http://localhost/api/frames')
+    url = 'http://localhost/api/frames'
+    params = {"limit":5}
+    r = requests.get(url,params)
     data = r.json()
     return render_template('pages/frames.html', data=data)
+
+
+@web_frames.route('/live')
+def getFramesLive():
+    return render_template('pages/frames_live.html')

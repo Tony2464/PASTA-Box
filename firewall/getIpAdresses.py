@@ -59,38 +59,88 @@ def checkIP(string):
 
 def verifyRule(Rule):
     if(Rule["protocol"] < 0 or Rule["protocol"] > 3):
-        return 2
+        return -1
 
     if(Rule["protocol"] == 3):
         if(Rule["ipDst"] == None and Rule["ipSource"] == None):
-            return 3
+            return -2
 
     if(Rule["portSrc"] == None or Rule["portDst"] == None):
         if(Rule["ipDst"] == None and Rule["ipSource"] == None):
-            return 4
+            return -3
+
+    if(Rule["ipDst"] != None):
+        Rule["ipDstVersion"] = checkIP(Rule["ipDst"])
+        if(Rule["ipDstVersion"] == 3):
+            return -4
+
+    if(Rule["ipSrc"] != None):
+        Rule["ipSrcVersion"] = checkIP(Rule["ipSrc"])
+        if(Rule["ipSrcVersion"] == -3):
+            return 5
+        if(Rule["ipVersion"] != Rule["ipDstVersion"]):
+            return -6
+
+    return 0
 
 
 # Apply customized rules from the HMI
 
 def buildCustomRules(Rule):
     error = verifyRule(Rule)
-    if(error != 0):
+    if(error < 0):
         return error
 
-    if(Rule["ipDst"] != None):
-        version = checkIP(Rule["ipDst"])
-        if(version == 3):
-            return 1
-        else:
-            Rule["IPvDst"] = version
+    cmd = "sudo ebtables -t filter -A FORWARD "
+    if(Rule["ipSrcVersion"] == 1 or Rule["ipDstVersion"] == 1):
+        cmd += "-p ipv4 "
+        version = "ipv4"
+        if(Rule["ipSrc"] != None):
+            cmd += "--ip-src " + Rule["ipSrc"] + " "
+        if(Rule["ipDst"] != None):
+            cmd += "--ip-dst " + Rule["ipDst"] + " "
 
-    if(Rule["ipSource"] != None):
-        version = checkIP(Rule["ipSource"])
-        if(version == 3):
-            return 1
+    elif(Rule["ipSrcVersion"] == 2 or Rule["ipDstVersion"] == 2):
+        cmd += "-p ipv6 "
+        version = "ipv6"
+        if(Rule["ipSrc"] != None):
+            cmd += "--ip6-source " + Rule["ipSrc"] + " "
+        if(Rule["ipDst"] != None):
+            cmd += "--ip6-destination " + Rule["ipDst"] + " "
+
+    if(Rule["protocol"] != None):
+
+        if(version == "ipv4"):
+            cmd += "--ip-protocol "
+            if(Rule["protocol"] == 1):
+                cmd += "tcp "
+            elif(Rule["protocol"] == 2):
+                cmd += "udp "
+            else:
+                cmd += "icmp "
+
+            if(Rule["protocol"] != 3):
+                if(Rule["portSrc"] != None):
+                    cmd += "--ip-source-port " + Rule["portSrc"]
+                else:
+                    cmd += "--ip-destination-port " + Rule["portDst"]
+
         else:
-            Rule["IPvSrc"] = version
-    #WIP
+            cmd += "--ip6-protocol "
+            if(Rule["protocol"] == 1):
+                cmd += "tcp "
+            elif(Rule["protocol"] == 2):
+                cmd += "udp "
+            else:
+                cmd += "icmp "
+
+            if(Rule["protocol"] != 3):
+                if(Rule["portSrc"] != None):
+                    cmd += "--ip6-source-port " + Rule["portSrc"]
+                else:
+                    cmd += "--ip6-destination-port " + Rule["portDst"]
+    cmd += "-j DROP"
+    res = os.system(cmd)
 
 
 # Organize the rules application in background
@@ -146,7 +196,7 @@ def fetchIP():
                 dataIP.append(data[j])
 
     dataIP = list(dict.fromkeys(dataIP))
-    applyEbtableBack(dataIP, True)
+    applyEbtableBack(dataIP)
 
 # fetchIP()
 # updateDate()

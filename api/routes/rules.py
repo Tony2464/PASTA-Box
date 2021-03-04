@@ -29,6 +29,7 @@ def apiRules():
         d["portDest"] = row[3]
         d["portSource"] = row[4]
         d["protocol"] = row[5]
+        d["ipVersion"] = row[6]
         objects_list.append(d)
     return jsonify(objects_list)
 
@@ -50,6 +51,7 @@ def apiRulesId(id=None):
             d["portDest"] = row[3]
             d["portSource"] = row[4]
             d["protocol"] = row[5]
+            d["ipVersion"] = row[6]
         objects_list.append(d)
         return jsonify(objects_list)
     else:
@@ -63,13 +65,14 @@ def apiRulesCreate():
     if request.json:
         data = request.get_json()
         rule = data[0]
-        dbManager.queryInsert("INSERT INTO `RuleFirewall` (`ipDest`, `ipSource`, `portDest`, `portSource`, `protocol`) VALUES (?, ?, ?, ?, ?)",
+        dbManager.queryInsert("INSERT INTO `RuleFirewall` (`ipDest`, `ipSource`, `portDest`, `portSource`, `protocol`, `ipVersion`) VALUES (?, ?, ?, ?, ?, ?)",
                               [
                                   rule["ipDest"],
                                   rule["ipSource"],
                                   rule["portDest"],
                                   rule["portSource"],
-                                  rule["protocol"]
+                                  rule["protocol"],
+                                  rule["ipVersion"]
                               ])
         return "Create Success"
     else:

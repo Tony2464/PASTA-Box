@@ -1,0 +1,61 @@
+{% extends 'base/base.html'%}
+{% block title %} Pasta-Box - Frames {% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row">
+        <a class="btn btn-primary" href="/admin/frames/live" role="button">See frames in live</a>
+    </div>
+    <br>
+
+    <table class="table table-bordered table-responsive-lg table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>IP source</th>
+                <th>IP dest</th>
+                <th>Port source</th>
+                <th>Port dest</th>
+                <th>MAC source</th>
+                <th>MAC dest</th>
+                <th>Layer application</th>
+                <th>Layer transport</th>
+                <th>Layer network</th>
+            </tr>
+        </thead>
+        <tbody id="myTable">
+            {% for frame in data %}
+            <tr>
+                <td>
+                    {{frame.ipSource}}
+                </td>
+                <td>
+                    {{frame.ipDest}}
+                </td>
+                <td>
+                    {{frame.portSource}}
+                </td>
+                <td>
+                    {{frame.portDest}}
+                </td>
+                <td>
+                    {{frame.macAddrSource}}
+                </td>
+                <td>
+                    {{frame.macAddrDest}}
+                </td>
+                <td>
+                    {{frame.protocolLayerApplication}}
+                </td>
+                <td>
+                    {{frame.protocolLayerTransport}}
+                </td>
+                <td>
+                    {{frame.protocolLayerNetwork}}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

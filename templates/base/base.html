@@ -10,6 +10,7 @@
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/custom-bootstrap.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
+    <link rel="icon" sizes="64x64" type="image/png" href="{{ url_for('static', filename='img/favicon.png') }}">
 
     <style>
         .bd-placeholder-img {
@@ -36,7 +37,7 @@
 <body>
 
     <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">PASTA-BOX</a>
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#"><img style="width:40px;margin-right: 8%;vertical-align: middle;" src="{{ url_for('static', filename='img/favicon.png') }}" alt="">PASTA-BOX</a>
         <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
             data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
             aria-label="Toggle navigation">

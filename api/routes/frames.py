@@ -1,16 +1,19 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, json, request, jsonify
+from flask.helpers import flash
 
 # Local
 import database.db_config as config
 from database import db_manager
 
-dbManager = db_manager.DbManager(
-    config.dbConfig["user"],
-    config.dbConfig["password"],
-    config.dbConfig["host"],
-    config.dbConfig["port"],
-    config.dbConfig["database"]
-)
+def initDb():
+    dbManager = db_manager.DbManager(
+        config.dbConfig["user"],
+        config.dbConfig["password"],
+        config.dbConfig["host"],
+        config.dbConfig["port"],
+        config.dbConfig["database"]
+    )
+    return dbManager
 
 frames = Blueprint("frames", __name__)
 
@@ -19,14 +22,12 @@ frames = Blueprint("frames", __name__)
 
 @frames.route('/', methods=['GET'])
 def apiFrames():
-    dbManager = db_manager.DbManager(
-        config.dbConfig["user"],
-        config.dbConfig["password"],
-        config.dbConfig["host"],
-        config.dbConfig["port"],
-        config.dbConfig["database"]
-    )
-    data = dbManager.queryGet("SELECT * FROM Frame", [])
+    dbManager = initDb()
+    if request.args.get('limit'):
+        limit = request.args.get('limit')
+        data = dbManager.queryGet("SELECT * FROM Frame ORDER BY `id` DESC limit ?", [limit])
+    else:
+        data = dbManager.queryGet("SELECT * FROM Frame ORDER BY `id` DESC", [])
     objects_list = []
     for row in data:
         d = {}
@@ -59,6 +60,7 @@ def apiFrames():
 @frames.route('/<id>', methods=['GET'])
 def apiFramesId(id=None):
     if id:
+        dbManager = initDb()
         data = dbManager.queryGet("SELECT * FROM Frame WHERE id=?", [id])
         objects_list = []
         for row in data:
@@ -81,6 +83,7 @@ def apiFramesId(id=None):
             d["domain"] = row[15]
             d["info"] = row[16]
             objects_list.append(d)
+        dbManager.close()
         return jsonify(objects_list)
     else:
         return "Error : Need an id. "
@@ -90,6 +93,7 @@ def apiFramesId(id=None):
 @frames.route('/', methods=['POST'])
 def apiFramesCreate():
     if request.json:
+        dbManager = initDb()
         data = request.get_json()
         frame = data[0]
         dbManager.queryInsert("INSERT INTO `Frame` (`portSource`, `portDest`, `ipSource`, `ipDest`, `macAddrSource`, `macAddrDest`, `protocolLayerApplication`, `protocolLayerTransport`, `protocolLayerNetwork`, `date`, `idDeviceSource`, `idDeviceDest`, `idNetworkSource`, `idNetworkDest`, `domain`, `info`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -111,6 +115,7 @@ def apiFramesCreate():
                                   frame["domain"],
                                   frame["info"]
                               ])
+        dbManager.close()
         return "Create Success"
     else:
         return "Error : Need json data"
@@ -122,6 +127,7 @@ def apiFramesCreate():
 def apiFramesUpdate(id=None):
     if id:
         if request.json:
+            dbManager = initDb()
             data = request.get_json()
             frame = data[0]
             # UPDATE `Frame` SET `portSource` = '22' WHERE `Frame`.`id` = 1
@@ -145,6 +151,7 @@ def apiFramesUpdate(id=None):
                                       frame["info"],
                                       id
                                   ])
+            dbManager.close()
             return "Update Success"
         else:
             return "Error : Need json data."
@@ -157,8 +164,10 @@ def apiFramesUpdate(id=None):
 @frames.route('/<id>', methods=['DELETE'])
 def apiFramesDelete(id=None):
     if id:
+        dbManager = initDb()
         dbManager.queryInsert(
             "DELETE FROM `Frame` WHERE `Frame`.`id` = ?", [id])
+        dbManager.close()
         return "Delete Success"
     else:
         return "Error : Need an id."

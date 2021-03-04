@@ -18,12 +18,10 @@
 
 {% block js%}
 <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://intercoolerjs.org/release/intercooler-1.2.3.js"></script>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
 
 <script>
-
-
-
     $(document).ready(function () {
         //connect to the socket server.
         var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
@@ -31,7 +29,9 @@
 
         //receive details from server
         socket.on('newnumber', function (msg) {
-            console.log("Received number" + msg.number);
+            console.log(msg)
+            console.log("Received number" + msg.id);
+            /*
             //maintain a list of ten numbers
             if (numbers_received.length >= 10) {
                 numbers_received.shift()
@@ -42,12 +42,16 @@
             // numbers_string = numbers_string + '<p>' + numbers_received[i].toString() + '</p>';
             // }
             for (var i = 0; i < numbers_received.length; i++) {
-                numbers_string = numbers_string + '<p>' +
-                numbers_received[i].toString() + '</p>';
-            } $('#log').html(numbers_string);
+                numbers_string = numbers_string + '<p>' + numbers_received[i].toString() + '</p>';
+            }
+            */
+            //$('#log').prepend(numbers_string);
+            $('#log').prepend(
+                '<p>' + msg.id + '</p>'
+            );
+
         });
     });
-
 </script>
 
 {% endblock %}

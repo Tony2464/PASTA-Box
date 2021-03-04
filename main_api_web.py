@@ -51,40 +51,45 @@ socketio = SocketIO(app, async_mode=None, logger=True, engineio_logger=True)
 thread = Thread()
 thread_stop_event = Event()
 def sendFrames():
-    #infinite loop of magical random numbers
     print("Sending frames")
-    number = 0
-    oldData = -1
+
+    dbManager = initDb()
+    data = dbManager.queryGet("SELECT MAX(id) FROM `Frame`", [])
+    id = data[0]
+    id = id[0]
+    dbManager.close()
+
+    counter = 0
+    # Loop unless disconnection
     while not thread_stop_event.isSet():
-        dbManager = initDb()    
-        data = dbManager.queryGet("SELECT MAX(id) FROM `Frame`", [])
-        # objects_list = []
-        # for row in data:
-        #     d = {}
-        #     d["id"] = row[0]
-        #     d["portSource"] = row[1]
-        #     d["portDest"] = row[2]
-        #     d["ipSource"] = row[3]
-        #     d["ipDest"] = row[4]
-        #     d["macAddrSource"] = row[5]
-        #     d["macAddrDest"] = row[6]
-        #     d["protocolLayerApplication"] = row[7]
-        #     d["protocolLayerTransport"] = row[8]
-        #     d["protocolLayerNetwork"] = row[9]
-        #     d["date"] = row[10]
-        #     d["idDeviceSource"] = row[11]
-        #     d["idDeviceDest"] = row[12]
-        #     d["idNetworkSource"] = row[13]
-        #     d["idNetworkDest"] = row[14]
-        #     d["domain"] = row[15]
-        #     d["info"] = row[16]
-        #     objects_list.append(d)
-        # data = jsonify(objects_list)
-        # number += 1
-        # if data[0] != oldData:
-        socketio.emit('newnumber', {'number': data[0],}, namespace='/test')
-        # oldData = data[0]
-        socketio.sleep(0.5)
+        dbManager = initDb()
+
+        # Prendre le plus grand id avant le while
+
+        # Mettre cet id dans une variable
+        # Faire la requete avec
+        # Comparaison avec l'acnien id si nouveau envoie 
+        #incremener la variable
+
+        # data = dbManager.queryGet("SELECT MAX(id) FROM `Frame`", [])
+
+        # data = dbManager.queryGet("SELECT * FROM `Frame` WHERE `id`=?", [id + counter])
+        # counter += 1
+        
+        if counter == 20:
+            counter = 0
+            data = dbManager.queryGet("SELECT MAX(id) FROM `Frame`", [])
+            id = data[0]
+            id = id[0]
+            sleep(0.3)
+        else:
+            data = dbManager.queryGet("SELECT * FROM `Frame` WHERE `id`=?", [id + counter])
+            sleep(0.3)
+
+        counter += 1
+        newId = data[0]
+        socketio.emit('newnumber', {'id':newId[0]}, namespace='/test')
+        # socketio.sleep(0.5)
         dbManager.close()
 
 @socketio.on('connect', namespace='/test')
@@ -99,7 +104,6 @@ def test_connect():
     if not thread.isAlive():
         print("Starting Thread")
         thread = socketio.start_background_task(sendFrames)
-
 
 @socketio.on('disconnect', namespace='/test')
 def test_disconnect():

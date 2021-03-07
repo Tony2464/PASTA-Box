@@ -91,6 +91,7 @@ def buildCustomRules(Rule):
     if(error < 0):
         return error
 
+    exception = False
     cmd = "sudo ebtables -t filter -A FORWARD "
     if(Rule["ipSrcVersion"] == 1 or Rule["ipDstVersion"] == 1):
         cmd += "-p ipv4 "
@@ -107,6 +108,9 @@ def buildCustomRules(Rule):
             cmd += "--ip6-source " + Rule["ipSrc"] + " "
         if(Rule["ipDst"] != None):
             cmd += "--ip6-destination " + Rule["ipDst"] + " "
+
+    else:
+        exception = True
 
     if(Rule["protocol"] != None):
 
@@ -141,6 +145,9 @@ def buildCustomRules(Rule):
                     cmd += "--ip6-destination-port " + Rule["portDst"]
     cmd += "-j DROP"
     res = os.system(cmd)
+
+    if(exception == True):
+        res = os.system(cmd.replace('--ip6-protocol', '--ip-protocol'))
 
 
 # Organize the rules application in background

@@ -93,3 +93,19 @@ body {
 	justify-content: center;
 
 }
+
+.submit-form {
+
+	display: block !important;
+	margin: auto;
+	text-align: center;
+	margin-bottom: 15%;
+
+}
+
+.port-group {
+
+	display: block !important;
+	width: 100%;
+
+}

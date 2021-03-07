@@ -6,41 +6,147 @@
         <h1 style="text-align: center;">FIREWALL RULES</h1>
         <div class="divider div-transparent div-arrow-down"></div>
     </div>
-    <div class="col-md-6 half-body">
+    <div style="padding-right:inherit;" class="col-md-6 half-body">
         <h3 style="text-align: center;">Add a rule to the Firewall</h3>
         <br>
         <br>
-        <form class="form-inline form-firewall">
-            <div class="form-group mb-2">
-                <label>Enter an IP address : </label>
+        <form>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <div class="row">
+                        <legend class="col-form-label pt-0"><u>IP Source :</u></legend>
+                        <div class="col-sm-10">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gridRadiosIpSrc" id="radIpSrc1"
+                                    checked>
+                                <label class="form-check-label" for="gridRadios1">
+                                    None
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gridRadiosIpSrc" id="radIpSrc2"
+                                    value="option2">
+                                <label class="form-check-label" for="gridRadios2">
+                                    Add an IP source address
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="text" class="form-control" id="ipAddrSrc" placeholder="IP address" disabled>
+                </div>
+                <div class="form-group col-md-6">
+                    <div class="row">
+                        <legend class="col-form-label pt-0"><u>IP Destination :</u></legend>
+                        <div class="col-sm-10">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gridRadiosIpDest" id="radIpDest1"
+                                    checked>
+                                <label class="form-check-label" for="gridRadios1">
+                                    None
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gridRadiosIpDest" id="radIpDest2"
+                                    value="option2">
+                                <label class="form-check-label" for="gridRadios2">
+                                    Add an IP destination address
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="text" class="form-control" id="ipAddrSrc" placeholder="IP address" disabled>
+                </div>
+                <div class="form-group col-md-6">
+                    <div class="row">
+                        <legend class="col-form-label pt-0"><u>Source port :</u></legend>
+                        <div class="col-sm-10">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gridRadiosPortSrc" id="radPortSrc1"
+                                    checked>
+                                <label class="form-check-label" for="gridRadios1">
+                                    None
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gridRadiosPortSrc" id="radPortSrc2"
+                                    value="option2">
+                                <label class="form-check-label" for="gridRadios2">
+                                    Add a source port
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="number" class="form-control" id="portSrc" placeholder="Port" disabled>
+                </div>
+                <div class="form-group col-md-6">
+                    <div class="row">
+                        <legend class="col-form-label pt-0"><u>Destination port :</u></legend>
+                        <div class="col-sm-10">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gridRadiosPortDst" id="radPortDst1"
+                                    checked>
+                                <label class="form-check-label" for="gridRadios1">
+                                    None
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gridRadiosPortDst" id="radPortDst2"
+                                    value="option2">
+                                <label class="form-check-label" for="gridRadios2">
+                                    Add a destination port
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="number" class="form-control" id="portDst" placeholder="Port" disabled>
+                </div>
+                <div class="form-group port-group">
+                    <div class="row">
+                        <legend class="col-form-label pt-0"><u>Transport Protocol :</u></legend>
+                        <div class="col-sm-10">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gridRadiosProtocol" id="radProtocol1"
+                                    value="0" checked>
+                                <label class="form-check-label" for="gridRadios1">
+                                    All
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gridRadiosProtocol" id="radProtocol2"
+                                    value="1">
+                                <label class="form-check-label" for="gridRadios2">
+                                    tcp
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gridRadiosProtocol" id="radProtocol3"
+                                    value="2">
+                                <label class="form-check-label" for="gridRadios3">
+                                    udp
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gridRadiosProtocol" id="radProtocol4"
+                                    value="3">
+                                <label class="form-check-label" for="gridRadios4">
+                                    icmp
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary submit-form">Add the rule</button>
             </div>
-            <div class="form-group mx-sm-3 mb-2">
-                <input type="text" class="form-control" placeholder="IP address">
-            </div>
-            <br>
-            <button style="text-align: center;" type="submit" class="btn btn-primary mb-2">Add the rule</button>
-        </form>
-        <br>
-        <br>
-        <form class="form-inline form-firewall">
-            <div class="form-group mb-2">
-                <label>Enter a port : </label>
-            </div>
-            <div class="form-group mx-sm-3 mb-2">
-                <input type="text" class="form-control" placeholder="Port">
-            </div>
-            <br>
-            <button style="text-align: center;" type="submit" class="btn btn-primary mb-2">Add the rule</button>
         </form>
     </div><!--
- --><div class="col-md-6 half-body">
+ --><div style="padding-left:inherit;" class="col-md-6 half-body">
         <h3 style="text-align: center;">List of the rules</h3>
         <br>
         <br>
         <table style="text-align: center;" class="table">
             <thead>
                 <tr>
-                    <th>N°</th>
+                    <th># ID</th>
                     <th>IP Dest</th>
                     <th>IP Source</th>
                     <th>Port Dest</th>
@@ -103,4 +209,8 @@
 </div>
 
 {% endblock %}
-{% block js %} {% endblock %}
+{% block js %}
+
+<!-- <script src="{{ url_for('static', filename='img/favicon.png') }}"></script> -->
+
+{% endblock %}

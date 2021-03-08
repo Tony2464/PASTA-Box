@@ -17,14 +17,14 @@
                         <legend class="col-form-label pt-0"><u>IP Source :</u></legend>
                         <div class="col-sm-10">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="gridRadiosIpSrc" id="radIpSrc1"
+                                <input onchange="disableInput('ipAddrSrc')" class="form-check-input" type="radio" name="gridRadiosIpSrc" id="radIpSrc1"
                                     checked>
                                 <label class="form-check-label" for="gridRadios1">
                                     None
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="gridRadiosIpSrc" id="radIpSrc2"
+                                <input onchange="enableInput('ipAddrSrc')" class="form-check-input" type="radio" name="gridRadiosIpSrc" id="radIpSrc2"
                                     value="option2">
                                 <label class="form-check-label" for="gridRadios2">
                                     Add an IP source address
@@ -39,14 +39,14 @@
                         <legend class="col-form-label pt-0"><u>IP Destination :</u></legend>
                         <div class="col-sm-10">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="gridRadiosIpDest" id="radIpDest1"
+                                <input onchange="disableInput('ipAddrDst')" class="form-check-input" type="radio" name="gridRadiosIpDest" id="radIpDest1"
                                     checked>
                                 <label class="form-check-label" for="gridRadios1">
                                     None
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="gridRadiosIpDest" id="radIpDest2"
+                                <input onchange="enableInput('ipAddrDst')" class="form-check-input" type="radio" name="gridRadiosIpDest" id="radIpDest2"
                                     value="option2">
                                 <label class="form-check-label" for="gridRadios2">
                                     Add an IP destination address
@@ -54,21 +54,21 @@
                             </div>
                         </div>
                     </div>
-                    <input type="text" class="form-control" id="ipAddrSrc" placeholder="IP address" disabled>
+                    <input type="text" class="form-control" id="ipAddrDst" placeholder="IP address" disabled>
                 </div>
                 <div class="form-group col-md-6">
                     <div class="row">
                         <legend class="col-form-label pt-0"><u>Source port :</u></legend>
                         <div class="col-sm-10">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="gridRadiosPortSrc" id="radPortSrc1"
+                                <input onchange="disableInput('portSrc')" class="form-check-input" type="radio" name="gridRadiosPortSrc" id="radPortSrc1"
                                     checked>
                                 <label class="form-check-label" for="gridRadios1">
                                     None
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="gridRadiosPortSrc" id="radPortSrc2"
+                                <input onchange="enableInput('portSrc')" class="form-check-input" type="radio" name="gridRadiosPortSrc" id="radPortSrc2"
                                     value="option2">
                                 <label class="form-check-label" for="gridRadios2">
                                     Add a source port
@@ -83,14 +83,14 @@
                         <legend class="col-form-label pt-0"><u>Destination port :</u></legend>
                         <div class="col-sm-10">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="gridRadiosPortDst" id="radPortDst1"
+                                <input onchange="disableInput('portDst')" class="form-check-input" type="radio" name="gridRadiosPortDst" id="radPortDst1"
                                     checked>
                                 <label class="form-check-label" for="gridRadios1">
                                     None
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="gridRadiosPortDst" id="radPortDst2"
+                                <input onchange="enableInput('portDst')" class="form-check-input" type="radio" name="gridRadiosPortDst" id="radPortDst2"
                                     value="option2">
                                 <label class="form-check-label" for="gridRadios2">
                                     Add a destination port
@@ -211,6 +211,6 @@
 {% endblock %}
 {% block js %}
 
-<!-- <script src="{{ url_for('static', filename='img/favicon.png') }}"></script> -->
+<script src="{{ url_for('static', filename='js/form.js') }}"></script>
 
 {% endblock %}

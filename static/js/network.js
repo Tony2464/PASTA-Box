@@ -14,9 +14,10 @@ function checkPort(id) {
 function checkIP(id) {
 
     let input = document.getElementById(id).value;
-    if (checkIpVersion(input) != 0)
-        testSameIpVersion();
-    else
+    if (checkIpVersion(input) != 0) {
+        if (testSameIpVersion() == false)
+            displayError("The firewall rule can handle one type of IP version at the time");
+    } else
         displayError("Invalid IP address");
 
 }
@@ -28,7 +29,9 @@ function testSameIpVersion() {
 
     if (ip1 != "" && ip2 != "")
         if (checkIpVersion(ip1) != checkIpVersion(ip2))
-            displayError("The firewall rule can handle one type of IP version at the time");
+            return false;
+
+    return true;
 
 }
 

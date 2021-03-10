@@ -135,7 +135,7 @@
                         </div>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary submit-form">Add the rule</button>
+                <button onclick="verifyInputs()" type="submit" class="btn btn-primary submit-form">Add the rule</button>
             </div>
         </form>
     </div><!--
@@ -213,5 +213,6 @@
 
 <script src="{{ url_for('static', filename='js/form.js') }}"></script>
 <script src="{{ url_for('static', filename='js/network.js') }}"></script>
+<script src="{{ url_for('static', filename='js/firewall.js') }}"></script>
 
 {% endblock %}

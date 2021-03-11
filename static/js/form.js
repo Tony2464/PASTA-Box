@@ -9,6 +9,7 @@ function disableInput(id) {
 
 
     let input = document.getElementById(id);
+    input.value = "";
     input.disabled = true;
 
 }

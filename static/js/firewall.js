@@ -18,6 +18,12 @@ function verifyInputs() {
 
     }
 
+    if ((ipAddrDst.value != "" && ipAddrDst.disabled == true) || (ipAddrSrc.value != "" && ipAddrSrc.disabled == true) || (portSrc.value != "" && portSrc.disabled == true) || (portDst.value != "" && portDst.disabled == true)) {
+
+        displayError("Invalid input");
+        return;
+    }
+
     if (testSameIpVersion() == false) {
 
         displayError("The firewall rule can handle one type of IP version at the time");
@@ -32,7 +38,7 @@ function verifyInputs() {
 
     }
 
-    if (protocol.value != '1' || protocol.value != '2' || protocol.value != '3' || protocol.value != '0') {
+    if (protocol.value != 1 && protocol.value != 2 && protocol.value != 3 && protocol.value != 0) {
 
         displayError("Invalid protocol");
         return;
@@ -53,6 +59,7 @@ function verifyInputs() {
 
     }
 
+    flushAlerts();
     console.log('ok');
 
 }

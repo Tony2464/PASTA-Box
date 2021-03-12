@@ -16,8 +16,8 @@ function checkIP(id) {
 
     let input = document.getElementById(id).value;
     if (checkIpVersion(input) != 0) {
-        if (testSameIpVersion() == false)
-            displayError("The firewall rule can handle one type of IP version at the time");
+        if (testSameIpVersion() == 0)
+            displayError("The firewall rule can handle one type of IP version for the source/destination address");
         else
             flushAlerts();
     } else
@@ -30,11 +30,27 @@ function testSameIpVersion() {
     let ip1 = document.getElementById('ipAddrSrc').value;
     let ip2 = document.getElementById('ipAddrDst').value;
 
-    if (ip1 != "" && ip2 != "")
-        if (checkIpVersion(ip1) != checkIpVersion(ip2))
-            return false;
+    let versionSrc = 0;
+    let versionDst = 0;
 
-    return true;
+    if (ip1 != "")
+        versionSrc = checkIpVersion(ip1)
+
+    if (ip2 != "")
+        versionDst = checkIpVersion(ip2)
+
+    if (versionSrc != 0) {
+        if (versionDst != 0) {
+            if (versionSrc == versionDst)
+                return versionSrc;
+            else
+                return 0
+        } else {
+            return versionSrc;
+        }
+    } else {
+        return versionDst;
+    }
 
 }
 

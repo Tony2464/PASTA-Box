@@ -29,17 +29,36 @@ function verifyInputs() {
 
     }
 
-    if ((rule['ipDst'].value != "" && rule['ipDst'].disabled == true) || (rule['ipSrc'].value != "" && rule['ipSrc'].disabled == true) || (rule['portSrc'].value != "" && rule['portSrc'].disabled == true) || (rule['portDst'].value != "" && rule['portDst'].disabled == true)) {
+    if (rule['ipDst'].value == "" && rule['ipDst'].disabled == false) {
 
-        displayError("Invalid input");
+        displayError("Invalid destination IP address");
         return;
     }
 
+    if (rule['ipSrc'].value == "" && rule['ipSrc'].disabled == false) {
+
+        displayError("Invalid source IP address");
+        return;
+    }
+
+    if (rule['portSrc'].value == "" && rule['portSrc'].disabled == false) {
+
+        displayError("Invalid source port");
+        return;
+
+    }
+
+    if (rule['portDst'].value == "" && rule['portDst'].disabled == false) {
+
+        displayError("Invalid destination port");
+        return;
+
+    }
+
     rule['ipVersion'] = testSameIpVersion();
+    if (rule['ipVersion'] == 4) {
 
-    if (rule['ipVersion'] == 0) {
-
-        displayError("The firewall rule can handle one type of IP version at the time");
+        displayError("The firewall rule can handle one type of IP version for the source/destination address");
         return;
 
     }
@@ -73,7 +92,7 @@ function verifyInputs() {
     }
 
     flushAlerts();
-    //sendFirewallRule(rule);
+    sendFirewallRule(rule);
 
 }
 
@@ -83,16 +102,15 @@ function sendFirewallRule(rule) {
     req.onreadystatechange = function () {
         if (req.readyState == 4) {
             if (req.status != 200) {
-                //error handling code here
+                console.log('error');
             } else {
-                var response = JSON.parse(req.responseText)
-                document.getElementById('myDiv').innerHTML = response.username
+                console.log(req.responseText)
             }
         }
     }
 
-    req.open('POST', '/ajax');
+    req.open('POST', '/admin/firewall/rule');
     req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    req.send(rule)
+    req.send("rule=" + "test")
 
 }

@@ -20,3 +20,9 @@ def homepage():
     r = requests.get('http://localhost/api/rules')
     data = r.json()
     return render_template('pages/firewall.html', content=data)
+
+
+@firewall.route('/rule', methods=['POST'])
+def addRule():
+    rule = request.form['rule']
+    return rule

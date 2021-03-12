@@ -14,15 +14,20 @@ function checkPort(id) {
 
 function checkIP(id) {
 
-    let input = document.getElementById(id).value;
-    if (checkIpVersion(input) != 0) {
-        if (testSameIpVersion() == 0)
-            displayError("The firewall rule can handle one type of IP version for the source/destination address");
-        else
-            flushAlerts();
-    } else
-        displayError("Invalid IP address");
+    let input = document.getElementById(id).value.trim();
+    if (checkIpVersion(input) == 3) {
 
+        displayError("Invalid IP address");
+        return;
+
+    } else if (testSameIpVersion() == 4) {
+
+        displayError("The firewall rule can handle one type of IP version for the source/destination address");
+
+    } else {
+
+        flushAlerts();
+    }
 }
 
 function testSameIpVersion() {
@@ -30,21 +35,22 @@ function testSameIpVersion() {
     let ip1 = document.getElementById('ipAddrSrc').value;
     let ip2 = document.getElementById('ipAddrDst').value;
 
-    let versionSrc = 0;
-    let versionDst = 0;
+    let versionSrc = -1;
+    let versionDst = -1;
 
-    if (ip1 != "")
+    if (ip1.trim() != "")
         versionSrc = checkIpVersion(ip1)
 
-    if (ip2 != "")
+    if (ip2.trim() != "")
         versionDst = checkIpVersion(ip2)
 
-    if (versionSrc != 0) {
-        if (versionDst != 0) {
-            if (versionSrc == versionDst)
+    if (versionSrc != -1) {
+        if (versionDst != -1) {
+            if (versionSrc == versionDst) {
                 return versionSrc;
-            else
-                return 0
+            } else {
+                return 4;
+            }
         } else {
             return versionSrc;
         }
@@ -56,11 +62,11 @@ function testSameIpVersion() {
 
 function checkIpVersion(IPaddress) {
 
-    if (regexIPv4.test(IPaddress) == true)
+    if (regexIPv4.test(IPaddress) == true) {
         return 1;
-    else if (regexIPv6.test(IPaddress) == true)
+    } else if (regexIPv6.test(IPaddress) == true) {
         return 2;
-    else
-        return 0;
-
+    } else {
+        return 3;
+    }
 }

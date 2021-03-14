@@ -3,3 +3,4 @@ Flask
 Flask-SocketIO == 4.3.2
 crontabs
 numpy
+flask-http-response

@@ -40,33 +40,38 @@ def checkIP(string):
 # Check if the rule parameters are correct
 
 def verifyRule(Rule):
-    if(Rule["protocol"] < 0 or Rule["protocol"] > 3):
+    ipSrcVersion = 0
+    ipDstVersion = 0
+    if(int(Rule["protocol"]) < 0 or int(Rule["protocol"]) > 3):
         return -1
 
-    if(Rule["protocol"] == 3):
-        if(Rule["ipDst"] == None and Rule["ipSource"] == None):
+    if(int(Rule["protocol"]) == 3):
+        if(Rule["ipDst"] == "" and Rule["ipSrc"] == ""):
             return -2
 
-    if(Rule["portSrc"] == None or Rule["portDst"] == None):
-        if(Rule["ipDst"] == None and Rule["ipSource"] == None):
+    if(Rule["portSrc"] == "" and Rule["portDst"] == ""):
+        if(Rule["ipDst"] == "" and Rule["ipSrc"] == ""):
             return -3
 
-    if(Rule["ipDst"] != None):
-        Rule["ipDstVersion"] = checkIP(Rule["ipDst"])
-        if(Rule["ipDstVersion"] == 3):
+    if(Rule["ipDst"] != ""):
+        ipDstVersion = checkIP(Rule["ipDst"])
+        if(ipDstVersion == 3):
             return -4
 
-    if(Rule["ipSrc"] != None):
-        Rule["ipSrcVersion"] = checkIP(Rule["ipSrc"])
-        if(Rule["ipSrcVersion"] == 3):
+    if(Rule["ipSrc"] != ""):
+        ipSrcVersion = checkIP(Rule["ipSrc"])
+        if(ipSrcVersion == 3):
             return -5
-        if(Rule["ipVersion"] != Rule["ipDstVersion"]):
+        if(Rule["ipVersion"] != ipDstVersion and ipDstVersion != 0):
             return -6
 
-    if(Rule["portSrc"] != None and (Rule["portSrc"] < 1 or Rule["portSrc"] > 65535)):
+    if(ipSrcVersion != 0 and ipDstVersion != 0 and ipDstVersion != ipSrcVersion):
+        return -6
+
+    if(Rule["portSrc"] != "" and (int(Rule["portSrc"]) < 1 or int(Rule["portSrc"]) > 65535)):
         return -7
 
-    if(Rule["portDst"] != None and (Rule["portDst"] < 1 or Rule["portDst"] > 65535)):
+    if(Rule["portDst"] != "" and (int(Rule["portDst"]) < 1 or int(Rule["portDst"]) > 65535)):
         return -8
 
     return 0
@@ -81,7 +86,7 @@ def buildCustomRules(Rule):
 
     exception = False
     cmd = "sudo ebtables -t filter -A FORWARD "
-    if(Rule["ipSrcVersion"] == 1 or Rule["ipDstVersion"] == 1):
+    if(Rule["ipVersion"] == 1):
         cmd += "-p ipv4 "
         version = "ipv4"
         if(Rule["ipSrc"] != None):
@@ -89,7 +94,7 @@ def buildCustomRules(Rule):
         if(Rule["ipDst"] != None):
             cmd += "--ip-dst " + Rule["ipDst"] + " "
 
-    elif(Rule["ipSrcVersion"] == 2 or Rule["ipDstVersion"] == 2):
+    elif(Rule["ipVersion"] == 2):
         cmd += "-p ipv6 "
         version = "ipv6"
         if(Rule["ipSrc"] != None):
@@ -102,7 +107,7 @@ def buildCustomRules(Rule):
 
     if(Rule["protocol"] != None):
 
-        if(version == "ipv4"):
+        if(Rule["ipVersion"] == 1):
             cmd += "--ip-protocol "
             if(Rule["protocol"] == 1):
                 cmd += "tcp "
@@ -136,3 +141,5 @@ def buildCustomRules(Rule):
 
     if(exception == True):
         res = os.system(cmd.replace('--ip6-protocol', '--ip-protocol'))
+
+    return 0

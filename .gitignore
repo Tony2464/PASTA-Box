@@ -8,6 +8,13 @@ web/routes/__pycache__/
 secret/
 
 database/__pycache__/db_manager.cpython-37.pyc
+
+.vscode/
+
+firewall/__pycache__/
+
+__pycache__/
+
 network_capture/conf/__init__.py
 
 network_capture/conf/__pycache__/__init__.cpython-37.pyc
@@ -17,4 +24,5 @@ network_capture/conf/__pycache__/
 web/routes/admin/__pycache__/
 
 *.pyc
-.vscode/
+
+firewall/test.py

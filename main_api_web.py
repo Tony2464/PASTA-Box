@@ -19,6 +19,7 @@ from api.routes.rules import rules
 # Web pages routes
 from web.routes.admin.index import index
 from web.routes.admin.web_frames import web_frames
+from web.routes.admin.firewall import firewall
 
 app = Flask(__name__)
 # API
@@ -28,11 +29,12 @@ app.register_blueprint(rules, url_prefix="/api/rules")
 # Web Pages
 app.register_blueprint(index, url_prefix="/admin")
 app.register_blueprint(web_frames, url_prefix="/admin/frames")
+app.register_blueprint(firewall, url_prefix="/admin/firewall")
 
 
 @app.route('/')
 def home():
-    return "Index page"
+    return "test"
 
 ### Web Scocket for Live frames
 

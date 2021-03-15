@@ -2,14 +2,144 @@
 {% block title %} Pasta-Box - Frames {% endblock %}
 
 {% block content %}
-
 <div class="container-fluid">
+    <br>
     <div class="row">
-        <a class="btn btn-primary" href="/admin/frames/live" role="button">See frames in live</a>
+        <div class="col">
+            <a href="/admin/frames/live" class="badge badge-pill badge-primary">Live Frames</a>
+        </div>
     </div>
     <br>
-
-    <table class="table table-bordered table-responsive-lg table-hover">
+    <form>
+        <div class="row">
+            <div class="input-group mb-3">
+                <div class="input-group">
+                    <span class="input-group-text">Last</span>
+                    <input type="number" class="form-control" id="limit" value="20">
+                </div>
+            </div>
+        </div>
+        <p>
+            <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseExample" role="button"
+                aria-expanded="false" aria-controls="collapseExample">
+                Advanced Search <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="Bootstrap"
+                    width="20" height="20">
+            </a>
+        </p>
+        <div class="collapse" id="collapseExample">
+            <div class="card card-body">
+                <div class="form-group">
+                    <label>
+                        <h5>IP Address</h5>
+                    </label>
+                    <div class="form-row">
+                        <div class="col">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="ipSource" placeholder="192...">
+                                <label for="floatingInput">Source</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="ipDest" placeholder="192...">
+                                <label for="floatingInput">Destination</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <h5>Port</h5>
+                    </label>
+                    <div class="form-row">
+                        <div class="col">
+                            <div class="form-floating">
+                                <input type="number" class="form-control" id="portSource" placeholder="80...">
+                                <label for="floatingInput">Source</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating">
+                                <input type="number" class="form-control" id="portDest" placeholder="80...">
+                                <label for="floatingInput">Destination</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <h5>MAC Address</h5>
+                    </label>
+                    <div class="form-row">
+                        <div class="col">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="macAddrSource" placeholder="FF...">
+                                <label for="floatingInput">Source</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="macAddrDest" placeholder="FF...">
+                                <label for="floatingInput">Destination</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <h5>Protocols</h5>
+                    </label>
+                    <div class="form-row">
+                        <div class="col">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="ipSource" placeholder="HTTP,SSH,...">
+                                <label for="floatingInput">Application</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="ipDest" placeholder="TCP,UDP...">
+                                <label for="floatingInput">Transport</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="ipDest" placeholder="ip,ipv6">
+                                <label for="floatingInput">Network</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <h5>Date</h5>
+                    </label>
+                    <div class="form-row">
+                        <div class="col">
+                            <div class="input-group flex-nowrap">
+                                <span class="input-group-text" id="addon-wrapping">Begin</span>
+                                <input type="date" class="form-control" placeholder="">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group flex-nowrap">
+                                <span class="input-group-text" id="addon-wrapping">End</span>
+                                <input type="date" class="form-control" placeholder="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- <button type="submit" class="btn btn-primary">Search</button> -->
+            </div>
+        </div>
+    </form>
+    <br>
+    <label>
+        <h5>Table search</h5>
+    </label>
+    <input class="form-control" id="myInput" type="text" placeholder="Search..">
+    <br>
+    <table class="table table-bordered table-responsive-lg table-hover text-center">
         <thead class="thead-dark">
             <tr>
                 <th>IP source</th>
@@ -21,6 +151,8 @@
                 <th>Layer application</th>
                 <th>Layer transport</th>
                 <th>Layer network</th>
+                <th>Date</th>
+                <th>Info</th>
             </tr>
         </thead>
         <tbody id="myTable">
@@ -53,9 +185,49 @@
                 <td>
                     {{frame.protocolLayerNetwork}}
                 </td>
+                <td>
+                    {{frame.date}}
+                </td>
+                <td>
+                    {{frame.info}}
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
+<script>
+    $(document).ready(function () {
+        $("#myInput").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#myTable tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        $('#limit').on('input', function (event) {
+            if ($('#limit').val() === "") {
+                return 0
+            }
+            $.ajax({
+                method: "GET",
+                url: '/api/frames',
+                data: { limit: $('#limit').val() },
+                success: function (response) {
+                    console.log(JSON.stringify(response));
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

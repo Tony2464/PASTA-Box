@@ -115,9 +115,15 @@ function sendFirewallRule(rule) {
     }
 
     req.open('POST', '/admin/firewall/rule');
-    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    req.send("ipSrc=" + rule['ipSrc'].value + "&ipDst=" + rule['ipDst'].value + "&portSrc=" + rule['portSrc'].value + "&portDst=" + rule['portDst'].value + "&protocol=" + rule['protocol'].value + "&ipVersion=" + rule['ipVersion']);
-
+    req.setRequestHeader("Content-type", "application/json");
+    req.send(JSON.stringify({
+        ipSrc: rule['ipSrc'].value,
+        ipDst: rule['ipDst'].value,
+        portSrc: rule['portSrc'].value,
+        portDst: rule['portDst'].value,
+        protocol: rule['protocol'].value,
+        ipVersion: rule['ipVersion']
+    }));
 }
 
 function displayServerError(error) {

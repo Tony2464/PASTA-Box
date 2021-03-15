@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, request, jsonify
 from flask_http_response import success, result, error
 import requests
-import os
 
 # Local
 import database.db_config as config
@@ -30,13 +29,7 @@ def homepage():
 @firewall.route('/rule', methods=['POST'])
 def addRule():
 
-    Rule = {}
-    Rule['ipSrc'] = request.form['ipSrc']
-    Rule['ipDst'] = request.form['ipDst']
-    Rule['portSrc'] = request.form['portSrc']
-    Rule['portDst'] = request.form['portDst']
-    Rule['protocol'] = request.form['protocol']
-    Rule['ipVersion'] = request.form['ipVersion']
+    Rule = request.get_json()
 
     result = buildCustomRules(Rule)
     if(result != 0):

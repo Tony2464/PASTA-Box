@@ -34,9 +34,10 @@ app.register_blueprint(firewall, url_prefix="/admin/firewall")
 
 @app.route('/')
 def home():
-    return "test"
+    return "Index page"
 
 ### Web Scocket for Live frames
+
 
 #turn the flask app into a socketio app
 socketio = SocketIO(app, async_mode=None, logger=True, engineio_logger=True)
@@ -44,21 +45,19 @@ socketio = SocketIO(app, async_mode=None, logger=True, engineio_logger=True)
 thread = Thread()
 thread_stop_event = Event()
 
+
 def sendFrames():
     print("Sending frames")
     # Loop unless disconnection
-    while not thread_stop_event.isSet():
-        cmd = "tshark -i eth0"
-        with Popen(cmd, shell=True,stdout=PIPE, bufsize=1, universal_newlines=True) as p:
-            for line in p.stdout:
-                print(line, end='')  # process line here
-                socketio.emit('newnumber', {'id': line}, namespace='/test')
-                # sleep(1)
-                if thread_stop_event.is_set():
-                    return 0
+    cmd = "tshark -i br0"
+    with Popen(cmd, shell=True, stdout=PIPE, bufsize=1, universal_newlines=True) as p:
+        for line in p.stdout:
+            print(line, end='')  # process line here
+            socketio.emit('newnumber', {'id': line}, namespace='/test')
+            socketio.sleep(0.04)
+            if thread_stop_event.is_set():
+                return 0
 
-        if p.returncode != 0:
-            raise CalledProcessError(p.returncode, p.args)
 
 @socketio.on('connect', namespace='/test')
 def test_connect():
@@ -73,12 +72,14 @@ def test_connect():
         print("Starting Thread")
         thread = socketio.start_background_task(sendFrames)
 
+
 @socketio.on('disconnect', namespace='/test')
 def test_disconnect():
     print('Client disconnected')
     thread_stop_event.set()
 
 ### Web Scocket for Live frames END
+
 
 if __name__ == "__main__":
     # app.run(host=config.hostConfig, debug=config.debugMode)

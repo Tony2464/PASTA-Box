@@ -9,6 +9,11 @@
             <h1>Live Frames</h1>
         </div>
         <div class="row">
+            <div class="col">
+                <a href="/admin/frames/" class="badge badge-pill badge-primary">Quit</a>
+            </div>
+        </div>
+        <div class="row">
             <div id="log">
                 <div class="text-center">
                     <div class="spinner-border text-primary" role="status">
@@ -21,7 +26,7 @@
 </div>
 {% endblock %}
 
-{% block js%}
+{% block js %}
 <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://intercoolerjs.org/release/intercooler-1.2.3.js"></script>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
@@ -36,21 +41,6 @@
         socket.on('newnumber', function (msg) {
             console.log(msg)
             console.log("Received number" + msg.id);
-            /*
-            //maintain a list of ten numbers
-            if (numbers_received.length >= 10) {
-                numbers_received.shift()
-            }
-            numbers_received.push(msg.number);
-            numbers_string = '';
-            // for (var i = numbers_received.length; i > 0 ; i--) {
-            // numbers_string = numbers_string + '<p>' + numbers_received[i].toString() + '</p>';
-            // }
-            for (var i = 0; i < numbers_received.length; i++) {
-                numbers_string = numbers_string + '<p>' + numbers_received[i].toString() + '</p>';
-            }
-            */
-            //$('#log').prepend(numbers_string);
             $('#log').prepend(
                 '<p>' + msg.id + '</p>'
             );

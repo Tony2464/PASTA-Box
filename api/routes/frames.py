@@ -5,6 +5,7 @@ from flask.helpers import flash
 import database.db_config as config
 from database import db_manager
 
+
 def initDb():
     dbManager = db_manager.DbManager(
         config.dbConfig["user"],
@@ -14,6 +15,7 @@ def initDb():
         config.dbConfig["database"]
     )
     return dbManager
+
 
 frames = Blueprint("frames", __name__)
 
@@ -25,7 +27,8 @@ def apiFrames():
     dbManager = initDb()
     if request.args.get('limit'):
         limit = request.args.get('limit')
-        data = dbManager.queryGet("SELECT * FROM Frame ORDER BY `id` DESC limit ?", [limit])
+        data = dbManager.queryGet(
+            "SELECT * FROM Frame ORDER BY `id` DESC limit ?", [limit])
     else:
         data = dbManager.queryGet("SELECT * FROM Frame ORDER BY `id` DESC", [])
     objects_list = []
@@ -42,12 +45,8 @@ def apiFrames():
         d["protocolLayerTransport"] = row[8]
         d["protocolLayerNetwork"] = row[9]
         d["date"] = row[10]
-        d["idDeviceSource"] = row[11]
-        d["idDeviceDest"] = row[12]
-        d["idNetworkSource"] = row[13]
-        d["idNetworkDest"] = row[14]
-        d["domain"] = row[15]
-        d["info"] = row[16]
+        d["domain"] = row[11]
+        d["info"] = row[12]
         objects_list.append(d)
     dbManager.close()
     return jsonify(objects_list)
@@ -76,12 +75,8 @@ def apiFramesId(id=None):
             d["protocolLayerTransport"] = row[8]
             d["protocolLayerNetwork"] = row[9]
             d["date"] = row[10]
-            d["idDeviceSource"] = row[11]
-            d["idDeviceDest"] = row[12]
-            d["idNetworkSource"] = row[13]
-            d["idNetworkDest"] = row[14]
-            d["domain"] = row[15]
-            d["info"] = row[16]
+            d["domain"] = row[11]
+            d["info"] = row[12]
             objects_list.append(d)
         dbManager.close()
         return jsonify(objects_list)
@@ -96,7 +91,7 @@ def apiFramesCreate():
         dbManager = initDb()
         data = request.get_json()
         frame = data[0]
-        dbManager.queryInsert("INSERT INTO `Frame` (`portSource`, `portDest`, `ipSource`, `ipDest`, `macAddrSource`, `macAddrDest`, `protocolLayerApplication`, `protocolLayerTransport`, `protocolLayerNetwork`, `date`, `idDeviceSource`, `idDeviceDest`, `idNetworkSource`, `idNetworkDest`, `domain`, `info`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        dbManager.queryInsert("INSERT INTO `Frame` (`portSource`, `portDest`, `ipSource`, `ipDest`, `macAddrSource`, `macAddrDest`, `protocolLayerApplication`, `protocolLayerTransport`, `protocolLayerNetwork`, `date`, `domain`, `info`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                               [
                                   frame["portSource"],
                                   frame["portDest"],
@@ -108,10 +103,6 @@ def apiFramesCreate():
                                   frame["protocolLayerTransport"],
                                   frame["protocolLayerNetwork"],
                                   frame["date"],
-                                  frame["idDeviceSource"],
-                                  frame["idDeviceDest"],
-                                  frame["idNetworkSource"],
-                                  frame["idNetworkDest"],
                                   frame["domain"],
                                   frame["info"]
                               ])
@@ -131,7 +122,7 @@ def apiFramesUpdate(id=None):
             data = request.get_json()
             frame = data[0]
             # UPDATE `Frame` SET `portSource` = '22' WHERE `Frame`.`id` = 1
-            dbManager.queryInsert("UPDATE `Frame` SET `portSource` = ?, `portDest` = ?, `ipSource` = ?, `ipDest` = ?, `macAddrSource` = ?, `macAddrDest` = ?, `protocolLayerApplication` = ?, `protocolLayerTransport` = ?, `protocolLayerNetwork` = ?, `date` = ?, `idDeviceSource` = ?, `idDeviceDest` = ?, `idNetworkSource` = ?, `idNetworkDest` = ?, `domain` = ?, `info` = ? WHERE `Frame`.`id` = ?",
+            dbManager.queryInsert("UPDATE `Frame` SET `portSource` = ?, `portDest` = ?, `ipSource` = ?, `ipDest` = ?, `macAddrSource` = ?, `macAddrDest` = ?, `protocolLayerApplication` = ?, `protocolLayerTransport` = ?, `protocolLayerNetwork` = ?, `date` = ?, `domain` = ?, `info` = ? WHERE `Frame`.`id` = ?",
                                   [
                                       frame["portSource"],
                                       frame["portDest"],
@@ -143,10 +134,6 @@ def apiFramesUpdate(id=None):
                                       frame["protocolLayerTransport"],
                                       frame["protocolLayerNetwork"],
                                       frame["date"],
-                                      frame["idDeviceSource"],
-                                      frame["idDeviceDest"],
-                                      frame["idNetworkSource"],
-                                      frame["idNetworkDest"],
                                       frame["domain"],
                                       frame["info"],
                                       id

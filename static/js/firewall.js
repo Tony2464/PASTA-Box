@@ -93,6 +93,7 @@ function verifyInputs() {
 
     flushAlerts();
     sendFirewallRule(rule);
+    flushRuleInputs();
 
 }
 
@@ -104,6 +105,7 @@ function sendFirewallRule(rule) {
             if (req.status == 200) {
 
                 console.log(req.responseText);
+                displaySuccess("Your rule has been added successfully !");
 
             } else {
 
@@ -169,3 +171,25 @@ function displayServerError(error) {
     }
 
 }
+
+function flushRuleInputs() {
+
+    let checkbox = document.getElementsByName('gridRadiosProtocol');
+    checkbox[0].checked = true;
+
+    disableInput('ipAddrDst');
+    disableInput('ipAddrSrc');
+    disableInput('portDst');
+    disableInput('portSrc');
+
+    document.getElementsByName('gridRadiosIpSrc')[0].checked = true;
+    document.getElementsByName('gridRadiosIpDst')[0].checked = true;
+    document.getElementsByName('gridRadiosPortDst')[0].checked = true;
+    document.getElementsByName('gridRadiosPortSrc')[0].checked = true;
+}
+
+// function deleteRule(id){
+
+
+
+// }

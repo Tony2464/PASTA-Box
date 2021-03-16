@@ -39,14 +39,14 @@
                         <legend class="col-form-label pt-0"><u>IP Destination :</u></legend>
                         <div class="col-sm-10">
                             <div class="form-check">
-                                <input onclick="flushAlerts()" onchange="disableInput('ipAddrDst')" class="form-check-input" type="radio" name="gridRadiosIpDest" id="radIpDest1"
+                                <input onclick="flushAlerts()" onchange="disableInput('ipAddrDst')" class="form-check-input" type="radio" name="gridRadiosIpDst" id="radIpDest1"
                                     checked>
                                 <label class="form-check-label" for="gridRadios1">
                                     None
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input onchange="enableInput('ipAddrDst')" class="form-check-input" type="radio" name="gridRadiosIpDest" id="radIpDest2"
+                                <input onchange="enableInput('ipAddrDst')" class="form-check-input" type="radio" name="gridRadiosIpDst" id="radIpDest2"
                                     value="option2">
                                 <label class="form-check-label" for="gridRadios2">
                                     Add an IP destination address
@@ -162,14 +162,14 @@
                         {{rule.id}}
                     </td>
                     <td>
-                        {% if rule.ipDest != None %}
+                        {% if rule.ipDest != "" and rule.ipDest != None %}
                         {{rule.ipDest}}
                         {% else %}
                         X
                         {% endif %}
                     </td>
                     <td>
-                        {% if rule.ipSource != None %}
+                        {% if rule.ipSource != "" and rule.ipSource != None %}
                         {{rule.ipSource}}
                         {% else %}
                         X

@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify
 from flask_http_response import success, result, error
 import requests
+import os
 
 # Local
 import database.db_config as config
@@ -31,10 +32,11 @@ def addRule():
 
     Rule = request.get_json()
 
-    result = buildCustomRules(Rule)
-    if(result != 0):
+    res = buildCustomRules(Rule)
+    if(res != 0):
         return switchError(result)
 
+    requests.post('http://localhost/api/rules', json=Rule)
     return success.return_response(status=200)
 
 

@@ -37,3 +37,15 @@ function flushAlerts() {
             alerts[i].remove();
 
 }
+
+function displaySuccess(msg) {
+
+    flushAlerts();
+    let divAlert = document.createElement('div');
+    const target = document.querySelector('#errorAnchor');
+
+    divAlert.className = "alert alert-success";
+    target.parentNode.insertBefore(divAlert, target.nextSibling);
+    divAlert.innerHTML = msg;
+
+}

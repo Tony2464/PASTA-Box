@@ -17,11 +17,7 @@ web_frames = Blueprint("web_frames", __name__)
 
 @web_frames.route('/')
 def getFrames():
-    url = 'http://localhost/api/frames'
-    params = {"limit":5}
-    r = requests.get(url,params)
-    data = r.json()
-    return render_template('pages/frames.html', data=data)
+    return render_template('pages/frames.html')
 
 
 @web_frames.route('/live')

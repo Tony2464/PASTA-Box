@@ -63,14 +63,21 @@ def apiRulesId(id=None):
 @rules.route('/', methods=['POST'])
 def apiRulesCreate():
     if request.json:
-        data = request.get_json()
-        rule = data[0]
+        rule = request.get_json()
+        if(rule["portDst"] == ""):
+            rule["portDst"] = None
+        if(rule["portSrc"] == ""):
+            rule["portSrc"] = None
+        if(rule["protocol"] == ""):
+            rule["protocol"] = None
+        if(rule["ipVersion"] == ""):
+            rule["ipVersion"] = None
         dbManager.queryInsert("INSERT INTO `RuleFirewall` (`ipDest`, `ipSource`, `portDest`, `portSource`, `protocol`, `ipVersion`) VALUES (?, ?, ?, ?, ?, ?)",
                               [
-                                  rule["ipDest"],
-                                  rule["ipSource"],
-                                  rule["portDest"],
-                                  rule["portSource"],
+                                  rule["ipDst"],
+                                  rule["ipSrc"],
+                                  rule["portDst"],
+                                  rule["portSrc"],
                                   rule["protocol"],
                                   rule["ipVersion"]
                               ])

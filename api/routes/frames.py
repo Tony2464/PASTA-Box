@@ -1,5 +1,5 @@
-from flask import Blueprint, json, request, jsonify
-from flask.helpers import flash
+from flask import Blueprint, request, jsonify
+import re
 
 # Local
 import database.db_config as config
@@ -24,13 +24,101 @@ frames = Blueprint("frames", __name__)
 
 @frames.route('/', methods=['GET'])
 def apiFrames():
+    if len(request.args) < 1:
+        return "Need params"
+
     dbManager = initDb()
-    if request.args.get('limit'):
-        limit = request.args.get('limit')
-        data = dbManager.queryGet(
-            "SELECT * FROM Frame ORDER BY `id` DESC limit ?", [limit])
+
+    # Initial request
+    params = []
+    req = []
+
+    # if len(request.args) > 1:
+    #     req.append("SELECT * FROM Frame WHERE ")
+    # else:
+    #     req.append("SELECT * FROM Frame ")
+    req.append("SELECT * FROM Frame ")
+
+    # Date request begin and end
+    if request.args.get('startDate') and request.args.get('endDate'):
+        reqDate = "date >= ? AND date <= ? "
+        req.append(reqDate)
+        params.append(request.args.get('startDate'))
+        params.append(request.args.get('endDate'))
     else:
-        data = dbManager.queryGet("SELECT * FROM Frame ORDER BY `id` DESC", [])
+        # Date request begin
+        if request.args.get('startDate'):
+            reqDate = "date >= ? "
+            req.append(reqDate)
+            params.append(request.args.get('startDate'))
+        # Date request end
+        if request.args.get('endDate'):
+            reqDate = "date <= ? "
+            req.append(reqDate)
+            params.append(request.args.get('endDate'))
+
+    # Domain
+    if request.args.get('domain'):
+        reqDomain = "domain LIKE ? "
+        req.append(reqDomain)
+        params.append("%"+request.args.get('domain')+"%")
+
+    # Info
+    if request.args.get('info'):
+        reqInfo = "info LIKE ? "
+        req.append(reqInfo)
+        params.append("%"+request.args.get('info')+"%")
+
+    # Application
+    if request.args.get('application'):
+        reqApplication = "protocolLayerApplication LIKE ? "
+        req.append(reqApplication)
+        params.append("%"+request.args.get('application')+"%")
+
+    # Transport
+    if request.args.get('transport'):
+
+        reqTransport = "protocolLayerTransport LIKE ? "
+        req.append(reqTransport)
+        params.append("%"+request.args.get('transport')+"%")
+
+    # Network
+    if request.args.get('network'):
+        reqNetwork = "protocolLayerNetwork LIKE ? "
+        req.append(reqNetwork)
+        params.append("%"+request.args.get('network')+"%")
+
+    # Limit request
+    if request.args.get('limit'):
+        reqLimit = "ORDER BY `id` DESC limit ? "
+        req.append(reqLimit)
+        params.append(request.args.get('limit'))
+        # return req
+        # data = dbManager.queryGet(req, params)
+    else:
+        return "Error : Need a limit"
+
+    # Final Step
+    finalReq = ""
+    if len(request.args) > 1:
+        for i in range(0, len(req)):
+            if i == 1:
+                finalReq += "WHERE "+req[i]
+            else:
+                if i > 1:
+                    if i == len(req) - 1:
+                        finalReq += req[i]
+                    else:
+                        finalReq += "AND " + req[i]
+                else:
+                    finalReq += req[i]
+    else:
+        for i in range(0, len(req)):
+            finalReq += req[i]
+
+    # return (str(finalReq)+" "+str(params))
+
+    data = dbManager.queryGet(finalReq, params)
     objects_list = []
     for row in data:
         d = {}

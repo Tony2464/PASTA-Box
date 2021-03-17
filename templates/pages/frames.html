@@ -11,19 +11,11 @@
     </div>
     <br>
     <form>
-        <div class="row">
-            <div class="input-group mb-3">
-                <div class="input-group">
-                    <span class="input-group-text">Last packets</span>
-                    <input type="number" class="form-control inputs" id="limit" value="20" min="0">
-                </div>
-            </div>
-        </div>
         <p>
             <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseSearch" role="button"
                 aria-expanded="false" aria-controls="collapseSearch">
-                Advanced Search <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="Bootstrap"
-                    width="20" height="20">
+                Advanced Search <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="" width="20"
+                    height="20">
             </a>
         </p>
         <div class="collapse" id="collapseSearch">
@@ -186,19 +178,19 @@
                     <div class="form-row">
                         <div class="col">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="ipSource" placeholder="HTTP,SSH,...">
+                                <input type="text" class="form-control inputs" id="application" placeholder="HTTP, SSH, ...">
                                 <label for="floatingInput">Application</label>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="ipDest" placeholder="TCP,UDP...">
+                                <input type="number" class="form-control inputs" id="transport" placeholder="6(TCP), 17(UDP), ...">
                                 <label for="floatingInput">Transport</label>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-floating">
-                                <input type="text" class="form-control inputs" id="ipDest" placeholder="ip,ipv6">
+                                <input type="text" class="form-control inputs" id="network" placeholder="IP, IPv6, VLAN, ARP, ...">
                                 <label for="floatingInput">Network</label>
                             </div>
                         </div>
@@ -212,13 +204,14 @@
                     <div class="form-row">
                         <div class="col">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="domainName" placeholder="domain.name.com">
+                                <input type="text" class="form-control inputs" id="domain"
+                                    placeholder="domain.name.com">
                                 <label for="floatingInput">Domain name</label>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="info" placeholder="Ack...">
+                                <input type="text" class="form-control inputs" id="info" placeholder="Ack,...">
                                 <label for="floatingInput">Info</label>
                             </div>
                         </div>
@@ -233,13 +226,13 @@
                         <div class="col">
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-wrapping">Begin</span>
-                                <input type="date" class="form-control" id="datepicker" placeholder="">
+                                <input type="date" class="form-control inputs" id="startDate" placeholder="">
                             </div>
                         </div>
                         <div class="col">
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-wrapping">End</span>
-                                <input type="date" class="form-control" id="datepicker" placeholder="">
+                                <input type="date" class="form-control inputs" id="endDate" placeholder="">
                             </div>
                         </div>
                     </div>
@@ -252,7 +245,25 @@
     <label>
         <h5>Table search</h5>
     </label>
-    <input class="form-control" id="myInput" type="text" placeholder="Search..">
+    <div class="row">
+        <div class="col-3">
+            <div class="input-group mb-3">
+                <div class="input-group">
+                    <span class="input-group-text">Last packets</span>
+                    <input type="number" class="form-control inputs" id="limit" value="20" min="0">
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="input-group mb-3">
+                <div class="input-group">
+                    <span class="input-group-text"><img src="{{ url_for('static', filename='icons/search.svg') }}"
+                            alt="" width="20" height="20"></span>
+                    <input class="form-control" id="myInput" type="text" placeholder="Search..">
+                </div>
+            </div>
+        </div>
+    </div>
     <br>
     <table class="table table-bordered table-responsive-lg table-hover text-center">
         <thead class="thead-dark">
@@ -265,7 +276,8 @@
                 <th>MAC dest</th>
                 <th>Layer application</th>
                 <th>Layer transport</th>
-                <th>Layer network</th><th>Domain name</th>
+                <th>Layer network</th>
+                <th>Domain name</th>
                 <th>Date</th>
                 <th>Info</th>
             </tr>
@@ -282,11 +294,13 @@
 <script>
     $(document).ready(function () {
         //Max date input
+        /*
         $(function () {
             $('[type="date"]').prop('max', function () {
                 return new Date().toJSON().split('T')[0];
             });
         });
+        */
         //Table search
         $("#myInput").on("keyup", function () {
             var value = $(this).val().toLowerCase();
@@ -311,15 +325,53 @@
         });
     });
 
-    function ajaxGetFrame(){
-         // Check if value is empty
+    function ajaxGetFrame() {
+        // Check if value is empty
         if ($('#limit').val() === "") {
             return 0
         }
+
+        // Get all params
+        params = {}
+
+        if ($('#limit').val() != "") {
+            params["limit"] = $('#limit').val()
+        }
+
+        if ($('#startDate').val() != "") {
+            params["startDate"] = $('#startDate').val()
+        }
+
+        if ($('#endDate').val() != "") {
+            params["endDate"] = $('#endDate').val()
+        }
+
+        if ($('#domain').val() != "") {
+            params["domain"] = $('#domain').val()
+        }
+
+        if ($('#info').val() != "") {
+            params["info"] = $('#info').val()
+        }
+
+        if ($('#application').val() != "") {
+            params["application"] = $('#application').val()
+        }
+
+        if ($('#transport').val() != "") {
+            params["transport"] = $('#transport').val()
+        }
+
+        if ($('#network').val() != "") {
+            params["network"] = $('#network').val()
+        }
+
+        console.log(params)
+
         $.ajax({
             method: "GET",
             url: '/api/frames',
-            data: { limit: $('#limit').val() },
+            data: params,
             success: function (response) {
                 //console.log(JSON.stringify(response));
                 $('#myTable').empty();

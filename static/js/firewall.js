@@ -188,8 +188,13 @@ function flushRuleInputs() {
     document.getElementsByName('gridRadiosPortSrc')[0].checked = true;
 }
 
-// function deleteRule(id){
+function deleteRule(id) {
 
+    let domain = window.location.href;
+    let domainParts = domain.split('/');
 
+    fetch(domainParts.slice(0, 3).join('/') + '/api/rules/' + id, {
+        method: 'DELETE'
+    });
 
-// }
+}

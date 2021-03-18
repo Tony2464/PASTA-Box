@@ -17,88 +17,95 @@
                         <legend class="col-form-label pt-0"><u>IP Source :</u></legend>
                         <div class="col-sm-10">
                             <div class="form-check">
-                                <input onclick="flushAlerts()" onchange="disableInput('ipAddrSrc')" class="form-check-input" type="radio" name="gridRadiosIpSrc" id="radIpSrc1"
-                                    checked>
+                                <input onclick="flushAlerts()" onchange="disableInput('ipAddrSrc')"
+                                    class="form-check-input" type="radio" name="gridRadiosIpSrc" id="radIpSrc1" checked>
                                 <label class="form-check-label" for="gridRadios1">
                                     None
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input onchange="enableInput('ipAddrSrc')" class="form-check-input" type="radio" name="gridRadiosIpSrc" id="radIpSrc2"
-                                    value="option2">
+                                <input onchange="enableInput('ipAddrSrc')" class="form-check-input" type="radio"
+                                    name="gridRadiosIpSrc" id="radIpSrc2" value="option2">
                                 <label class="form-check-label" for="gridRadios2">
                                     Add an IP source address
                                 </label>
                             </div>
                         </div>
                     </div>
-                    <input onkeyup="checkIP('ipAddrSrc')" type="text" class="form-control" id="ipAddrSrc" placeholder="IP address" disabled>
+                    <input onkeyup="checkIP('ipAddrSrc')" type="text" class="form-control" id="ipAddrSrc"
+                        placeholder="IP address" disabled>
                 </div>
                 <div class="form-group col-md-6">
                     <div class="row">
                         <legend class="col-form-label pt-0"><u>IP Destination :</u></legend>
                         <div class="col-sm-10">
                             <div class="form-check">
-                                <input onclick="flushAlerts()" onchange="disableInput('ipAddrDst')" class="form-check-input" type="radio" name="gridRadiosIpDst" id="radIpDest1"
+                                <input onclick="flushAlerts()" onchange="disableInput('ipAddrDst')"
+                                    class="form-check-input" type="radio" name="gridRadiosIpDst" id="radIpDest1"
                                     checked>
                                 <label class="form-check-label" for="gridRadios1">
                                     None
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input onchange="enableInput('ipAddrDst')" class="form-check-input" type="radio" name="gridRadiosIpDst" id="radIpDest2"
-                                    value="option2">
+                                <input onchange="enableInput('ipAddrDst')" class="form-check-input" type="radio"
+                                    name="gridRadiosIpDst" id="radIpDest2" value="option2">
                                 <label class="form-check-label" for="gridRadios2">
                                     Add an IP destination address
                                 </label>
                             </div>
                         </div>
                     </div>
-                    <input onkeyup="checkIP('ipAddrDst')" type="text" class="form-control" id="ipAddrDst" placeholder="IP address" disabled>
+                    <input onkeyup="checkIP('ipAddrDst')" type="text" class="form-control" id="ipAddrDst"
+                        placeholder="IP address" disabled>
                 </div>
                 <div class="form-group col-md-6">
                     <div class="row">
                         <legend class="col-form-label pt-0"><u>Source port :</u></legend>
                         <div class="col-sm-10">
                             <div class="form-check">
-                                <input onclick="flushAlerts()" onchange="disableInput('portSrc')" class="form-check-input" type="radio" name="gridRadiosPortSrc" id="radPortSrc1"
+                                <input onclick="flushAlerts()" onchange="disableInput('portSrc')"
+                                    class="form-check-input" type="radio" name="gridRadiosPortSrc" id="radPortSrc1"
                                     checked>
                                 <label class="form-check-label" for="gridRadios1">
                                     None
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input onchange="enableInput('portSrc')" class="form-check-input" type="radio" name="gridRadiosPortSrc" id="radPortSrc2"
-                                    value="option2">
+                                <input onchange="enableInput('portSrc')" class="form-check-input" type="radio"
+                                    name="gridRadiosPortSrc" id="radPortSrc2" value="option2">
                                 <label class="form-check-label" for="gridRadios2">
                                     Add a source port
                                 </label>
                             </div>
                         </div>
                     </div>
-                    <input onkeyup="checkPort('portSrc')" type="number" class="form-control" id="portSrc" placeholder="Port" disabled>
+                    <input onkeyup="checkPort('portSrc')" type="number" class="form-control" id="portSrc"
+                        placeholder="Port" disabled>
                 </div>
                 <div class="form-group col-md-6">
                     <div class="row">
                         <legend class="col-form-label pt-0"><u>Destination port :</u></legend>
                         <div class="col-sm-10">
                             <div class="form-check">
-                                <input onclick="flushAlerts()" onchange="disableInput('portDst')" class="form-check-input" type="radio" name="gridRadiosPortDst" id="radPortDst1"
+                                <input onclick="flushAlerts()" onchange="disableInput('portDst')"
+                                    class="form-check-input" type="radio" name="gridRadiosPortDst" id="radPortDst1"
                                     checked>
                                 <label class="form-check-label" for="gridRadios1">
                                     None
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input onchange="enableInput('portDst')" class="form-check-input" type="radio" name="gridRadiosPortDst" id="radPortDst2"
-                                    value="option2">
+                                <input onchange="enableInput('portDst')" class="form-check-input" type="radio"
+                                    name="gridRadiosPortDst" id="radPortDst2" value="option2">
                                 <label class="form-check-label" for="gridRadios2">
                                     Add a destination port
                                 </label>
                             </div>
                         </div>
                     </div>
-                    <input onkeyup="checkPort('portDst')" type="number" class="form-control" id="portDst" placeholder="Port" disabled>
+                    <input onkeyup="checkPort('portDst')" type="number" class="form-control" id="portDst"
+                        placeholder="Port" disabled>
                 </div>
                 <div class="form-group port-group">
                     <div class="row">
@@ -162,29 +169,29 @@
                         {{rule.id}}
                     </td>
                     <td>
-                        {% if rule.ipDest != "" and rule.ipDest != None %}
-                        {{rule.ipDest}}
+                        {% if rule.ipDst != "" and rule.ipDst != None %}
+                        {{rule.ipDst}}
                         {% else %}
                         X
                         {% endif %}
                     </td>
                     <td>
-                        {% if rule.ipSource != "" and rule.ipSource != None %}
-                        {{rule.ipSource}}
+                        {% if rule.ipSrc != "" and rule.ipSrc != None %}
+                        {{rule.ipSrc}}
                         {% else %}
                         X
                         {% endif %}
                     </td>
                     <td>
-                        {% if rule.portDest != None %}
-                        {{rule.portDest}}
+                        {% if rule.portDst != None %}
+                        {{rule.portDst}}
                         {% else %}
                         X
                         {% endif %}
                     </td>
                     <td>
-                        {% if rule.portSource != None %}
-                        {{rule.portSource}}
+                        {% if rule.portSrc != None %}
+                        {{rule.portSrc}}
                         {% else %}
                         X
                         {% endif %}
@@ -200,7 +207,30 @@
                         icmp
                         {% endif %}
                     </td>
-                    <td><button type="button" class="btn btn-dark">Delete</button></td>
+                    <td><button data-bs-toggle="modal" data-bs-target="#exampleModal{{rule.id}}" type="button" class="btn btn-dark">Delete</button></td>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal{{rule.id}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Delete rule n°{{rule.id}}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you really sure to delete the rule n°{{rule.id}} ?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                    <button onclick="deleteRule('{{rule.id}}')" type="button" data-bs-dismiss="modal"
+                                        class="btn btn-primary">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -214,5 +244,6 @@
 <script src="{{ url_for('static', filename='js/form.js') }}"></script>
 <script src="{{ url_for('static', filename='js/network.js') }}"></script>
 <script src="{{ url_for('static', filename='js/firewall.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 
 {% endblock %}

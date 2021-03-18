@@ -77,7 +77,6 @@ def apiFrames():
 
     # Transport
     if request.args.get('transport'):
-
         reqTransport = "protocolLayerTransport LIKE ? "
         req.append(reqTransport)
         params.append("%"+request.args.get('transport')+"%")
@@ -87,6 +86,65 @@ def apiFrames():
         reqNetwork = "protocolLayerNetwork LIKE ? "
         req.append(reqNetwork)
         params.append("%"+request.args.get('network')+"%")
+
+    # MAC Address Source
+    if request.args.get('macAddrSource'):
+        reqMac = "macAddrSource LIKE ? "
+        req.append(reqMac)
+        params.append("%"+request.args.get('macAddrSource')+"%")
+    
+    # MAC Address Dest
+    if request.args.get('macAddrDest'):
+        reqMac = "macAddrDest LIKE ? "
+        req.append(reqMac)
+        params.append("%"+request.args.get('macAddrDest')+"%")
+
+    # Port Source
+    if request.args.get('portSource'):
+        reqMac = "portSource LIKE ? "
+        req.append(reqMac)
+        params.append("%"+request.args.get('portSource')+"%")
+
+    # Port Dest
+    if request.args.get('portDest'):
+        reqMac = "portDest LIKE ? "
+        req.append(reqMac)
+        params.append("%"+request.args.get('portDest')+"%")
+    
+    # IP Source
+    if request.args.get('ipSource'):
+        reqMac = "ipSource LIKE ? "
+        req.append(reqMac)
+        params.append("%"+request.args.get('ipSource')+"%")
+
+    # IP Dest
+    if request.args.get('ipDest'):
+        reqMac = "ipDest LIKE ? "
+        req.append(reqMac)
+        params.append("%"+request.args.get('ipDest')+"%")
+        params.append("%"+request.args.get('ipDest')+"%")
+
+    # Both Source and Dest
+    # MAC
+    if request.args.get('macSourceAndDest'):
+        reqMac = '(macAddrDest LIKE ? OR macAddrSource LIKE ?) '
+        req.append(reqMac)
+        params.append("%"+request.args.get('macSourceAndDest')+"%")
+        params.append("%"+request.args.get('macSourceAndDest')+"%")
+
+    # Port
+    if request.args.get('portSourceAndDest'):
+        reqMac = '(portDest LIKE ? OR portSource LIKE ?) '
+        req.append(reqMac)
+        params.append("%"+request.args.get('portSourceAndDest')+"%")
+        params.append("%"+request.args.get('portSourceAndDest')+"%")
+    
+    # IP
+    if request.args.get('ipSourceAndDest'):
+        reqMac = '(ipDest LIKE ? OR ipSource LIKE ?) '
+        req.append(reqMac)
+        params.append("%"+request.args.get('ipSourceAndDest')+"%")
+        params.append("%"+request.args.get('ipSourceAndDest')+"%")
 
     # Limit request
     if request.args.get('limit'):

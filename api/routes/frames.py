@@ -101,27 +101,26 @@ def apiFrames():
 
     # Port Source
     if request.args.get('portSource'):
-        reqMac = "portSource LIKE ? "
-        req.append(reqMac)
+        reqPort = "portSource LIKE ? "
+        req.append(reqPort)
         params.append("%"+request.args.get('portSource')+"%")
 
     # Port Dest
     if request.args.get('portDest'):
-        reqMac = "portDest LIKE ? "
-        req.append(reqMac)
+        reqPort = "portDest LIKE ? "
+        req.append(reqPort)
         params.append("%"+request.args.get('portDest')+"%")
     
     # IP Source
     if request.args.get('ipSource'):
-        reqMac = "ipSource LIKE ? "
-        req.append(reqMac)
+        reqIP = "ipSource LIKE ? "
+        req.append(reqIP)
         params.append("%"+request.args.get('ipSource')+"%")
 
     # IP Dest
     if request.args.get('ipDest'):
-        reqMac = "ipDest LIKE ? "
-        req.append(reqMac)
-        params.append("%"+request.args.get('ipDest')+"%")
+        reqIP = "ipDest LIKE ? "
+        req.append(reqIP)
         params.append("%"+request.args.get('ipDest')+"%")
 
     # Both Source and Dest
@@ -134,15 +133,15 @@ def apiFrames():
 
     # Port
     if request.args.get('portSourceAndDest'):
-        reqMac = '(portDest LIKE ? OR portSource LIKE ?) '
-        req.append(reqMac)
+        reqPort = '(portDest LIKE ? OR portSource LIKE ?) '
+        req.append(reqPort)
         params.append("%"+request.args.get('portSourceAndDest')+"%")
         params.append("%"+request.args.get('portSourceAndDest')+"%")
     
     # IP
     if request.args.get('ipSourceAndDest'):
-        reqMac = '(ipDest LIKE ? OR ipSource LIKE ?) '
-        req.append(reqMac)
+        reqIP = '(ipDest LIKE ? OR ipSource LIKE ?) '
+        req.append(reqIP)
         params.append("%"+request.args.get('ipSourceAndDest')+"%")
         params.append("%"+request.args.get('ipSourceAndDest')+"%")
 

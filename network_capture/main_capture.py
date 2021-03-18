@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import os
 import sys
 from subprocess import Popen, PIPE
 
@@ -70,14 +69,6 @@ def main():
         for i in range(0, len(fields)):
             formattedFields += "-e " + fields[i] + " "
 
-        # Executing the capture
-        # os.system("sudo tshark " +
-        #           buffer +
-        #           " -i " + config.interface +
-        #           " -T fields -E separator='" + separator + "' " +
-        #           formattedFields +
-        #           " | " + "python3 " + insertProgram)
-        
         cmd = "sudo tshark " + buffer + " -i " + config.interface + " -T fields -E separator='" + separator + "' " + formattedFields
         with Popen(cmd, shell=True, stdout=PIPE, bufsize=1, universal_newlines=True) as p:
             for line in p.stdout:
@@ -101,6 +92,7 @@ def main():
 
                 # Determine application layer
                 protocol = frame[10].split(":")
+                # For LLC problem
                 if len(protocol) > 2:
                     applicationLayer = protocol[4] if len(protocol) == 5 else None
                     networkLayer = protocol[2]

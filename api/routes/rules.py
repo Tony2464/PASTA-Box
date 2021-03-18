@@ -24,10 +24,10 @@ def apiRules():
     for row in data:
         d = {}
         d["id"] = row[0]
-        d["ipDest"] = row[1]
-        d["ipSource"] = row[2]
-        d["portDest"] = row[3]
-        d["portSource"] = row[4]
+        d["ipDst"] = row[1]
+        d["ipSrc"] = row[2]
+        d["portDst"] = row[3]
+        d["portSrc"] = row[4]
         d["protocol"] = row[5]
         d["ipVersion"] = row[6]
         objects_list.append(d)
@@ -46,10 +46,10 @@ def apiRulesId(id=None):
         for row in data:
             d = {}
             d["id"] = row[0]
-            d["ipDest"] = row[1]
-            d["ipSource"] = row[2]
-            d["portDest"] = row[3]
-            d["portSource"] = row[4]
+            d["ipDst"] = row[1]
+            d["ipSrc"] = row[2]
+            d["portDst"] = row[3]
+            d["portSrc"] = row[4]
             d["protocol"] = row[5]
             d["ipVersion"] = row[6]
         objects_list.append(d)

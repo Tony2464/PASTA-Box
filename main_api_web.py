@@ -4,6 +4,7 @@ from flask.templating import render_template
 from flask_socketio import SocketIO, emit
 from time import sleep
 from threading import Thread, Event
+from subprocess import Popen, PIPE, CalledProcessError
 
 # Local imports
 import web.conf.config as config
@@ -33,61 +34,30 @@ app.register_blueprint(firewall, url_prefix="/admin/firewall")
 
 @app.route('/')
 def home():
-    return "test"
+    return "Index page"
 
-# Web 
+### Web Scocket for Live frames
 
-def initDb():
-    dbManager = db_manager.DbManager(
-        config.dbConfig["user"],
-        config.dbConfig["password"],
-        config.dbConfig["host"],
-        config.dbConfig["port"],
-        config.dbConfig["database"]
-    )
-    return dbManager
 
 #turn the flask app into a socketio app
 socketio = SocketIO(app, async_mode=None, logger=True, engineio_logger=True)
 
 thread = Thread()
 thread_stop_event = Event()
+
+
 def sendFrames():
-    #infinite loop of magical random numbers
     print("Sending frames")
-    number = 0
-    oldData = -1
-    while not thread_stop_event.isSet():
-        dbManager = initDb()    
-        data = dbManager.queryGet("SELECT MAX(id) FROM `Frame`", [])
-        # objects_list = []
-        # for row in data:
-        #     d = {}
-        #     d["id"] = row[0]
-        #     d["portSource"] = row[1]
-        #     d["portDest"] = row[2]
-        #     d["ipSource"] = row[3]
-        #     d["ipDest"] = row[4]
-        #     d["macAddrSource"] = row[5]
-        #     d["macAddrDest"] = row[6]
-        #     d["protocolLayerApplication"] = row[7]
-        #     d["protocolLayerTransport"] = row[8]
-        #     d["protocolLayerNetwork"] = row[9]
-        #     d["date"] = row[10]
-        #     d["idDeviceSource"] = row[11]
-        #     d["idDeviceDest"] = row[12]
-        #     d["idNetworkSource"] = row[13]
-        #     d["idNetworkDest"] = row[14]
-        #     d["domain"] = row[15]
-        #     d["info"] = row[16]
-        #     objects_list.append(d)
-        # data = jsonify(objects_list)
-        # number += 1
-        # if data[0] != oldData:
-        socketio.emit('newnumber', {'number': data[0],}, namespace='/test')
-        # oldData = data[0]
-        socketio.sleep(0.5)
-        dbManager.close()
+    # Loop unless disconnection
+    cmd = "tshark -i br0"
+    with Popen(cmd, shell=True, stdout=PIPE, bufsize=1, universal_newlines=True) as p:
+        for line in p.stdout:
+            print(line, end='')  # process line here
+            socketio.emit('newnumber', {'id': line}, namespace='/test')
+            socketio.sleep(0.04)
+            if thread_stop_event.is_set():
+                return 0
+
 
 @socketio.on('connect', namespace='/test')
 def test_connect():
@@ -107,6 +77,9 @@ def test_connect():
 def test_disconnect():
     print('Client disconnected')
     thread_stop_event.set()
+
+### Web Scocket for Live frames END
+
 
 if __name__ == "__main__":
     # app.run(host=config.hostConfig, debug=config.debugMode)

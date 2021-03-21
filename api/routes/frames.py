@@ -1,9 +1,10 @@
-from flask import Blueprint, json, request, jsonify
-from flask.helpers import flash
+from flask import Blueprint, request, jsonify
+import re
 
 # Local
 import database.db_config as config
 from database import db_manager
+
 
 def initDb():
     dbManager = db_manager.DbManager(
@@ -15,6 +16,7 @@ def initDb():
     )
     return dbManager
 
+
 frames = Blueprint("frames", __name__)
 
 # GET all frames
@@ -22,12 +24,158 @@ frames = Blueprint("frames", __name__)
 
 @frames.route('/', methods=['GET'])
 def apiFrames():
+    if len(request.args) < 1:
+        return "Need params"
+
     dbManager = initDb()
-    if request.args.get('limit'):
-        limit = request.args.get('limit')
-        data = dbManager.queryGet("SELECT * FROM Frame ORDER BY `id` DESC limit ?", [limit])
+
+    # Initial request
+    params = []
+    req = []
+
+    # if len(request.args) > 1:
+    #     req.append("SELECT * FROM Frame WHERE ")
+    # else:
+    #     req.append("SELECT * FROM Frame ")
+    req.append("SELECT * FROM Frame ")
+
+    # Date request begin and end
+    if request.args.get('startDate') and request.args.get('endDate'):
+        reqDate = "date >= ? AND date <= ? "
+        req.append(reqDate)
+        params.append(request.args.get('startDate'))
+        params.append(request.args.get('endDate'))
     else:
-        data = dbManager.queryGet("SELECT * FROM Frame ORDER BY `id` DESC", [])
+        # Date request begin
+        if request.args.get('startDate'):
+            reqDate = "date >= ? "
+            req.append(reqDate)
+            params.append(request.args.get('startDate'))
+        # Date request end
+        if request.args.get('endDate'):
+            reqDate = "date <= ? "
+            req.append(reqDate)
+            params.append(request.args.get('endDate'))
+
+    # Domain
+    if request.args.get('domain'):
+        reqDomain = "domain LIKE ? "
+        req.append(reqDomain)
+        params.append("%"+request.args.get('domain')+"%")
+
+    # Info
+    if request.args.get('info'):
+        reqInfo = "info LIKE ? "
+        req.append(reqInfo)
+        params.append("%"+request.args.get('info')+"%")
+
+    # Application
+    if request.args.get('application'):
+        reqApplication = "protocolLayerApplication LIKE ? "
+        req.append(reqApplication)
+        params.append("%"+request.args.get('application')+"%")
+
+    # Transport
+    if request.args.get('transport'):
+        reqTransport = "protocolLayerTransport LIKE ? "
+        req.append(reqTransport)
+        params.append("%"+request.args.get('transport')+"%")
+
+    # Network
+    if request.args.get('network'):
+        reqNetwork = "protocolLayerNetwork LIKE ? "
+        req.append(reqNetwork)
+        params.append("%"+request.args.get('network')+"%")
+
+    # MAC Address Source
+    if request.args.get('macAddrSource'):
+        reqMac = "macAddrSource LIKE ? "
+        req.append(reqMac)
+        params.append("%"+request.args.get('macAddrSource')+"%")
+    
+    # MAC Address Dest
+    if request.args.get('macAddrDest'):
+        reqMac = "macAddrDest LIKE ? "
+        req.append(reqMac)
+        params.append("%"+request.args.get('macAddrDest')+"%")
+
+    # Port Source
+    if request.args.get('portSource'):
+        reqPort = "portSource LIKE ? "
+        req.append(reqPort)
+        params.append("%"+request.args.get('portSource')+"%")
+
+    # Port Dest
+    if request.args.get('portDest'):
+        reqPort = "portDest LIKE ? "
+        req.append(reqPort)
+        params.append("%"+request.args.get('portDest')+"%")
+    
+    # IP Source
+    if request.args.get('ipSource'):
+        reqIP = "ipSource LIKE ? "
+        req.append(reqIP)
+        params.append("%"+request.args.get('ipSource')+"%")
+
+    # IP Dest
+    if request.args.get('ipDest'):
+        reqIP = "ipDest LIKE ? "
+        req.append(reqIP)
+        params.append("%"+request.args.get('ipDest')+"%")
+
+    # Both Source and Dest
+    # MAC
+    if request.args.get('macSourceAndDest'):
+        reqMac = '(macAddrDest LIKE ? OR macAddrSource LIKE ?) '
+        req.append(reqMac)
+        params.append("%"+request.args.get('macSourceAndDest')+"%")
+        params.append("%"+request.args.get('macSourceAndDest')+"%")
+
+    # Port
+    if request.args.get('portSourceAndDest'):
+        reqPort = '(portDest LIKE ? OR portSource LIKE ?) '
+        req.append(reqPort)
+        params.append("%"+request.args.get('portSourceAndDest')+"%")
+        params.append("%"+request.args.get('portSourceAndDest')+"%")
+    
+    # IP
+    if request.args.get('ipSourceAndDest'):
+        reqIP = '(ipDest LIKE ? OR ipSource LIKE ?) '
+        req.append(reqIP)
+        params.append("%"+request.args.get('ipSourceAndDest')+"%")
+        params.append("%"+request.args.get('ipSourceAndDest')+"%")
+
+    # Limit request
+    if request.args.get('limit'):
+        reqLimit = "ORDER BY `id` DESC limit ? "
+        req.append(reqLimit)
+        params.append(request.args.get('limit'))
+        # return req
+        # data = dbManager.queryGet(req, params)
+    else:
+        return "Error : Need a limit"
+
+    # Final Step
+    finalReq = ""
+    if len(request.args) > 1:
+        for i in range(0, len(req)):
+            if i == 1:
+                finalReq += "WHERE "+req[i]
+            else:
+                if i > 1:
+                    if i == len(req) - 1:
+                        finalReq += req[i]
+                    else:
+                        finalReq += "AND " + req[i]
+                else:
+                    finalReq += req[i]
+    else:
+        for i in range(0, len(req)):
+            finalReq += req[i]
+
+    # return (str(finalReq)+" "+str(params))
+
+    data = dbManager.queryGet(finalReq, params)
     objects_list = []
     for row in data:
         d = {}
@@ -42,12 +190,8 @@ def apiFrames():
         d["protocolLayerTransport"] = row[8]
         d["protocolLayerNetwork"] = row[9]
         d["date"] = row[10]
-        d["idDeviceSource"] = row[11]
-        d["idDeviceDest"] = row[12]
-        d["idNetworkSource"] = row[13]
-        d["idNetworkDest"] = row[14]
-        d["domain"] = row[15]
-        d["info"] = row[16]
+        d["domain"] = row[11]
+        d["info"] = row[12]
         objects_list.append(d)
     dbManager.close()
     return jsonify(objects_list)
@@ -76,12 +220,8 @@ def apiFramesId(id=None):
             d["protocolLayerTransport"] = row[8]
             d["protocolLayerNetwork"] = row[9]
             d["date"] = row[10]
-            d["idDeviceSource"] = row[11]
-            d["idDeviceDest"] = row[12]
-            d["idNetworkSource"] = row[13]
-            d["idNetworkDest"] = row[14]
-            d["domain"] = row[15]
-            d["info"] = row[16]
+            d["domain"] = row[11]
+            d["info"] = row[12]
             objects_list.append(d)
         dbManager.close()
         return jsonify(objects_list)
@@ -96,7 +236,7 @@ def apiFramesCreate():
         dbManager = initDb()
         data = request.get_json()
         frame = data[0]
-        dbManager.queryInsert("INSERT INTO `Frame` (`portSource`, `portDest`, `ipSource`, `ipDest`, `macAddrSource`, `macAddrDest`, `protocolLayerApplication`, `protocolLayerTransport`, `protocolLayerNetwork`, `date`, `idDeviceSource`, `idDeviceDest`, `idNetworkSource`, `idNetworkDest`, `domain`, `info`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        dbManager.queryInsert("INSERT INTO `Frame` (`portSource`, `portDest`, `ipSource`, `ipDest`, `macAddrSource`, `macAddrDest`, `protocolLayerApplication`, `protocolLayerTransport`, `protocolLayerNetwork`, `date`, `domain`, `info`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                               [
                                   frame["portSource"],
                                   frame["portDest"],
@@ -108,10 +248,6 @@ def apiFramesCreate():
                                   frame["protocolLayerTransport"],
                                   frame["protocolLayerNetwork"],
                                   frame["date"],
-                                  frame["idDeviceSource"],
-                                  frame["idDeviceDest"],
-                                  frame["idNetworkSource"],
-                                  frame["idNetworkDest"],
                                   frame["domain"],
                                   frame["info"]
                               ])
@@ -131,7 +267,7 @@ def apiFramesUpdate(id=None):
             data = request.get_json()
             frame = data[0]
             # UPDATE `Frame` SET `portSource` = '22' WHERE `Frame`.`id` = 1
-            dbManager.queryInsert("UPDATE `Frame` SET `portSource` = ?, `portDest` = ?, `ipSource` = ?, `ipDest` = ?, `macAddrSource` = ?, `macAddrDest` = ?, `protocolLayerApplication` = ?, `protocolLayerTransport` = ?, `protocolLayerNetwork` = ?, `date` = ?, `idDeviceSource` = ?, `idDeviceDest` = ?, `idNetworkSource` = ?, `idNetworkDest` = ?, `domain` = ?, `info` = ? WHERE `Frame`.`id` = ?",
+            dbManager.queryInsert("UPDATE `Frame` SET `portSource` = ?, `portDest` = ?, `ipSource` = ?, `ipDest` = ?, `macAddrSource` = ?, `macAddrDest` = ?, `protocolLayerApplication` = ?, `protocolLayerTransport` = ?, `protocolLayerNetwork` = ?, `date` = ?, `domain` = ?, `info` = ? WHERE `Frame`.`id` = ?",
                                   [
                                       frame["portSource"],
                                       frame["portDest"],
@@ -143,10 +279,6 @@ def apiFramesUpdate(id=None):
                                       frame["protocolLayerTransport"],
                                       frame["protocolLayerNetwork"],
                                       frame["date"],
-                                      frame["idDeviceSource"],
-                                      frame["idDeviceDest"],
-                                      frame["idNetworkSource"],
-                                      frame["idNetworkDest"],
                                       frame["domain"],
                                       frame["info"],
                                       id

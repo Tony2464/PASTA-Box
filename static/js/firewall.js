@@ -106,6 +106,7 @@ function sendFirewallRule(rule) {
 
                 console.log(req.responseText);
                 displaySuccess("Your rule has been added successfully !");
+                updateRules();
 
             } else {
 
@@ -190,11 +191,121 @@ function flushRuleInputs() {
 
 function deleteRule(id) {
 
-    let domain = window.location.href;
-    let domainParts = domain.split('/');
-
-    fetch(domainParts.slice(0, 3).join('/') + '/api/rules/' + id, {
+    fetch(getDomain() + '/api/rules/' + id, {
         method: 'DELETE'
     });
+
+    let rules = document.getElementsByTagName('tr');
+    for (let index = 1; index < rules.length; index++) {
+
+        let header = rules[index].getElementsByTagName('td')[0].innerHTML;
+        if (parseInt(header, 10) == id) {
+
+            rules[index].remove();
+            break;
+
+        }
+
+    }
+
+    displaySuccess("Rule n°" + id + " deleted successfully !");
+
+}
+
+function updateRules() {
+
+    let body = document.getElementsByTagName('tbody')[0];
+    body.innerHTML = "";
+
+    let newColumn;
+    let newLine;
+    let deleteButton;
+
+    fetch(getDomain() + '/api/rules/', {
+            method: 'GET'
+        })
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (json) {
+
+            for (let i = 0; i < json.length; i++) {
+
+                newLine = document.createElement('tr');
+
+                newColumn = document.createElement('td');
+                newColumn.innerHTML = json[i]['id'];
+                newLine.appendChild(newColumn);
+
+                newColumn = document.createElement('td');
+                if (json[i]['ipDst'] == "")
+                    newColumn.innerHTML = "X";
+                else
+                    newColumn.innerHTML = json[i]['ipDst'];
+                newLine.appendChild(newColumn);
+
+                newColumn = document.createElement('td');
+                if (json[i]['ipSrc'] == "")
+                    newColumn.innerHTML = "X";
+                else
+                    newColumn.innerHTML = json[i]['ipSrc'];
+                newLine.appendChild(newColumn);
+
+                newColumn = document.createElement('td');
+                if (json[i]['portDst'] == null)
+                    newColumn.innerHTML = "X";
+                else
+                    newColumn.innerHTML = json[i]['portDst'];
+                newLine.appendChild(newColumn);
+
+                newColumn = document.createElement('td');
+                if (json[i]['portSrc'] == null)
+                    newColumn.innerHTML = "X";
+                else
+                    newColumn.innerHTML = json[i]['portSrc'];
+                newLine.appendChild(newColumn);
+
+                newColumn = document.createElement('td');
+                newColumn.innerHTML = returnProtocol(json[i]['protocol']);
+                newLine.appendChild(newColumn);
+
+                newColumn = document.createElement('td');
+                deleteButton = document.createElement('button');
+                deleteButton.className = "btn btn-dark";
+                deleteButton.innerHTML = "Delete";
+                deleteButton.setAttribute("data-bs-toggle", "modal");
+                deleteButton.setAttribute("data-bs-target", "#Modal" + json[i]['id']);
+                newColumn.appendChild(deleteButton);
+                newLine.appendChild(newColumn);
+
+                body.appendChild(newLine);
+            }
+
+            addModal(json[json.length - 1]['id']);
+
+        });
+
+}
+
+function addModal(id) {
+
+    document.getElementsByTagName('body')[0].innerHTML += '<div class="modal fade" id="Modal' + id + '" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">\
+                <div class="modal-dialog modal-dialog-centered">\
+                    <div class="modal-content" style="background-color:#fff !important;">\
+                        <div class="modal-header">\
+                            <h5 class="modal-title">Delete rule n°' + id + '</h5>\
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>\
+                        </div>\
+                        <div class="modal-body">\
+                            Are you really sure to delete the rule n°' + id + ' ? \
+                        </div>\
+                        <div class="modal-footer">\
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>\
+                            <button onclick="deleteRule(\'' + id + '\')" type="button" data-bs-dismiss="modal"\
+                                class="btn btn-primary">Delete</button>\
+                        </div>\
+                    </div>\
+                </div>\
+            </div>';
 
 }

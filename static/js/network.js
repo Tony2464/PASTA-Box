@@ -40,9 +40,6 @@ function testSameIpVersion() {
     if (ip2 != "")
         versionDst = checkIpVersion(ip2)
 
-    console.log(ip1 + " | " + ip2);
-    console.log(versionSrc + " | " + versionDst);
-
     if (versionSrc != 0) {
         if (versionDst != 0) {
             if (versionSrc === versionDst) {
@@ -72,4 +69,37 @@ function checkIpVersion(IPaddress) {
     } else {
         return 3;
     }
+}
+
+function getDomain() {
+
+    let domain = window.location.href;
+    let domainParts = domain.split('/');
+
+    return domainParts.slice(0, 3).join('/');
+
+}
+
+function returnProtocol(protocolNb) {
+
+    switch (protocolNb) {
+
+        case 1:
+            return "tcp";
+            break;
+
+        case 2:
+            return "udp";
+            break;
+
+        case 3:
+            return "icmp";
+            break;
+
+        default:
+            return "X";
+            break;
+
+    }
+
 }

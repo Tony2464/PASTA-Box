@@ -93,7 +93,7 @@ def apiRulesCreate():
 def apiRulesDelete(id=None):
     if id:
         dbManager.queryInsert(
-            "DELETE FROM `RuleFirewall` WHERE `RuleFirewall`.`id` = ?", [id])
+            "DELETE FROM RuleFirewall WHERE id = ?", [id])
         return "Delete Success"
     else:
         return "Error : Need an id."

@@ -78,8 +78,11 @@ def test_disconnect():
     print('Client disconnected')
     thread_stop_event.set()
 
-### Web Scocket for Live frames END
+### 404 web page
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('pages/404.html'), 404
 
 if __name__ == "__main__":
     # app.run(host=config.hostConfig, debug=config.debugMode)

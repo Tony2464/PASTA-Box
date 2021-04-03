@@ -31,7 +31,7 @@ def addRule():
 
     Rule = request.get_json()
 
-    res = buildCustomRules(Rule)
+    res = buildCustomRules(Rule, True)
     if(res != 0):
         return switchError(result)
 

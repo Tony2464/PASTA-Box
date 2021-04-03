@@ -1,7 +1,6 @@
 import re
 import os
 import requests
-import subprocess
 
 # Regex IPv4
 ipv4 = """^(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(  
@@ -99,9 +98,9 @@ def verifyRule(Rule):
     return 0
 
 
-# Apply customized rules from the HMI
+# Build customized rules from json
 
-def buildCustomRules(Rule):
+def buildCustomRules(Rule, mode):
     error = verifyRule(Rule)
     if error < 0:
         return error
@@ -109,8 +108,12 @@ def buildCustomRules(Rule):
     exceptionIP = False
     exceptionProto = False
 
-    cmd = "/usr/bin/sudo /usr/sbin/ebtables -t filter -A FORWARD "
-    if int(Rule["ipVersion"]) == 1:
+    if(mode == True):
+        cmd = "/usr/bin/sudo /usr/sbin/ebtables -t filter -A FORWARD " # Add rule in RAM
+    else:
+        cmd = "/usr/bin/sudo /usr/sbin/ebtables -t filter -D FORWARD " # Delete rule in RAM
+    
+    if int(Rule["ipVersion"]) == 1: # IPv4 ?
         cmd += "-p ipv4 "
 
         if (Rule["portSrc"] != None and Rule["portSrc"] != "") or (
@@ -132,7 +135,7 @@ def buildCustomRules(Rule):
         if Rule["ipDst"] != None and Rule["ipDst"] != "":
             cmd += "--ip-dst " + Rule["ipDst"] + " "
 
-    elif int(Rule["ipVersion"]) == 2:
+    elif int(Rule["ipVersion"]) == 2: # IPv6 ?
         cmd += "-p ipv6 "
 
         if (Rule["portSrc"] != None and Rule["portSrc"] != "") or (
@@ -154,7 +157,7 @@ def buildCustomRules(Rule):
         if Rule["ipDst"] != None and Rule["ipDst"] != "":
             cmd += "--ip6-destination " + Rule["ipDst"] + " "
 
-    else:
+    else: # No IP address specified
         cmd += "-p ipv4 --ip-protocol "
         exceptionIP = True
 
@@ -176,16 +179,22 @@ def buildCustomRules(Rule):
 
     cmd += "-j DROP"
 
+    # If there isn't ip src/dst address but one port at least (dst or src port)
+
     if exceptionIP == True and exceptionProto == False:
         res = os.system(cmd)
         res = os.system(
             cmd.replace("-p ipv4 --ip-protocol ", "-p ipv6 --ip6-protocol ")
         )
 
+    # If all protocols were selected and one port at least (dst or src port)
+
     elif exceptionProto == True:
         cmds = cmd.split("all")
         for i in range(len(ebtablesPortProtocols)):
             res = os.system(cmds[0] + str(ebtablesPortProtocols[i]) + cmds[1])
+
+        # Apply for IPv6 if any specific type of ip ardress was selected
 
         if exceptionIP == True:
             cmdIpv6 = cmd.replace("-p ipv4 --ip-protocol ", "-p ipv6 --ip6-protocol ")
@@ -195,13 +204,15 @@ def buildCustomRules(Rule):
                     cmdsIpv6[0] + str(ebtablesPortProtocols[i]) + cmdsIpv6[1]
                 )
 
+    # No exception
+
     else:
         res = os.system(cmd)
 
     return 0
 
 
-# Get all the rules in database
+# Get all the rules from the database
 
 def getAllCustomRules():
     r = requests.get("http://localhost/api/rules")

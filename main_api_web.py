@@ -1,20 +1,17 @@
-from types import new_class
-from flask import Flask, jsonify
-from flask.templating import render_template
-from flask_socketio import SocketIO, emit
-from time import sleep
+from flask import Flask
+from flask_socketio import SocketIO
 from threading import Thread, Event
-from subprocess import Popen, PIPE, CalledProcessError
+from subprocess import Popen, PIPE
 
 # Local imports
 import web.conf.config as config
 import database.db_config as config
-from database import db_manager
 
 # Import all routes
 # API routes
 from api.routes.frames import frames
 from api.routes.rules import rules
+from api.routes.devices import devices
 
 # Web pages routes
 from web.routes.admin.index import index
@@ -25,6 +22,7 @@ app = Flask(__name__)
 # API
 app.register_blueprint(frames, url_prefix="/api/frames")
 app.register_blueprint(rules, url_prefix="/api/rules")
+app.register_blueprint(rules, url_prefix="/api/devices")
 
 # Web Pages
 app.register_blueprint(index, url_prefix="/admin")

@@ -14,6 +14,7 @@ dbManager = db_manager.DbManager(
 
 rules = Blueprint("rules", __name__)
 
+
 # GET all rules
 
 @rules.route('/', methods=['GET'])
@@ -23,8 +24,12 @@ def apiRules():
     for row in data:
         d = {}
         d["id"] = row[0]
-        d["ip"] = row[1]
-        d["port"] = row[2]
+        d["ipDst"] = row[1]
+        d["ipSrc"] = row[2]
+        d["portDst"] = row[3]
+        d["portSrc"] = row[4]
+        d["protocol"] = row[5]
+        d["ipVersion"] = row[6]
         objects_list.append(d)
     return jsonify(objects_list)
 
@@ -37,14 +42,15 @@ def apiRulesId(id=None):
     if id:
         data = dbManager.queryGet(
             "SELECT * FROM RuleFirewall WHERE id=?", [id])
-        objects_list = []
-        for row in data:
-            d = {}
-            d["id"] = row[0]
-            d["ip"] = row[1]
-            d["port"] = row[2]
-            objects_list.append(d)
-        return jsonify(objects_list)
+        d = {}
+        d["id"] = data[0][0]
+        d["ipDst"] = data[0][1]
+        d["ipSrc"] = data[0][2]
+        d["portDst"] = data[0][3]
+        d["portSrc"] = data[0][4]
+        d["protocol"] = data[0][5]
+        d["ipVersion"] = data[0][6]
+        return jsonify(d)
     else:
         return "Error : Need an id. "
 
@@ -54,12 +60,23 @@ def apiRulesId(id=None):
 @rules.route('/', methods=['POST'])
 def apiRulesCreate():
     if request.json:
-        data = request.get_json()
-        rule = data[0]
-        dbManager.queryInsert("INSERT INTO `RuleFirewall` (`ip`, `port`) VALUES (?, ?)",
+        rule = request.get_json()
+        if(rule["portDst"] == ""):
+            rule["portDst"] = None
+        if(rule["portSrc"] == ""):
+            rule["portSrc"] = None
+        if(rule["protocol"] == ""):
+            rule["protocol"] = None
+        if(rule["ipVersion"] == ""):
+            rule["ipVersion"] = None
+        dbManager.queryInsert("INSERT INTO `RuleFirewall` (`ipDest`, `ipSource`, `portDest`, `portSource`, `protocol`, `ipVersion`) VALUES (?, ?, ?, ?, ?, ?)",
                               [
-                                  rule["ip"],
-                                  rule["port"]
+                                  rule["ipDst"],
+                                  rule["ipSrc"],
+                                  rule["portDst"],
+                                  rule["portSrc"],
+                                  rule["protocol"],
+                                  rule["ipVersion"]
                               ])
         return "Create Success"
     else:
@@ -73,7 +90,7 @@ def apiRulesCreate():
 def apiRulesDelete(id=None):
     if id:
         dbManager.queryInsert(
-            "DELETE FROM `RuleFirewall` WHERE `RuleFirewall`.`id` = ?", [id])
+            "DELETE FROM RuleFirewall WHERE id = ?", [id])
         return "Delete Success"
     else:
         return "Error : Need an id."

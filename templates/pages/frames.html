@@ -1,0 +1,465 @@
+{% extends 'base/base.html'%}
+{% block title %} Pasta-Box - Frames {% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <br>
+    <div class="row text-center">
+        <div class="col">
+            <a href="/admin/frames/live" class="badge badge-pill badge-primary">Live Frames</a>
+        </div>
+    </div>
+    <br>
+    <form>
+        <p>
+            <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseSearch" role="button"
+                aria-expanded="false" aria-controls="collapseSearch">
+                Advanced Search <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="" width="20"
+                    height="20">
+            </a>
+        </p>
+        <div class="collapse" id="collapseSearch">
+            <div class="card card-body">
+                <!-- IP GROUP -->
+                <div class="form-group">
+                    <label>
+                        <h5>IP Address</h5>
+                    </label>
+                    <div class="collapse show" id="collapseIP">
+                        <div class="form-row" id="groupIP">
+                            <div class="col">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control inputs" id="ipSource" placeholder="192...">
+                                    <label for="floatingInput">Source</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control inputs" id="ipDest" placeholder="192...">
+                                    <label for="floatingInput">Destination</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- CHECK GROUP -->
+                <div class="form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="checkIP" data-bs-toggle="collapse"
+                            href="#collapseIP" unchecked autocomplete="off">
+                        <label class="form-check-label" for="checkIP">
+                            IP in both field
+                        </label>
+                    </div>
+                </div>
+                <!-- IP BOTH GROUP -->
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <div class="collapse collapseIPboth" id="collapseIP">
+                                <div class="form-row">
+                                    <div class="col">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control inputs" id="ipSourceAndDest"
+                                                placeholder="192...">
+                                            <label for="floatingInput">Source or Dest</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- PORT GROUP -->
+                <div class="form-group">
+                    <label>
+                        <h5>Port</h5>
+                    </label>
+                    <div class="collapse show" id="collapsePort">
+                        <div class="form-row" id="groupPort">
+                            <div class="col">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control inputs" id="portSource"
+                                        placeholder="80...">
+                                    <label for="floatingInput">Source</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control inputs" id="portDest" placeholder="80...">
+                                    <label for="floatingInput">Destination</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- CHECK GROUP -->
+                <div class="form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="checkPort"
+                            data-bs-toggle="collapse" href="#collapsePort" unchecked autocomplete="off">
+                        <label class="form-check-label" for="checkPort">
+                            Port in both field
+                        </label>
+                    </div>
+                </div>
+                <!-- PORT BOTH GROUP -->
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <div class="collapse collapsePortBoth" id="collapsePort">
+                                <div class="form-row">
+                                    <div class="col">
+                                        <div class="form-floating">
+                                            <input type="number" class="form-control inputs" id="portSourceAndDest"
+                                                placeholder="80...">
+                                            <label for="floatingInput">Source or Dest</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- MAC GROUP -->
+                <div class="form-group">
+                    <label>
+                        <h5>MAC Address</h5>
+                    </label>
+                    <div class="collapse show" id="collapseMAC">
+                        <div class="form-row" id="groupMAC">
+                            <div class="col">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control inputs" id="macAddrSource"
+                                        placeholder="FF...">
+                                    <label for="floatingInput">Source</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control inputs" id="macAddrDest" placeholder="FF...">
+                                    <label for="floatingInput">Destination</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- CHECK GROUP -->
+                <div class="form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="checkMAC" data-bs-toggle="collapse"
+                            href="#collapseMAC" unchecked autocomplete="off">
+                        <label class="form-check-label" for="checkMAC">
+                            MAC in both field
+                        </label>
+                    </div>
+                </div>
+                <!-- MAC BOTH GROUP -->
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <div class="collapse collapseMacBoth" id="collapseMAC">
+                                <div class="form-row">
+                                    <div class="col">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control inputs" id="macSourceAndDest"
+                                                placeholder="FF...">
+                                            <label for="floatingInput">Source or Dest</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- PROTOCOLS GROUP -->
+                <div class="form-group">
+                    <label>
+                        <h5>Protocols</h5>
+                    </label>
+                    <div class="form-row">
+                        <div class="col">
+                            <div class="form-floating">
+                                <input type="text" class="form-control inputs" id="application"
+                                    placeholder="HTTP, SSH, ...">
+                                <label for="floatingInput">Application</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating">
+                                <input type="number" class="form-control inputs" id="transport"
+                                    placeholder="6(TCP), 17(UDP), ...">
+                                <label for="floatingInput">Transport</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating">
+                                <input type="text" class="form-control inputs" id="network"
+                                    placeholder="IP, IPv6, VLAN, ARP, ...">
+                                <label for="floatingInput">Network</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ADDITIONAL GROUP -->
+                <div class="form-group">
+                    <label>
+                        <h5>Additionnal</h5>
+                    </label>
+                    <div class="form-row">
+                        <div class="col">
+                            <div class="form-floating">
+                                <input type="text" class="form-control inputs" id="domain"
+                                    placeholder="domain.name.com">
+                                <label for="floatingInput">Domain name</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating">
+                                <input type="text" class="form-control inputs" id="info" placeholder="Ack,...">
+                                <label for="floatingInput">Info</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- DATE GROUPE -->
+                <div class="form-group">
+                    <label>
+                        <h5>Date</h5>
+                    </label>
+                    <div class="form-row">
+                        <div class="col">
+                            <div class="input-group flex-nowrap">
+                                <span class="input-group-text" id="addon-wrapping">Begin</span>
+                                <input type="date" class="form-control inputs" id="startDate" placeholder="">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group flex-nowrap">
+                                <span class="input-group-text" id="addon-wrapping">End</span>
+                                <input type="date" class="form-control inputs" id="endDate" placeholder="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- <button type="submit" class="btn btn-primary">Search</button> -->
+            </div>
+        </div>
+    </form>
+    <br>
+    <label>
+        <h5>Table search</h5>
+    </label>
+    <div class="row">
+        <div class="col-3">
+            <div class="input-group mb-3">
+                <div class="input-group">
+                    <span class="input-group-text">Last packets</span>
+                    <input type="number" class="form-control inputs" id="limit" value="20" min="0">
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="input-group mb-3">
+                <div class="input-group">
+                    <span class="input-group-text"><img src="{{ url_for('static', filename='icons/search.svg') }}"
+                            alt="" width="20" height="20"></span>
+                    <input class="form-control" id="myInput" type="text" placeholder="Search..">
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <table class="table table-bordered table-responsive-lg table-hover text-center">
+        <thead class="thead-dark">
+            <tr>
+                <th>IP source</th>
+                <th>IP dest</th>
+                <th>Port source</th>
+                <th>Port dest</th>
+                <th>MAC source</th>
+                <th>MAC dest</th>
+                <th>Layer application</th>
+                <th>Layer transport</th>
+                <th>Layer network</th>
+                <th>Domain name</th>
+                <th>Date</th>
+                <th>Info</th>
+            </tr>
+        </thead>
+        <tbody id="myTable">
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
+<script>
+    $(document).ready(function () {
+        //Max date input
+        /*
+        $(function () {
+            $('[type="date"]').prop('max', function () {
+                return new Date().toJSON().split('T')[0];
+            });
+        });
+        */
+        //Table search
+        $("#myInput").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#myTable tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+        //Checkbox 
+        $("#checkIP").change(function () {
+            if (this.checked) {
+                $("#groupIP").hide()
+            } else {
+                $("#groupIP").show()
+            }
+        });
+        $("#checkPort").change(function () {
+            if (this.checked) {
+                $("#groupPort").hide()
+            } else {
+                $("#groupPort").show()
+            }
+        });
+    });
+
+    function ajaxGetFrame() {
+        // Check if value is empty
+        if ($('#limit').val() === "") {
+            return 0
+        }
+
+        // Get all params
+        params = {}
+
+        if ($('#limit').val() != "") {
+            params["limit"] = $('#limit').val()
+        }
+
+        if ($('#startDate').val() != "") {
+            params["startDate"] = $('#startDate').val()
+        }
+
+        if ($('#endDate').val() != "") {
+            params["endDate"] = $('#endDate').val()
+        }
+
+        if ($('#domain').val() != "") {
+            params["domain"] = $('#domain').val()
+        }
+
+        if ($('#info').val() != "") {
+            params["info"] = $('#info').val()
+        }
+
+        if ($('#application').val() != "") {
+            params["application"] = $('#application').val()
+        }
+
+        if ($('#transport').val() != "") {
+            params["transport"] = $('#transport').val()
+        }
+
+        if ($('#network').val() != "") {
+            params["network"] = $('#network').val()
+        }
+
+        // Both IP (OR)
+        if ($('.collapseIPboth').attr('class') == "collapseIPboth collapse show") {
+            if ($('#ipSourceAndDest').val() != "") {
+                params["ipSourceAndDest"] = $('#ipSourceAndDest').val()
+            }
+        } else {
+            //IP Source and Dest (AND)
+            if ($('#ipSource').val() != "") {
+                params["ipSource"] = $('#ipSource').val()
+            }
+            if ($('#ipDest').val() != "") {
+                params["ipDest"] = $('#ipDest').val()
+            }
+        }
+
+        // Both Port (OR)
+        if ($('.collapsePortBoth').attr('class') == "collapsePortBoth collapse show") {
+            if ($('#portSourceAndDest').val() != "") {
+                params["portSourceAndDest"] = $('#portSourceAndDest').val()
+            }
+        } else {
+            // Port Source and Dest (AND)
+            if ($('#portSource').val() != "") {
+                params["portSource"] = $('#portSource').val()
+            }
+            if ($('#portDest').val() != "") {
+                params["portDest"] = $('#portDest').val()
+            }
+        }
+
+        // Both MAC (OR)
+        if ($('.collapseMacBoth').attr('class') == "collapseMacBoth collapse show") {
+            if ($('#macSourceAndDest').val() != "") {
+                params["macSourceAndDest"] = $('#macSourceAndDest').val()
+            }
+        } else {
+            // MAC Source and Dest (AND)
+            if ($('#macAddrSource').val() != "") {
+                params["macAddrSource"] = $('#macAddrSource').val()
+            }
+            if ($('#macAddrDest').val() != "") {
+                params["macAddrDest"] = $('#macAddrDest').val()
+            }
+        }
+
+
+        console.log(params)
+
+        $.ajax({
+            method: "GET",
+            url: '/api/frames',
+            data: params,
+            success: function (response) {
+                //console.log(JSON.stringify(response));
+                $('#myTable').empty();
+                $.each(response, function (index) {
+                    //console.log(response)
+                    //console.log(index)
+                    $('#myTable').append(
+                        '<tr>' +
+                        '<td>' + response[index].ipSource + '</td>' +
+                        '<td>' + response[index].ipDest + '</td>' +
+                        '<td>' + response[index].portSource + '</td>' +
+                        '<td>' + response[index].portDest + '</td>' +
+                        '<td>' + response[index].macAddrSource + '</td>' +
+                        '<td>' + response[index].macAddrDest + '</td>' +
+                        '<td>' + response[index].protocolLayerApplication + '</td>' +
+                        '<td>' + response[index].protocolLayerTransport + '</td>' +
+                        '<td>' + response[index].protocolLayerNetwork + '</td>' +
+                        '<td>' + response[index].domain + '</td>' +
+                        '<td>' + response[index].date + '</td>' +
+                        '<td>' + response[index].info + '</td>' +
+                        '</tr>'
+                    )
+                    //console.log(response[index])
+                });
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        ajaxGetFrame();
+        //Ajax request
+        $('.inputs').on('input', function (event) {
+            ajaxGetFrame();
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,249 @@
+{% extends "base/base.html" %}
+{% block title %} Pasta-Box - Firewall {% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="container">
+        <h1 style="text-align: center;">FIREWALL RULES</h1>
+        <div class="divider div-transparent div-arrow-down"></div>
+    </div>
+    <div style="padding-right:inherit;" class="col-md-6 half-body">
+        <h3 style="text-align: center;">Add a rule to the Firewall</h3>
+        <br id="errorAnchor">
+        <br>
+        <form>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <div class="row">
+                        <legend class="col-form-label pt-0"><u>IP Source :</u></legend>
+                        <div class="col-sm-10">
+                            <div class="form-check">
+                                <input onclick="flushAlerts()" onchange="disableInput('ipAddrSrc')"
+                                    class="form-check-input" type="radio" name="gridRadiosIpSrc" id="radIpSrc1" checked>
+                                <label class="form-check-label" for="gridRadios1">
+                                    None
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input onchange="enableInput('ipAddrSrc')" class="form-check-input" type="radio"
+                                    name="gridRadiosIpSrc" id="radIpSrc2" value="option2">
+                                <label class="form-check-label" for="gridRadios2">
+                                    Add an IP source address
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <input onkeyup="checkIP('ipAddrSrc')" type="text" class="form-control" id="ipAddrSrc"
+                        placeholder="IP address" disabled>
+                </div>
+                <div class="form-group col-md-6">
+                    <div class="row">
+                        <legend class="col-form-label pt-0"><u>IP Destination :</u></legend>
+                        <div class="col-sm-10">
+                            <div class="form-check">
+                                <input onclick="flushAlerts()" onchange="disableInput('ipAddrDst')"
+                                    class="form-check-input" type="radio" name="gridRadiosIpDst" id="radIpDest1"
+                                    checked>
+                                <label class="form-check-label" for="gridRadios1">
+                                    None
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input onchange="enableInput('ipAddrDst')" class="form-check-input" type="radio"
+                                    name="gridRadiosIpDst" id="radIpDest2" value="option2">
+                                <label class="form-check-label" for="gridRadios2">
+                                    Add an IP destination address
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <input onkeyup="checkIP('ipAddrDst')" type="text" class="form-control" id="ipAddrDst"
+                        placeholder="IP address" disabled>
+                </div>
+                <div class="form-group col-md-6">
+                    <div class="row">
+                        <legend class="col-form-label pt-0"><u>Source port :</u></legend>
+                        <div class="col-sm-10">
+                            <div class="form-check">
+                                <input onclick="flushAlerts()" onchange="disableInput('portSrc')"
+                                    class="form-check-input" type="radio" name="gridRadiosPortSrc" id="radPortSrc1"
+                                    checked>
+                                <label class="form-check-label" for="gridRadios1">
+                                    None
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input onchange="enableInput('portSrc')" class="form-check-input" type="radio"
+                                    name="gridRadiosPortSrc" id="radPortSrc2" value="option2">
+                                <label class="form-check-label" for="gridRadios2">
+                                    Add a source port
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <input onkeyup="checkPort('portSrc')" type="number" class="form-control" id="portSrc"
+                        placeholder="Port" disabled>
+                </div>
+                <div class="form-group col-md-6">
+                    <div class="row">
+                        <legend class="col-form-label pt-0"><u>Destination port :</u></legend>
+                        <div class="col-sm-10">
+                            <div class="form-check">
+                                <input onclick="flushAlerts()" onchange="disableInput('portDst')"
+                                    class="form-check-input" type="radio" name="gridRadiosPortDst" id="radPortDst1"
+                                    checked>
+                                <label class="form-check-label" for="gridRadios1">
+                                    None
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input onchange="enableInput('portDst')" class="form-check-input" type="radio"
+                                    name="gridRadiosPortDst" id="radPortDst2" value="option2">
+                                <label class="form-check-label" for="gridRadios2">
+                                    Add a destination port
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <input onkeyup="checkPort('portDst')" type="number" class="form-control" id="portDst"
+                        placeholder="Port" disabled>
+                </div>
+                <div class="form-group port-group">
+                    <div class="row">
+                        <legend class="col-form-label pt-0"><u>Transport Protocol :</u></legend>
+                        <div class="col-sm-10">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gridRadiosProtocol" id="radProtocol1"
+                                    value="0" checked>
+                                <label class="form-check-label" for="gridRadios1">
+                                    All
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gridRadiosProtocol" id="radProtocol2"
+                                    value="1">
+                                <label class="form-check-label" for="gridRadios2">
+                                    tcp
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gridRadiosProtocol" id="radProtocol3"
+                                    value="2">
+                                <label class="form-check-label" for="gridRadios3">
+                                    udp
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gridRadiosProtocol" id="radProtocol4"
+                                    value="3">
+                                <label class="form-check-label" for="gridRadios4">
+                                    icmp
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="verifyInputs()" type="button" class="btn btn-primary submit-form">Add the rule</button>
+            </div>
+        </form>
+    </div><!--
+ --><div style="padding-left:inherit;" class="col-md-6 half-body">
+        <h3 style="text-align: center;">List of the rules</h3>
+        <br>
+        <br>
+        <table style="text-align: center;" class="table">
+            <thead>
+                <tr>
+                    <th># ID</th>
+                    <th>IP Dest</th>
+                    <th>IP Source</th>
+                    <th>Port Dest</th>
+                    <th>Port Source</th>
+                    <th>Protocol</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rule in content %}
+                <tr>
+                    <td>
+                        {{rule.id}}
+                    </td>
+                    <td>
+                        {% if rule.ipDst != "" and rule.ipDst != None %}
+                        {{rule.ipDst}}
+                        {% else %}
+                        X
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if rule.ipSrc != "" and rule.ipSrc != None %}
+                        {{rule.ipSrc}}
+                        {% else %}
+                        X
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if rule.portDst != None %}
+                        {{rule.portDst}}
+                        {% else %}
+                        X
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if rule.portSrc != None %}
+                        {{rule.portSrc}}
+                        {% else %}
+                        X
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if rule.protocol == 0 %}
+                        all
+                        {% elif rule.protocol == 1 %}
+                        tcp
+                        {% elif rule.protocol == 2 %}
+                        udp
+                        {% elif rule.protocol == 3 %}
+                        icmp
+                        {% endif %}
+                    </td>
+                    <td><button data-bs-toggle="modal" data-bs-target="#Modal{{rule.id}}" type="button"
+                            class="btn btn-dark">Delete</button></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            {% for rule in content %}
+            <!-- Modal -->
+            <div class="modal fade" id="Modal{{rule.id}}" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Delete rule n°{{rule.id}}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Are you really sure to delete the rule n°{{rule.id}} ?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button onclick="deleteRule('{{rule.id}}')" type="button" data-bs-dismiss="modal"
+                                class="btn btn-primary">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+{% block js %}
+
+<script src="{{ url_for('static', filename='js/form.js') }}"></script>
+<script src="{{ url_for('static', filename='js/network.js') }}"></script>
+<script src="{{ url_for('static', filename='js/firewall.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+
+{% endblock %}

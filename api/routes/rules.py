@@ -42,18 +42,15 @@ def apiRulesId(id=None):
     if id:
         data = dbManager.queryGet(
             "SELECT * FROM RuleFirewall WHERE id=?", [id])
-        objects_list = []
-        for row in data:
-            d = {}
-            d["id"] = row[0]
-            d["ipDst"] = row[1]
-            d["ipSrc"] = row[2]
-            d["portDst"] = row[3]
-            d["portSrc"] = row[4]
-            d["protocol"] = row[5]
-            d["ipVersion"] = row[6]
-        objects_list.append(d)
-        return jsonify(objects_list)
+        d = {}
+        d["id"] = data[0][0]
+        d["ipDst"] = data[0][1]
+        d["ipSrc"] = data[0][2]
+        d["portDst"] = data[0][3]
+        d["portSrc"] = data[0][4]
+        d["protocol"] = data[0][5]
+        d["ipVersion"] = data[0][6]
+        return jsonify(d)
     else:
         return "Error : Need an id. "
 

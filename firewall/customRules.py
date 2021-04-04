@@ -101,19 +101,18 @@ def verifyRule(Rule):
 # Build customized rules from json
 
 def buildCustomRules(Rule, mode):
-    error = verifyRule(Rule)
-    if error < 0:
-        return error
+
+    if mode == True:  # Verify the rule only if it just has been added
+        error = verifyRule(Rule)
+        if error < 0:
+            return error
 
     exceptionIP = False
     exceptionProto = False
 
-    if(mode == True):
-        cmd = "/usr/bin/sudo /usr/sbin/ebtables -t filter -A FORWARD " # Add rule in RAM
-    else:
-        cmd = "/usr/bin/sudo /usr/sbin/ebtables -t filter -D FORWARD " # Delete rule in RAM
-    
-    if int(Rule["ipVersion"]) == 1: # IPv4 ?
+    cmd = beginEbtablesCmd(mode)
+
+    if int(Rule["ipVersion"]) == 1:  # IPv4 ?
         cmd += "-p ipv4 "
 
         if (Rule["portSrc"] != None and Rule["portSrc"] != "") or (
@@ -135,7 +134,7 @@ def buildCustomRules(Rule, mode):
         if Rule["ipDst"] != None and Rule["ipDst"] != "":
             cmd += "--ip-dst " + Rule["ipDst"] + " "
 
-    elif int(Rule["ipVersion"]) == 2: # IPv6 ?
+    elif int(Rule["ipVersion"]) == 2:  # IPv6 ?
         cmd += "-p ipv6 "
 
         if (Rule["portSrc"] != None and Rule["portSrc"] != "") or (
@@ -157,7 +156,7 @@ def buildCustomRules(Rule, mode):
         if Rule["ipDst"] != None and Rule["ipDst"] != "":
             cmd += "--ip6-destination " + Rule["ipDst"] + " "
 
-    else: # No IP address specified
+    else:  # No IP address specified
         cmd += "-p ipv4 --ip-protocol "
         exceptionIP = True
 
@@ -215,7 +214,19 @@ def buildCustomRules(Rule, mode):
 # Get all the rules from the database
 
 def getAllCustomRules():
+    
     r = requests.get("http://localhost/api/rules")
     data = r.json()
     for i in range(len(data)):
         buildCustomRules(data[i])
+
+
+# Send the correct beginning of the command
+
+def beginEbtablesCmd(mode):
+
+    if mode == True:
+        cmd = "/usr/bin/sudo /usr/sbin/ebtables -t filter -A FORWARD "  # Add rule in RAM
+    else:
+        cmd = "/usr/bin/sudo /usr/sbin/ebtables -t filter -D FORWARD "  # Delete rule in RAM
+    return cmd

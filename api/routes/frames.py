@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify
+from flask_http_response import success, error
 
 # Local
 import database.db_config as config
 from database import db_manager
-
 
 def initDb():
     dbManager = db_manager.DbManager(
@@ -18,8 +18,8 @@ def initDb():
 
 frames = Blueprint("frames", __name__)
 
-# GET all frames
 
+# GET all frames
 
 @frames.route('/', methods=['GET'])
 def apiGetFrames():
@@ -148,7 +148,7 @@ def apiGetFrames():
         # return req
         # data = dbManager.queryGet(req, params)
     else:
-        return "Error : Need a limit"
+        return error.return_response(status=400,message="Need a limit")
 
     # Final Step
     finalReq = ""
@@ -192,34 +192,30 @@ def apiGetFrames():
 
 # GET one frame
 
-
 @frames.route('/', methods=['GET'])
 @frames.route('/<id>', methods=['GET'])
 def apiGetFrame(id=None):
     if id:
         dbManager = initDb()
         data = dbManager.queryGet("SELECT * FROM Frame WHERE id=?", [id])
-        objects_list = []
-        for row in data:
-            d = {}
-            d["id"] = row[0]
-            d["portSource"] = row[1]
-            d["portDest"] = row[2]
-            d["ipSource"] = row[3]
-            d["ipDest"] = row[4]
-            d["macAddrSource"] = row[5]
-            d["macAddrDest"] = row[6]
-            d["protocolLayerApplication"] = row[7]
-            d["protocolLayerTransport"] = row[8]
-            d["protocolLayerNetwork"] = row[9]
-            d["date"] = row[10]
-            d["domain"] = row[11]
-            d["info"] = row[12]
-            objects_list.append(d)
+        d = {}
+        d["id"] = data[0]
+        d["portSource"] = data[1]
+        d["portDest"] = data[2]
+        d["ipSource"] = data[3]
+        d["ipDest"] = data[4]
+        d["macAddrSource"] = data[5]
+        d["macAddrDest"] = data[6]
+        d["protocolLayerApplication"] = data[7]
+        d["protocolLayerTransport"] = data[8]
+        d["protocolLayerNetwork"] = data[9]
+        d["date"] = data[10]
+        d["domain"] = data[11]
+        d["info"] = data[12]
         dbManager.close()
-        return jsonify(objects_list)
+        return jsonify(d)
     else:
-        return "Error : Need an id. "
+        return error.return_response(status=400,message="Need an ID")
 
 
 # POST one frame
@@ -245,9 +241,9 @@ def apiPostFrame():
                                   frame["info"]
                               ])
         dbManager.close()
-        return "Create Success"
+        return success.return_response(status=200,message="Frame added successfully")
     else:
-        return "Error : Need json data"
+        return error.return_response(status=400,message="Need JSON data")
 
 
 # Put one frame
@@ -276,11 +272,11 @@ def apiPutFrame(id=None):
                                       id
                                   ])
             dbManager.close()
-            return "Update Success"
+            return success.return_response(status=200,message="Frame updated successfully")
         else:
-            return "Error : Need json data."
+            return error.return_response(status=400,message="Need JSON data")
     else:
-        return "Error : Need an id."
+        return error.return_response(status=400,message="Need an ID")
 
 
 # DELETE one frame
@@ -292,6 +288,6 @@ def apiDeleteFrame(id=None):
         dbManager.queryInsert(
             "DELETE FROM `Frame` WHERE `Frame`.`id` = ?", [id])
         dbManager.close()
-        return "Delete Success"
+        return success.return_response(status=200,message="Frame deleted successfully")
     else:
-        return "Error : Need an id."
+        return error.return_response(status=400,message="Need an ID")

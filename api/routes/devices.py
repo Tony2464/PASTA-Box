@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify
+from flask_http_response import success, result, error
 
 # Local
 import database.db_config as config
 from database import db_manager
-
 
 def initDb():
     dbManager = db_manager.DbManager(
@@ -18,8 +18,8 @@ def initDb():
 
 devices = Blueprint("devices", __name__)
 
-# GET ALL
 
+# GET ALL
 
 @devices.route('/', methods=['GET'])
 def apiGetDevices():

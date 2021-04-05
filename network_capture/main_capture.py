@@ -4,7 +4,7 @@ import sys
 from subprocess import Popen, PIPE
 
 # local imports
-from conf import config as config
+from conf import config_main_capture as config
 from database import db_manager
 
 dbManager = db_manager.DbManager(

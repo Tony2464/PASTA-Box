@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from flask_http_response import success, error
 
 # Local
 import database.db_config as config
@@ -42,20 +43,17 @@ def apiRulesId(id=None):
     if id:
         data = dbManager.queryGet(
             "SELECT * FROM RuleFirewall WHERE id=?", [id])
-        objects_list = []
-        for row in data:
-            d = {}
-            d["id"] = row[0]
-            d["ipDst"] = row[1]
-            d["ipSrc"] = row[2]
-            d["portDst"] = row[3]
-            d["portSrc"] = row[4]
-            d["protocol"] = row[5]
-            d["ipVersion"] = row[6]
-        objects_list.append(d)
-        return jsonify(objects_list)
+        d = {}
+        d["id"] = data[0][0]
+        d["ipDst"] = data[0][1]
+        d["ipSrc"] = data[0][2]
+        d["portDst"] = data[0][3]
+        d["portSrc"] = data[0][4]
+        d["protocol"] = data[0][5]
+        d["ipVersion"] = data[0][6]
+        return jsonify(d)
     else:
-        return "Error : Need an id. "
+        return error.return_response(status=400,message="Need an ID")
 
 
 # POST one rule
@@ -81,9 +79,9 @@ def apiRulesCreate():
                                   rule["protocol"],
                                   rule["ipVersion"]
                               ])
-        return "Create Success"
+        return success.return_response(status=200,message="Rule added successfully")
     else:
-        return "Error : Need json data"
+        return error.return_response(status=400,message="Need JSON data")
 
 
 # DELETE one frame
@@ -94,6 +92,6 @@ def apiRulesDelete(id=None):
     if id:
         dbManager.queryInsert(
             "DELETE FROM RuleFirewall WHERE id = ?", [id])
-        return "Delete Success"
+        return success.return_response(status=200,message="Rule deleted successfully")
     else:
-        return "Error : Need an id."
+        return error.return_response(status=400,message="Need an ID")

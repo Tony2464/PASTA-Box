@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, request, jsonify
 from flask_http_response import success, result, error
 import requests
-import os
 
 # Local
 import database.db_config as config
@@ -17,31 +16,26 @@ dbManager = db_manager.DbManager(
     config.dbConfig["database"]
 )
 
-firewall = Blueprint("firewall", __name__)
+web_firewall = Blueprint("web_firewall", __name__)
 
 
-@firewall.route('/')
+@web_firewall.route('/')
 def homepage():
     r = requests.get('http://localhost/api/rules')
     data = r.json()
     return render_template('pages/firewall.html', content=data)
 
 
-@firewall.route('/rule', methods=['POST'])
+@web_firewall.route('/rule', methods=['POST'])
 def addRule():
 
-    Rule = {}
-    Rule['ipSrc'] = request.form['ipSrc']
-    Rule['ipDst'] = request.form['ipDst']
-    Rule['portSrc'] = request.form['portSrc']
-    Rule['portDst'] = request.form['portDst']
-    Rule['protocol'] = request.form['protocol']
-    Rule['ipVersion'] = request.form['ipVersion']
+    Rule = request.get_json()
 
-    result = buildCustomRules(Rule)
-    if(result != 0):
+    res = buildCustomRules(Rule)
+    if(res != 0):
         return switchError(result)
 
+    requests.post('http://localhost/api/rules', json=Rule)
     return success.return_response(status=200)
 
 

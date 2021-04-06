@@ -24,7 +24,7 @@ frames = Blueprint("frames", __name__)
 @frames.route('/', methods=['GET'])
 def apiGetFrames():
     if len(request.args) < 1:
-        return error.return_response(status=400, message="Need params")
+        return "Need params"
 
     dbManager = initDb()
 
@@ -217,16 +217,77 @@ def apiGetFrame(id=None):
     else:
         return error.return_response(status=400,message="Need an ID")
 
-# Get unique MAC address from frames
-@frames.route('/macAddr', methods=['GET'])
-def apiGetMac():
-    dbManager = initDb()
-    req = "SELECT DISTINCT macAddrSource as macAddr FROM `Frame` UNION SELECT DISTINCT macAddrDest FROM `Frame`"
-    data = dbManager.queryGet(req,[])
-    objects_list = []
-    for row in data:
-        d = {}
-        d["macAddr"] = row[0]
-        objects_list.append(d)
-    dbManager.close()
-    return jsonify(objects_list)
+
+# POST one frame
+@frames.route('/', methods=['POST'])
+def apiPostFrame():
+    if request.json:
+        dbManager = initDb()
+        data = request.get_json()
+        frame = data[0]
+        dbManager.queryInsert("INSERT INTO `Frame` (`portSource`, `portDest`, `ipSource`, `ipDest`, `macAddrSource`, `macAddrDest`, `protocolLayerApplication`, `protocolLayerTransport`, `protocolLayerNetwork`, `date`, `domain`, `info`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                              [
+                                  frame["portSource"],
+                                  frame["portDest"],
+                                  frame["ipSource"],
+                                  frame["ipDest"],
+                                  frame["macAddrSource"],
+                                  frame["macAddrDest"],
+                                  frame["protocolLayerApplication"],
+                                  frame["protocolLayerTransport"],
+                                  frame["protocolLayerNetwork"],
+                                  frame["date"],
+                                  frame["domain"],
+                                  frame["info"]
+                              ])
+        dbManager.close()
+        return success.return_response(status=200,message="Frame added successfully")
+    else:
+        return error.return_response(status=400,message="Need JSON data")
+
+
+# Put one frame
+@frames.route('/', methods=['PUT'])
+@frames.route('/<id>', methods=['PUT'])
+def apiPutFrame(id=None):
+    if id:
+        if request.json:
+            dbManager = initDb()
+            data = request.get_json()
+            frame = data[0]
+            dbManager.queryInsert("UPDATE `Frame` SET `portSource` = ?, `portDest` = ?, `ipSource` = ?, `ipDest` = ?, `macAddrSource` = ?, `macAddrDest` = ?, `protocolLayerApplication` = ?, `protocolLayerTransport` = ?, `protocolLayerNetwork` = ?, `date` = ?, `domain` = ?, `info` = ? WHERE `Frame`.`id` = ?",
+                                  [
+                                      frame["portSource"],
+                                      frame["portDest"],
+                                      frame["ipSource"],
+                                      frame["ipDest"],
+                                      frame["macAddrSource"],
+                                      frame["macAddrDest"],
+                                      frame["protocolLayerApplication"],
+                                      frame["protocolLayerTransport"],
+                                      frame["protocolLayerNetwork"],
+                                      frame["date"],
+                                      frame["domain"],
+                                      frame["info"],
+                                      id
+                                  ])
+            dbManager.close()
+            return success.return_response(status=200,message="Frame updated successfully")
+        else:
+            return error.return_response(status=400,message="Need JSON data")
+    else:
+        return error.return_response(status=400,message="Need an ID")
+
+
+# DELETE one frame
+@frames.route('/', methods=['DELETE'])
+@frames.route('/<id>', methods=['DELETE'])
+def apiDeleteFrame(id=None):
+    if id:
+        dbManager = initDb()
+        dbManager.queryInsert(
+            "DELETE FROM `Frame` WHERE `Frame`.`id` = ?", [id])
+        dbManager.close()
+        return success.return_response(status=200,message="Frame deleted successfully")
+    else:
+        return error.return_response(status=400,message="Need an ID")

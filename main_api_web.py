@@ -1,33 +1,35 @@
-from flask import Flask
-from flask_socketio import SocketIO
+from types import new_class
+from flask import Flask, jsonify
+from flask.templating import render_template
+from flask_socketio import SocketIO, emit
+from time import sleep
 from threading import Thread, Event
-from subprocess import Popen, PIPE
+from subprocess import Popen, PIPE, CalledProcessError
 
 # Local imports
 import web.conf.config as config
 import database.db_config as config
+from database import db_manager
 
 # Import all routes
 # API routes
 from api.routes.frames import frames
 from api.routes.rules import rules
-from api.routes.devices import devices
 
 # Web pages routes
 from web.routes.admin.index import index
 from web.routes.admin.web_frames import web_frames
-from web.routes.admin.firewall import firewall
+from web.routes.admin.web_firewall import web_firewall
 
 app = Flask(__name__)
 # API
 app.register_blueprint(frames, url_prefix="/api/frames")
 app.register_blueprint(rules, url_prefix="/api/rules")
-app.register_blueprint(devices, url_prefix="/api/devices")
 
 # Web Pages
 app.register_blueprint(index, url_prefix="/admin")
 app.register_blueprint(web_frames, url_prefix="/admin/frames")
-app.register_blueprint(firewall, url_prefix="/admin/firewall")
+app.register_blueprint(web_firewall, url_prefix="/admin/firewall")
 
 
 @app.route('/')
@@ -76,8 +78,11 @@ def test_disconnect():
     print('Client disconnected')
     thread_stop_event.set()
 
-### Web Scocket for Live frames END
+### 404 web page
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('pages/404.html'), 404
 
 if __name__ == "__main__":
     # app.run(host=config.hostConfig, debug=config.debugMode)

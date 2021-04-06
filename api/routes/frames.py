@@ -216,3 +216,17 @@ def apiGetFrame(id=None):
         return jsonify(d)
     else:
         return error.return_response(status=400,message="Need an ID")
+
+# Get unique MAC address from frames
+@frames.route('/macAddr', methods=['GET'])
+def apiGetMac():
+    dbManager = initDb()
+    req = "SELECT DISTINCT macAddrSource as macAddr FROM `Frame` UNION SELECT DISTINCT macAddrDest FROM `Frame`"
+    data = dbManager.queryGet(req,[])
+    objects_list = []
+    for row in data:
+        d = {}
+        d["macAddr"] = row[0]
+        objects_list.append(d)
+    dbManager.close()
+    return jsonify(objects_list)

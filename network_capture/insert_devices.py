@@ -9,6 +9,14 @@ def getUniqueMacAddr():
     data = r.json()
     return data
 
+# Get MAC to insert
+
+
+def macToInsert():
+    r = requests.get('http://localhost/api/frames/macToInsert')
+    data = r.json()
+    return data
+
 # Get last frame from MAC address
 
 

@@ -5,6 +5,7 @@ from flask_http_response import success, error
 import database.db_config as config
 from database import db_manager
 
+
 def initDb():
     dbManager = db_manager.DbManager(
         config.dbConfig["user"],
@@ -148,7 +149,7 @@ def apiGetFrames():
         # return req
         # data = dbManager.queryGet(req, params)
     else:
-        return error.return_response(status=400,message="Need a limit")
+        return error.return_response(status=400, message="Need a limit")
 
     # Final Step
     finalReq = ""
@@ -215,18 +216,21 @@ def apiGetFrame(id=None):
         dbManager.close()
         return jsonify(d)
     else:
-        return error.return_response(status=400,message="Need an ID")
+        return error.return_response(status=400, message="Need an ID")
 
 # Get unique MAC address from frames
+
+
 @frames.route('/macAddr', methods=['GET'])
 def apiGetMac():
     dbManager = initDb()
-    req = "SELECT DISTINCT macAddrSource as macAddr FROM `Frame` UNION SELECT DISTINCT macAddrDest FROM `Frame`"
-    data = dbManager.queryGet(req,[])
+    req = "SELECT macAddrSource as macAddr, MAX(date) as date FROM Frame GROUP BY macAddrSource UNION SELECT macAddrDest, MAX(date) FROM Frame GROUP BY macAddrDest"
+    data = dbManager.queryGet(req, [])
     objects_list = []
     for row in data:
         d = {}
         d["macAddr"] = row[0]
+        d["date"] = row[1]
         objects_list.append(d)
     dbManager.close()
     return jsonify(objects_list)

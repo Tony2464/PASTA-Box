@@ -24,7 +24,23 @@ devices = Blueprint("devices", __name__)
 
 @devices.route('/', methods=['GET'])
 def apiGetDevices():
-    return 0
+    dbManager = initDb()
+    data = dbManager.queryGet("SELECT * FROM Device", [])
+    objects_list = []
+    for row in data:
+        d = {}
+        d["id"] = row[0]
+        d["idNetwork"] = row[1]
+        d["macAddr"] = row[2]
+        d["ipAddr"] = row[3]
+        d["securityScore"] = row[4]
+        d["netBios"] = row[5]
+        d["activeStatus"] = row[6]
+        d["firstConnection"] = row[7]
+        d["lastConnection"] = row[8]
+        objects_list.append(d)
+    dbManager.close()
+    return jsonify(objects_list)
 
 # GET ONE
 

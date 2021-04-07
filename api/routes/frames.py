@@ -234,3 +234,20 @@ def apiGetMac():
         objects_list.append(d)
     dbManager.close()
     return jsonify(objects_list)
+
+# Get new MAC address to insert
+
+
+@frames.route('/macToInsert', methods=['GET'])
+def apiGetMacToInsert():
+    dbManager = initDb()
+    req = "SELECT Frame.macAddrSource as macAddr, MAX(date) as date FROM Frame LEFT JOIN Device ON Device.macAddr = Frame.macAddrSource WHERE Device.macAddr IS NULL GROUP BY macAddrSource UNION SELECT Frame.macAddrDest, MAX(date)FROM Frame LEFT JOIN Device ON Device.macAddr = Frame.macAddrDest WHERE Device.macAddr IS NULL GROUP BY macAddrDest"
+    data = dbManager.queryGet(req, [])
+    objects_list = []
+    for row in data:
+        d = {}
+        d["macAddr"] = row[0]
+        d["date"] = row[1]
+        objects_list.append(d)
+    dbManager.close()
+    return jsonify(objects_list)

@@ -1,6 +1,7 @@
 from datetime import datetime
 from flask.helpers import get_load_dotenv
 import requests
+from requests import api
 
 # Api url base
 
@@ -28,6 +29,10 @@ def getData(url, params=None):
     return data
 
 
+def updateData(url, params=None):
+    requests.put(url, json=params)
+    return 0
+
 # Get all unique and last MAC address
 
 # def getUniqueMacAddr():
@@ -54,7 +59,6 @@ def getLastFrame(macAddr):
 def getDevices():
     return getData(apiUrlBase("devices"))
 
-
 # Insert new mac
 
 
@@ -68,6 +72,38 @@ def insertNewMac():
         insertData(apiUrlBase("devices"), params)
     return 0
 
+
 def insertNewIp():
+
     devices = getDevices()
+
+    for i in range(0, len(devices)):
+
+
+        deviceMacAddr = devices[i]["macAddr"]
+        frame = getLastFrame(deviceMacAddr)
+
+        deviceIp = devices[i]["ipAddr"]
+        deviceId = str(devices[i]["id"])
+        frameMacAddrSource = frame[0]["macAddrSource"]
+        frameIpSource = frame[0]["ipSource"]
+        frameIpDest = frame[0]["ipDest"]
+        frameDate = stringToDate(frame[0]["date"])
+
+        # MAC source
+        if (deviceMacAddr == frameMacAddrSource):
+            if deviceIp != frameIpSource:
+                params = {
+                    "ipAddr": frameIpSource,
+                    "lastConnection": frameDate
+                }
+                updateData(apiUrlBase("devices/"+deviceId), params)
+        # MAC dest
+        else:
+            if deviceIp != frameIpDest:
+                params = {
+                    "ipAddr": frameIpDest,
+                    "lastConnection": frameDate
+                }
+                updateData(apiUrlBase("devices/"+deviceId), params)
     return 0

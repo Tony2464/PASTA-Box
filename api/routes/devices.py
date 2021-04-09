@@ -170,12 +170,11 @@ def apiPutDevice(id=None):
 
             # final id
             finalReq += " WHERE `Device`.`id` = ?"
-            params += id
-
+            params.append(id)
             dbManager.queryInsert(finalReq, params)
             dbManager.close()
 
-            return success.return_response(status=200, message="Frame updated successfully")
+            return success.return_response(status=200, message="Device updated successfully")
         else:
             return error.return_response(status=400, message="Need JSON data")
     else:

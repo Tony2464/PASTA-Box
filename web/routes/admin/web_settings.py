@@ -16,6 +16,6 @@ dbManager = db_manager.DbManager(
 web_settings = Blueprint("web_settings", __name__)
 
 @web_settings.route('/')
-@web_settings.route('/network/')
+@web_settings.route('/system/')
 def getFrames():
-    return render_template('pages/network_settings.html')
+    return render_template('pages/system_settings.html')

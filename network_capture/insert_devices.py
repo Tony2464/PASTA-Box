@@ -1,7 +1,7 @@
-from datetime import datetime
+from datetime import datetime, date
 from flask.helpers import get_load_dotenv
 import requests
-from requests import api
+import json
 
 # Api url base
 
@@ -13,7 +13,7 @@ def apiUrlBase(path):
 
 
 def stringToDate(string):
-    return str(datetime.strptime(string, "%a, %d %b %Y %H:%M:%S %Z"))
+    return datetime.strptime(string, "%a, %d %b %Y %H:%M:%S %Z")
 
 # Insert data with API
 
@@ -32,6 +32,10 @@ def getData(url, params=None):
 def updateData(url, params=None):
     requests.put(url, json=params)
     return 0
+
+
+def updateDevice(deviceId, params):
+    updateData(apiUrlBase("devices/"+deviceId), params)
 
 # Get all unique and last MAC address
 
@@ -67,19 +71,15 @@ def insertNewMac():
     for i in range(0, len(macs)):
         params = {
             "macAddr": macs[i]["macAddr"],
-            "firstConnection": stringToDate(macs[i]["date"])
+            "firstConnection": str(stringToDate(macs[i]["date"]))
         }
         insertData(apiUrlBase("devices"), params)
     return 0
 
 
 def insertNewIp():
-
     devices = getDevices()
-
     for i in range(0, len(devices)):
-
-
         deviceMacAddr = devices[i]["macAddr"]
         frame = getLastFrame(deviceMacAddr)
 
@@ -88,22 +88,70 @@ def insertNewIp():
         frameMacAddrSource = frame[0]["macAddrSource"]
         frameIpSource = frame[0]["ipSource"]
         frameIpDest = frame[0]["ipDest"]
-        frameDate = stringToDate(frame[0]["date"])
 
         # MAC source
         if (deviceMacAddr == frameMacAddrSource):
             if deviceIp != frameIpSource:
                 params = {
-                    "ipAddr": frameIpSource,
-                    "lastConnection": frameDate
+                    "ipAddr": frameIpSource
                 }
-                updateData(apiUrlBase("devices/"+deviceId), params)
+                updateDevice(deviceId, params)
+                # updateData(apiUrlBase("devices/"+deviceId), params)
         # MAC dest
         else:
             if deviceIp != frameIpDest:
                 params = {
-                    "ipAddr": frameIpDest,
-                    "lastConnection": frameDate
+                    "ipAddr": frameIpDest
                 }
-                updateData(apiUrlBase("devices/"+deviceId), params)
+                updateDevice(deviceId, params)
+                # updateData(apiUrlBase("devices/"+deviceId), params)
+    return 0
+
+# Insert new date
+
+
+def insertNewDate():
+    devices = getDevices()
+    for i in range(0, len(devices)):
+        deviceId = str(devices[i]["id"])
+        deviceDate = None if devices[i]["lastConnection"] == None else str(
+            stringToDate(str(devices[i]["lastConnection"])))
+        # print(deviceDate)
+        frame = getLastFrame(devices[i]["macAddr"])
+        frameDate = str(stringToDate(str(frame[0]["date"])))
+        if frameDate != deviceDate:
+            params = {
+                "lastConnection": frameDate
+            }
+            updateDevice(deviceId, params)
+    return 0
+
+# Return date interval
+
+
+def dayDiff(date1, date2):
+    return (date1-date2)
+
+# Check the status of a device
+
+
+def insertStatus():
+    with open("conf/config_insert_devices.json", "r+") as configFile:
+        data = json.load(configFile)
+        dayLimit = data["dayLimit"]
+        devices = getDevices()
+        for i in range(0, len(devices)):
+            deviceId = str(devices[i]["id"])
+            lastConnection = None if devices[i]["lastConnection"] == None else stringToDate(str(devices[i]["lastConnection"]))
+            daysDiff = dayDiff(datetime.today(), lastConnection).days
+            if (daysDiff < int(dayLimit)):
+                params = {
+                    "activeStatus":1 
+                }
+                updateDevice(deviceId, params)
+            else:
+                params = {
+                    "activeStatus": 0
+                }
+                updateDevice(deviceId, params)
     return 0

@@ -25,29 +25,36 @@
                     </div>
                     <input type="text" class="form-control" id="netmask" placeholder="255.255.255.0">
                 </div>
-                <button style="margin-top:1em;" onclick="" type="button"
-                    class="btn btn-primary submit-form">Save</button>
+                <div class="form-group col-md-6">
+                    <div class="row">
+                        <legend class="col-form-label pt-0"><u>Gateway :</u></legend>
+                    </div>
+                    <input type="text" class="form-control" id="gateway" placeholder="192.168.1.1">
+                </div>
+                    <button style="margin-top:2em;width:100%;" onclick="" type="button"
+                        class="btn btn-primary">Save</button>
             </div>
         </form>
     </div><!--
 --><div style="padding-right:inherit;" class="col-md-6 half-body">
         <h3 style="text-align: center;">Manage Pasta-Box</h3>
         <br>
+        <br>
         <form>
             <div class="form-group row">
                 <div class="form-group col-md-6">
-                    <label style="display: inline;" class="col-sm-2 col-form-label"><u>E-mail to send security alerts :</u></label>
+                    <label style="display: inline;" class="col-sm-2 col-form-label"><u>Hostname :</u></label>
                 </div>
                 <div class="form-group col-md-6">
-                    <input type="text" class="form-control" placeholder="test@pastabox.fr">
+                    <input type="text" class="form-control" placeholder="PASTA-Box">
                 </div>
                 <button style="margin-top:1em;" onclick="" type="button"
-                    class="btn btn-primary submit-settings">Save</button>
+                    class="btn btn-primary submit-settings">Restart all the services</button>
             </div>
         </form>
         <div class="form-row">
             <div class="form-group col-md-6">
-                <button style="width: 100%;" onclick="" type="button" class="btn btn-success">Restart Pasta-Box</button>
+                <button style="width: 100%;" onclick="" type="button" class="btn btn-danger">Restart Pasta-Box</button>
             </div>
             <div class="form-group col-md-6">
                 <button style="width: 100%;" onclick="" type="button" class="btn btn-danger">Shutdown Pasta-Box</button>

@@ -5,6 +5,8 @@ from flask.helpers import url_for
 import database.db_config as config
 from database import db_manager
 
+from settings.systemSettings import *
+
 dbManager = db_manager.DbManager(
     config.dbConfig["user"],
     config.dbConfig["password"],

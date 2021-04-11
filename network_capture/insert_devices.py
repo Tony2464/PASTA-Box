@@ -1,5 +1,4 @@
-from datetime import datetime, date
-from flask.helpers import get_load_dotenv
+from datetime import datetime
 import requests
 import json
 
@@ -96,7 +95,6 @@ def insertNewIp():
                     "ipAddr": frameIpSource
                 }
                 updateDevice(deviceId, params)
-                # updateData(apiUrlBase("devices/"+deviceId), params)
         # MAC dest
         else:
             if deviceIp != frameIpDest:
@@ -104,7 +102,6 @@ def insertNewIp():
                     "ipAddr": frameIpDest
                 }
                 updateDevice(deviceId, params)
-                # updateData(apiUrlBase("devices/"+deviceId), params)
     return 0
 
 # Insert new date

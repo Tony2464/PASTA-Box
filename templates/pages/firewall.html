@@ -115,28 +115,28 @@
                                 <input class="form-check-input" type="radio" name="gridRadiosProtocol" id="radProtocol1"
                                     value="0" checked>
                                 <label class="form-check-label" for="gridRadios1">
-                                    All
+                                    ALL
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="gridRadiosProtocol" id="radProtocol2"
                                     value="1">
                                 <label class="form-check-label" for="gridRadios2">
-                                    tcp
+                                    TCP
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="gridRadiosProtocol" id="radProtocol3"
                                     value="2">
                                 <label class="form-check-label" for="gridRadios3">
-                                    udp
+                                    UDP
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="gridRadiosProtocol" id="radProtocol4"
                                     value="3">
                                 <label class="form-check-label" for="gridRadios4">
-                                    icmp
+                                    ICMP
                                 </label>
                             </div>
                         </div>
@@ -198,13 +198,13 @@
                     </td>
                     <td>
                         {% if rule.protocol == 0 %}
-                        all
+                        ALL
                         {% elif rule.protocol == 1 %}
-                        tcp
+                        TCP
                         {% elif rule.protocol == 2 %}
-                        udp
+                        UDP
                         {% elif rule.protocol == 3 %}
-                        icmp
+                        ICMP
                         {% endif %}
                     </td>
                     <td><button data-bs-toggle="modal" data-bs-target="#Modal{{rule.id}}" type="button"

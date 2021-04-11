@@ -25,6 +25,7 @@ app = Flask(__name__)
 # API
 app.register_blueprint(frames, url_prefix="/api/frames")
 app.register_blueprint(rules, url_prefix="/api/rules")
+app.register_blueprint(devices, url_prefix="/api/devices")
 
 # Web Pages
 app.register_blueprint(index, url_prefix="/admin")

@@ -5,6 +5,7 @@ from flask_http_response import success, error
 import database.db_config as config
 from database import db_manager
 
+
 def initDb():
     dbManager = db_manager.DbManager(
         config.dbConfig["user"],
@@ -24,7 +25,7 @@ frames = Blueprint("frames", __name__)
 @frames.route('/', methods=['GET'])
 def apiGetFrames():
     if len(request.args) < 1:
-        return "Need params"
+        return error.return_response(status=400, message="Need params")
 
     dbManager = initDb()
 
@@ -148,7 +149,7 @@ def apiGetFrames():
         # return req
         # data = dbManager.queryGet(req, params)
     else:
-        return error.return_response(status=400,message="Need a limit")
+        return error.return_response(status=400, message="Need a limit")
 
     # Final Step
     finalReq = ""
@@ -215,79 +216,38 @@ def apiGetFrame(id=None):
         dbManager.close()
         return jsonify(d)
     else:
-        return error.return_response(status=400,message="Need an ID")
+        return error.return_response(status=400, message="Need an ID")
+
+# Get unique MAC address from frames
 
 
-# POST one frame
-@frames.route('/', methods=['POST'])
-def apiPostFrame():
-    if request.json:
-        dbManager = initDb()
-        data = request.get_json()
-        frame = data[0]
-        dbManager.queryInsert("INSERT INTO `Frame` (`portSource`, `portDest`, `ipSource`, `ipDest`, `macAddrSource`, `macAddrDest`, `protocolLayerApplication`, `protocolLayerTransport`, `protocolLayerNetwork`, `date`, `domain`, `info`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                              [
-                                  frame["portSource"],
-                                  frame["portDest"],
-                                  frame["ipSource"],
-                                  frame["ipDest"],
-                                  frame["macAddrSource"],
-                                  frame["macAddrDest"],
-                                  frame["protocolLayerApplication"],
-                                  frame["protocolLayerTransport"],
-                                  frame["protocolLayerNetwork"],
-                                  frame["date"],
-                                  frame["domain"],
-                                  frame["info"]
-                              ])
-        dbManager.close()
-        return success.return_response(status=200,message="Frame added successfully")
-    else:
-        return error.return_response(status=400,message="Need JSON data")
+@frames.route('/macAddr', methods=['GET'])
+def apiGetMac():
+    dbManager = initDb()
+    req = "SELECT macAddrSource as macAddr, MAX(date) as date FROM Frame GROUP BY macAddrSource UNION SELECT macAddrDest, MAX(date) FROM Frame GROUP BY macAddrDest"
+    data = dbManager.queryGet(req, [])
+    objects_list = []
+    for row in data:
+        d = {}
+        d["macAddr"] = row[0]
+        d["date"] = row[1]
+        objects_list.append(d)
+    dbManager.close()
+    return jsonify(objects_list)
+
+# Get new MAC address to insert
 
 
-# Put one frame
-@frames.route('/', methods=['PUT'])
-@frames.route('/<id>', methods=['PUT'])
-def apiPutFrame(id=None):
-    if id:
-        if request.json:
-            dbManager = initDb()
-            data = request.get_json()
-            frame = data[0]
-            dbManager.queryInsert("UPDATE `Frame` SET `portSource` = ?, `portDest` = ?, `ipSource` = ?, `ipDest` = ?, `macAddrSource` = ?, `macAddrDest` = ?, `protocolLayerApplication` = ?, `protocolLayerTransport` = ?, `protocolLayerNetwork` = ?, `date` = ?, `domain` = ?, `info` = ? WHERE `Frame`.`id` = ?",
-                                  [
-                                      frame["portSource"],
-                                      frame["portDest"],
-                                      frame["ipSource"],
-                                      frame["ipDest"],
-                                      frame["macAddrSource"],
-                                      frame["macAddrDest"],
-                                      frame["protocolLayerApplication"],
-                                      frame["protocolLayerTransport"],
-                                      frame["protocolLayerNetwork"],
-                                      frame["date"],
-                                      frame["domain"],
-                                      frame["info"],
-                                      id
-                                  ])
-            dbManager.close()
-            return success.return_response(status=200,message="Frame updated successfully")
-        else:
-            return error.return_response(status=400,message="Need JSON data")
-    else:
-        return error.return_response(status=400,message="Need an ID")
-
-
-# DELETE one frame
-@frames.route('/', methods=['DELETE'])
-@frames.route('/<id>', methods=['DELETE'])
-def apiDeleteFrame(id=None):
-    if id:
-        dbManager = initDb()
-        dbManager.queryInsert(
-            "DELETE FROM `Frame` WHERE `Frame`.`id` = ?", [id])
-        dbManager.close()
-        return success.return_response(status=200,message="Frame deleted successfully")
-    else:
-        return error.return_response(status=400,message="Need an ID")
+@frames.route('/macToInsert', methods=['GET'])
+def apiGetMacToInsert():
+    dbManager = initDb()
+    req = "SELECT Frame.macAddrSource as macAddr, MAX(date) as date FROM Frame LEFT JOIN Device ON Device.macAddr = Frame.macAddrSource WHERE Device.macAddr IS NULL GROUP BY macAddrSource UNION SELECT Frame.macAddrDest, MAX(date)FROM Frame LEFT JOIN Device ON Device.macAddr = Frame.macAddrDest WHERE Device.macAddr IS NULL GROUP BY macAddrDest"
+    data = dbManager.queryGet(req, [])
+    objects_list = []
+    for row in data:
+        d = {}
+        d["macAddr"] = row[0]
+        d["date"] = row[1]
+        objects_list.append(d)
+    dbManager.close()
+    return jsonify(objects_list)

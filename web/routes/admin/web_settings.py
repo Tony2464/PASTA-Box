@@ -1,3 +1,4 @@
+from os import system
 from flask import Blueprint, json, render_template
 from flask.helpers import url_for
 
@@ -19,5 +20,6 @@ web_settings = Blueprint("web_settings", __name__)
 
 @web_settings.route('/')
 @web_settings.route('/system/')
-def getFrames():
-    return render_template('pages/system_settings.html')
+def systemHomepage():
+    configPasta = getConfig()
+    return render_template('pages/system_settings.html', content=configPasta)

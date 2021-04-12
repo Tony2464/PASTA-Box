@@ -17,19 +17,19 @@
                     <div class="row">
                         <legend class="col-form-label pt-0"><u>IP address :</u></legend>
                     </div>
-                    <input type="text" class="form-control" id="ipAddr" placeholder="192.168.1.30">
+                    <input type="text" class="form-control" id="ipAddr" value="{{content.ipAddr}}">
                 </div>
                 <div class="form-group col-md-6">
                     <div class="row">
                         <legend class="col-form-label pt-0"><u>Netmask :</u></legend>
                     </div>
-                    <input type="text" class="form-control" id="netmask" placeholder="255.255.255.0">
+                    <input type="text" class="form-control" id="netmask" value="{{content.netmask}}">
                 </div>
                 <div class="form-group col-md-6">
                     <div class="row">
                         <legend class="col-form-label pt-0"><u>Gateway :</u></legend>
                     </div>
-                    <input type="text" class="form-control" id="gateway" placeholder="192.168.1.1">
+                    <input type="text" class="form-control" id="gateway" value="{{content.gateway}}">
                 </div>
                     <button style="margin-top:2em;width:100%;" onclick="" type="button"
                         class="btn btn-primary">Save</button>
@@ -46,7 +46,7 @@
                     <label style="display: inline;" class="col-sm-2 col-form-label"><u>Hostname :</u></label>
                 </div>
                 <div class="form-group col-md-6">
-                    <input type="text" class="form-control" placeholder="PASTA-Box">
+                    <input type="text" class="form-control" value="{{content.hostname}}">
                 </div>
                 <button style="margin-top:1em;" onclick="" type="button"
                     class="btn btn-primary submit-settings">Restart all the services</button>

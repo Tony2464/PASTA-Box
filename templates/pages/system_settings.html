@@ -8,7 +8,7 @@
         <div class="divider div-transparent div-arrow-down"></div>
     </div>
     <div style="padding-right:inherit;" class="col-md-6 half-body">
-        <h3 style="text-align: center;">Network Settings</h3>
+        <h3 style="text-align: center;">Main Settings</h3>
         <br id="errorAnchor">
         <br>
         <form>
@@ -31,8 +31,16 @@
                     </div>
                     <input type="text" class="form-control" id="gateway" value="{{content.gateway}}">
                 </div>
-                    <button style="margin-top:2em;width:100%;" onclick="" type="button"
-                        class="btn btn-primary">Save</button>
+                <div class="form-group col-md-6">
+                    <div class="row">
+                        <legend class="col-form-label pt-0"><u>Hostname :</u></legend>
+                    </div>
+                    <input type="text" class="form-control" id="hostname" value="{{content.hostname}}">
+                </div>
+                <legend class="col-form-label pt-0"><i>Note : if you change the hostname of the Pasta-Box,
+                        don't forget to restart the system to make it effective.</i></legend>
+                <button style="margin-top:2em;width:100%;" onclick="" type="button"
+                    class="btn btn-primary">Save</button>
             </div>
         </form>
     </div><!--
@@ -41,15 +49,10 @@
         <br>
         <br>
         <form>
-            <div class="form-group row">
-                <div class="form-group col-md-6">
-                    <label style="display: inline;" class="col-sm-2 col-form-label"><u>Hostname :</u></label>
-                </div>
-                <div class="form-group col-md-6">
-                    <input type="text" class="form-control" value="{{content.hostname}}">
-                </div>
-                <button style="margin-top:1em;" onclick="" type="button"
-                    class="btn btn-primary submit-settings">Restart all the services</button>
+            <div class="form-group row" style="margin-top:1em;">
+
+                <button onclick="" type="button" class="btn btn-primary submit-settings">Restart all the
+                    services</button>
             </div>
         </form>
         <div class="form-row">

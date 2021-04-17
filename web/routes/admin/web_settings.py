@@ -1,6 +1,6 @@
-from os import system
-from flask import Blueprint, json, render_template
+from flask import Blueprint, json, render_template, request
 from flask.helpers import url_for
+from flask_http_response import success, result, error
 
 # Local
 import database.db_config as config
@@ -23,3 +23,30 @@ web_settings = Blueprint("web_settings", __name__)
 def systemHomepage():
     configPasta = getConfig()
     return render_template('pages/system_settings.html', content=configPasta)
+
+
+@web_settings.route('/system/', methods=['POST'])
+def updateConfig():
+    config = request.get_json()
+
+    res = applyConfig(config)
+    if(res != 0):
+        return switchError(res)
+    else:
+        return success.return_response(status=200)
+
+
+# All the errors from the function verifyConfig in systemSettings.py
+
+def switchError(result):
+    switcher = {
+
+        -1: "error_ip",
+        -2: "error_gw",
+        -3: "error_hostname",
+        -4: "len_hostname",
+        -5: "error_mask"
+
+    }
+
+    return switcher.get(result, 1)

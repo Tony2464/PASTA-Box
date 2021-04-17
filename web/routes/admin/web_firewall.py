@@ -33,7 +33,7 @@ def addRule():
 
     res = buildCustomRules(Rule, True)
     if res != 0:
-        return switchError(result)
+        return switchError(res)
 
     requests.post("http://localhost/api/rules", json=Rule)
     return success.return_response(status=200)

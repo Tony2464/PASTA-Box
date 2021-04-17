@@ -2,69 +2,52 @@ from datetime import datetime
 import requests
 import json
 
-# Api url base
-
-
+# URL base of the API
 def apiUrlBase(path):
     return "http://localhost/api/" + path
 
-# convert string to date format
-
-
+# Format string in GMT format
 def stringToDate(string):
     return datetime.strptime(string, "%a, %d %b %Y %H:%M:%S %Z")
 
-# Insert data with API
+# Return date interval
+def dayDiff(date1, date2):
+    return (date1-date2)
 
-
+# Insert data in API
 def insertData(url, params=None):
     requests.post(url, json=params)
     return 0
 
-
+# Get data from API
 def getData(url, params=None):
     r = requests.get(url, params)
     data = r.json()
     return data
 
-
+# Update data in API
 def updateData(url, params=None):
     requests.put(url, json=params)
     return 0
 
-
+# Update data in API
 def updateDevice(deviceId, params):
     updateData(apiUrlBase("devices/"+deviceId), params)
 
-# Get all unique and last MAC address
-
-# def getUniqueMacAddr():
-#     r = requests.get('http://localhost/api/frames/macAddr')
-#     data = r.json()
-#     return data
-
-# Get MAC to insert
-
-
+# Get all the new MAC not present in device table
 def getMacToInsert():
     return getData(apiUrlBase("frames/macToInsert"))
 
 # Get last frame from MAC address
-
-
 def getLastFrame(macAddr):
     params = {"limit": 1, "macSourceAndDest": macAddr}
     return getData(apiUrlBase("frames"), params)
 
 # Get all devices
-
-
 def getDevices():
     return getData(apiUrlBase("devices"))
 
-# Insert new mac
-
-
+# Insert new devices
 def insertNewMac():
     macs = getMacToInsert()
     for i in range(0, len(macs)):
@@ -75,7 +58,7 @@ def insertNewMac():
         insertData(apiUrlBase("devices"), params)
     return 0
 
-
+# Check the last IP of a device
 def insertNewIp():
     devices = getDevices()
     for i in range(0, len(devices)):
@@ -104,9 +87,7 @@ def insertNewIp():
                 updateDevice(deviceId, params)
     return 0
 
-# Insert new date
-
-
+# Check the last time the device has been seen
 def insertNewDate():
     devices = getDevices()
     for i in range(0, len(devices)):
@@ -123,15 +104,7 @@ def insertNewDate():
             updateDevice(deviceId, params)
     return 0
 
-# Return date interval
-
-
-def dayDiff(date1, date2):
-    return (date1-date2)
-
 # Check the status of a device
-
-
 def insertStatus():
     with open("conf/config_insert_devices.json", "r+") as configFile:
         data = json.load(configFile)
@@ -143,7 +116,7 @@ def insertStatus():
             daysDiff = dayDiff(datetime.today(), lastConnection).days
             if (daysDiff < int(dayLimit)):
                 params = {
-                    "activeStatus":1 
+                    "activeStatus": 1
                 }
                 updateDevice(deviceId, params)
             else:

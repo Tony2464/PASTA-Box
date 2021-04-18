@@ -17,25 +17,29 @@
                     <div class="row">
                         <legend class="col-form-label pt-0"><u>IP address :</u></legend>
                     </div>
-                    <input type="text" class="form-control" id="ipAddr" value="{{content.ipAddr}}">
+                    <input onkeyup="checkIP('ipAddr')" type="text" class="form-control" id="ipAddr"
+                        value="{{content.ipAddr}}">
                 </div>
                 <div class="form-group col-md-6">
                     <div class="row">
                         <legend class="col-form-label pt-0"><u>Netmask :</u></legend>
                     </div>
-                    <input type="text" class="form-control" id="netmask" value="{{content.netmask}}">
+                    <input onkeyup="checkIP('netmask')" type="text" class="form-control" id="netmask"
+                        value="{{content.netmask}}">
                 </div>
                 <div class="form-group col-md-6">
                     <div class="row">
                         <legend class="col-form-label pt-0"><u>Gateway :</u></legend>
                     </div>
-                    <input type="text" class="form-control" id="gateway" value="{{content.gateway}}">
+                    <input onkeyup="checkIP('gateway')" type="text" class="form-control" id="gateway"
+                        value="{{content.gateway}}">
                 </div>
                 <div class="form-group col-md-6">
                     <div class="row">
                         <legend class="col-form-label pt-0"><u>Hostname :</u></legend>
                     </div>
-                    <input type="text" class="form-control" id="hostname" value="{{content.hostname}}">
+                    <input onkeyup="" type="text" class="form-control" id="hostname"
+                        value="{{content.hostname}}">
                 </div>
                 <legend class="col-form-label pt-0"><i>Note : if you change the hostname of the Pasta-Box,
                         don't forget to restart the system to make it effective.</i></legend>
@@ -69,6 +73,7 @@
 {% endblock %}
 {% block js %}
 
-<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/form.js') }}"></script>
+<script src="{{ url_for('static', filename='js/network.js') }}"></script>
 
 {% endblock %}

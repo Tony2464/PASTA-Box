@@ -13,7 +13,10 @@ function checkIP(id) {
     let input = document.getElementById(id).value.trim();
     if (checkIpVersion(input) == 3) {
 
-        displayError("Invalid IP address");
+        if (id == "netmask")
+            displayError("Invalid netmask");
+        else
+            displayError("Invalid IP address");
         return;
 
     } else if (testSameIpVersion() == 4) {
@@ -28,8 +31,13 @@ function checkIP(id) {
 
 function testSameIpVersion() {
 
-    let ip1 = document.getElementById('ipAddrSrc').value.trim();
-    let ip2 = document.getElementById('ipAddrDst').value.trim();
+    let ip1 = document.getElementById('ipAddrSrc');
+    let ip2 = document.getElementById('ipAddrDst');
+
+    if (ip1 == null || ip2 == null) return 0
+
+    ip1 = ip1.value.trim();
+    ip2 = ip2.value.trim();
 
     let versionSrc = 0;
     let versionDst = 0;

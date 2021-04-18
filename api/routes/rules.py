@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from flask_http_response import success, error
 
 # Local
 import database.db_config as config
@@ -52,7 +53,7 @@ def apiRulesId(id=None):
         d["ipVersion"] = data[0][6]
         return jsonify(d)
     else:
-        return "Error : Need an id. "
+        return error.return_response(status=400,message="Need an ID")
 
 
 # POST one rule
@@ -78,9 +79,9 @@ def apiRulesCreate():
                                   rule["protocol"],
                                   rule["ipVersion"]
                               ])
-        return "Create Success"
+        return success.return_response(status=200,message="Rule added successfully")
     else:
-        return "Error : Need json data"
+        return error.return_response(status=400,message="Need JSON data")
 
 
 # DELETE one frame
@@ -91,6 +92,6 @@ def apiRulesDelete(id=None):
     if id:
         dbManager.queryInsert(
             "DELETE FROM RuleFirewall WHERE id = ?", [id])
-        return "Delete Success"
+        return success.return_response(status=200,message="Rule deleted successfully")
     else:
-        return "Error : Need an id."
+        return error.return_response(status=400,message="Need an ID")

@@ -25,6 +25,7 @@ app = Flask(__name__)
 # API
 app.register_blueprint(frames, url_prefix="/api/frames")
 app.register_blueprint(rules, url_prefix="/api/rules")
+app.register_blueprint(devices, url_prefix="/api/devices")
 
 # Web Pages
 app.register_blueprint(index, url_prefix="/admin")
@@ -78,8 +79,11 @@ def test_disconnect():
     print('Client disconnected')
     thread_stop_event.set()
 
-### Web Scocket for Live frames END
+### 404 web page
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('pages/404.html'), 404
 
 if __name__ == "__main__":
     # app.run(host=config.hostConfig, debug=config.debugMode)

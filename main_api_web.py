@@ -15,6 +15,7 @@ from database import db_manager
 # API routes
 from api.routes.frames import frames
 from api.routes.rules import rules
+from api.routes.devices import devices
 
 # Web pages routes
 from web.routes.admin.index import index

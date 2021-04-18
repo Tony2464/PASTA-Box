@@ -3,20 +3,16 @@
 
 {% block content %}
 <div class="container-fluid">
-    <br>
-    <div class="row text-center">
-        <div class="col">
-            <a href="/admin/frames/live" class="badge badge-pill badge-primary">Live Frames</a>
-        </div>
-    </div>
-    <br>
+    <h1 style="text-align: center;">FRAMES VIEWER</h1>
+    <div class="divider div-transparent div-arrow-down"></div>
     <form>
-        <p>
-            <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseSearch" role="button"
-                aria-expanded="false" aria-controls="collapseSearch">
-                Advanced Search <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="" width="20"
-                    height="20">
+        <p class="text-center">
+            <a class="btn btn-primary my-2" data-bs-toggle="collapse" href="#collapseSearch" role="button" aria-expanded="false"
+                aria-controls="collapseSearch">
+                Advanced Search <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="" width="20" height="20">
             </a>
+            <a class="btn btn-primary my-2" href="/admin/frames/live">Live Frames <img
+                    src="{{ url_for('static', filename='icons/broadcast.svg') }}" alt="Broadcast" width="20" height="20"></a>
         </p>
         <div class="collapse" id="collapseSearch">
             <div class="card card-body">
@@ -230,7 +226,7 @@
                     <div class="form-row">
                         <div class="col">
                             <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">Begin</span>
+                                <span class="input-group-text" id="addon-wrapping">Start</span>
                                 <input type="date" class="form-control inputs" id="startDate" placeholder="">
                             </div>
                         </div>
@@ -295,17 +291,8 @@
 
 {% block js %}
 
-<script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
 <script>
     $(document).ready(function () {
-        //Max date input
-        /*
-        $(function () {
-            $('[type="date"]').prop('max', function () {
-                return new Date().toJSON().split('T')[0];
-            });
-        });
-        */
         //Table search
         $("#myInput").on("keyup", function () {
             var value = $(this).val().toLowerCase();
@@ -416,19 +403,15 @@
             }
         }
 
-
-        console.log(params)
+        //console.log(params)
 
         $.ajax({
             method: "GET",
             url: '/api/frames',
             data: params,
             success: function (response) {
-                //console.log(JSON.stringify(response));
                 $('#myTable').empty();
                 $.each(response, function (index) {
-                    //console.log(response)
-                    //console.log(index)
                     $('#myTable').append(
                         '<tr>' +
                         '<td>' + response[index].ipSource + '</td>' +
@@ -445,7 +428,6 @@
                         '<td>' + response[index].info + '</td>' +
                         '</tr>'
                     )
-                    //console.log(response[index])
                 });
             },
             error: function (error) {

@@ -83,7 +83,6 @@ function getDomain() {
 
     let domain = window.location.href;
     let domainParts = domain.split('/');
-
     return domainParts.slice(0, 3).join('/');
 
 }
@@ -107,6 +106,35 @@ function returnProtocol(protocolNb) {
         default:
             return "X";
             break;
+
+    }
+
+}
+
+function checkHostname(id) {
+
+    let hostname = document.getElementById(id);
+    if (hostname != null) hostname = hostname.value.trim();
+
+    var stringRegexHostname = /^([a-zA-Z0-9](?:(?:[a-zA-Z0-9-]*|(?<!-)\.(?![-.]))*[a-zA-Z0-9]+)?)$/gm;
+    var regexHostname = new RegExp(stringRegexHostname);
+
+    if (hostname.length == 0) return;
+    if (hostname.length < 255) {
+
+        if (regexHostname.test(hostname)) {
+
+            flushAlerts();
+
+        } else {
+
+            displayError("This hostname is not formatted correctly or contains some unauthorized characters");
+
+        }
+
+    } else {
+
+        displayError("Hostname is too long");
 
     }
 

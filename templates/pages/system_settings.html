@@ -38,12 +38,12 @@
                     <div class="row">
                         <legend class="col-form-label pt-0"><u>Hostname :</u></legend>
                     </div>
-                    <input onkeyup="" type="text" class="form-control" id="hostname"
+                    <input onkeyup="checkHostname('hostname')" type="text" class="form-control" id="hostname"
                         value="{{content.hostname}}">
                 </div>
                 <legend class="col-form-label pt-0"><i>Note : if you change the hostname of the Pasta-Box,
                         don't forget to restart the system to make it effective.</i></legend>
-                <button style="margin-top:2em;width:100%;" onclick="" type="button"
+                <button style="margin-top:2em;width:100%;" onclick="checkMainSettingsInputs()" type="button"
                     class="btn btn-primary">Save</button>
             </div>
         </form>
@@ -75,5 +75,6 @@
 
 <script src="{{ url_for('static', filename='js/form.js') }}"></script>
 <script src="{{ url_for('static', filename='js/network.js') }}"></script>
+<script src="{{ url_for('static', filename='js/settings.js') }}"></script>
 
 {% endblock %}

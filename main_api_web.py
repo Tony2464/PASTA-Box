@@ -1,23 +1,23 @@
-from types import new_class
-from flask import Flask, jsonify
+from flask import Flask, redirect
+from flask.helpers import url_for
 from flask.templating import render_template
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO
 from time import sleep
 from threading import Thread, Event
-from subprocess import Popen, PIPE, CalledProcessError
+from subprocess import Popen, PIPE
 
 # Local imports
 import web.conf.config as config
 import database.db_config as config
-from database import db_manager
 
 # Import all routes
 # API routes
 from api.routes.frames import frames
 from api.routes.rules import rules
+from api.routes.devices import devices
 
 # Web pages routes
-from web.routes.admin.index import index
+from web.routes.admin.index import homepage, index
 from web.routes.admin.web_frames import web_frames
 from web.routes.admin.web_firewall import web_firewall
 
@@ -35,7 +35,7 @@ app.register_blueprint(web_firewall, url_prefix="/admin/firewall")
 
 @app.route('/')
 def home():
-    return "Index page"
+    return redirect("/admin", code=301)
 
 ### Web Scocket for Live frames
 

@@ -9,10 +9,10 @@ function checkMainSettingsInputs() {
 
     }
 
-    if (config['ipAddr'].value == "" || config['ipAddr'] == null){
+    if (config['ipAddr'].value == "" || config['ipAddr'] == null) {
 
-      displayError("The IP address can't be empty");
-      return;
+        displayError("The IP address can't be empty");
+        return;
 
     }
 
@@ -38,6 +38,67 @@ function checkMainSettingsInputs() {
     }
 
     flushAlerts();
-    // sendConfig(config);
+    sendConfig(config);
+
+}
+
+function sendConfig(config) {
+
+    var req = new XMLHttpRequest();
+    req.onreadystatechange = function () {
+        if (req.readyState == 4) {
+            if (req.status == 200) {
+
+                console.log(req.responseText);
+                displaySuccess("Configuration updated successfully !");
+
+            } else {
+
+                displayConfigError(req.responseText);
+
+            }
+
+        }
+    }
+
+    req.open('POST', '/admin/settings/system');
+    req.setRequestHeader("Content-type", "application/json");
+    req.send(JSON.stringify({
+        ipAddr: config['ipAddr'].value,
+        netmask: config['netmask'].value,
+        gateway: config['gateway'].value,
+        hostname: config['hostname'].value
+    }));
+}
+
+function displayConfigError(error) {
+
+    switch (error) {
+
+        case "error_ip":
+            displayError("Invalid IP address");
+            break;
+
+        case "error_gw":
+            displayError("Invalid gateway");
+            break;
+
+        case "error_hostname":
+            displayError("Invalid hostname, maybe it's not formatted correctly or contains some unauthorized characters");
+            break;
+
+        case "error_gw":
+            displayError("Invalid gateway");
+            break;
+
+        case "error_mask":
+            displayError("Invalid netmask");
+            break;
+
+        default:
+            console.log(error); //debugging
+            displayError("Oups, server error :(");
+
+    }
 
 }

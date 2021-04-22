@@ -28,6 +28,17 @@ ipv6 = '''(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|
 # Regex hostname
 hostname = '''^([a-zA-Z0-9](?:(?:[a-zA-Z0-9-]*|(?<!-)\.(?![-.]))*[a-zA-Z0-9]+)?)$'''
 
+# Settings configuration file
+pastaConfigFile = "/PASTA-Box/settings/config.json"
+
+
+# Check netmask
+
+def isNetmask(string):
+
+    octets = string.split(".")
+    return len(octets) == 4 and all(o.isdigit() and 0 <= int(o) < 256 for o in octets)
+
 
 # Check IP version
 
@@ -43,8 +54,7 @@ def checkIP(string):
 # Get the PASTA-Box configuration from settings/config.json
 
 def getConfig():
-    config = "/PASTA-Box/settings/config.json"
-    with open(config, encoding="utf8", errors="ignore") as configFile:
+    with open(pastaConfigFile, encoding="utf8", errors="ignore") as configFile:
         configData = configFile.read()
         configFile.close()
     return json.loads(configData)
@@ -65,7 +75,7 @@ def verifyConfig(userConfig):
     if(len(userConfig['hostname']) > 255 or len(userConfig['hostname']) == 0):
         return -4
 
-    if(checkIP(userConfig['netmask']) == 3):
+    if(isNetmask(userConfig['netmask']) == False):
         return -5
 
     return 0
@@ -78,7 +88,7 @@ def applyConfig(userConfig):
     if(error < 0):
         return error
 
-    with open("config.json", "r+") as configFile:
+    with open(pastaConfigFile, "r+") as configFile:
         jsonData = json.load(configFile)
 
         jsonData["ipAddr"] = userConfig['ipAddr']

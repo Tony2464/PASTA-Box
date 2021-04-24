@@ -1,6 +1,7 @@
 import os
 import json
 import re
+import socket
 
 # Regex IPv4
 ipv4 = '''^(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(  
@@ -30,6 +31,9 @@ hostname = '''^([a-zA-Z0-9](?:(?:[a-zA-Z0-9-]*|(?<!-)\.(?![-.]))*[a-zA-Z0-9]+)?)
 
 # Settings configuration file
 pastaConfigFile = "/PASTA-Box/settings/config.json"
+
+# Network bridge interface
+interface = "br0"
 
 
 # Check netmask
@@ -102,3 +106,45 @@ def applyConfig(userConfig):
         configFile.close()
 
     return 0
+
+
+# Read configuration files from the operating system
+
+def readSystemFiles():
+    with open("/etc/network/interfaces", encoding="utf8", errors="ignore") as networkFile:
+        content = networkFile.readlines()
+        networkFile.close()
+    
+    systemConfig = {
+        "ipAddr": "",
+        "netmask": "",
+        "gateway": "",
+        "hostname": socket.gethostname()
+    }
+
+    for i in range(len(content)):
+        print(content[i])
+        if(content[i].find("auto " + interface) != -1):
+            i += 1
+            while(i < len(content) and content[i].find("auto") == -1):
+                if(content[i].find("address") != -1):
+                    systemConfig['ipAddr'] = content[i].split(' ')[len(content[i].split(' ')) - 1][:-2]
+                
+                if(content[i].find("netmask") != -1):
+                    systemConfig['netmask'] = content[i].split(' ')[len(content[i].split(' ')) - 1][:-2]
+                
+                if(content[i].find("gateway") != -1):
+                    systemConfig['gateway'] = content[i].split(' ')[len(content[i].split(' ')) - 1][:-2]
+                
+                i += 1
+    
+    return systemConfig
+
+
+# Change configuration files in the operating system
+
+def updateSystemFiles(userConfig):
+    localConfig = readSystemFiles()
+
+
+# print(readSystemFiles())

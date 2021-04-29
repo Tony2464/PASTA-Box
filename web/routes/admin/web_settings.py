@@ -33,7 +33,7 @@ def updateConfig():
     if(res != 0):
         return switchError(res)
     else:
-        # updateSystemFiles(config)
+        updateSystemFiles(config)
         return success.return_response(status=200)
 
 

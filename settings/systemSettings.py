@@ -114,7 +114,7 @@ def readSystemFiles():
     with open("/etc/network/interfaces", encoding="utf8", errors="ignore") as networkFile:
         content = networkFile.readlines()
         networkFile.close()
-    
+
     systemConfig = {
         "ipAddr": "",
         "netmask": "",
@@ -123,21 +123,20 @@ def readSystemFiles():
     }
 
     for i in range(len(content)):
-        print(content[i])
         if(content[i].find("auto " + interface) != -1):
             i += 1
             while(i < len(content) and content[i].find("auto") == -1):
                 if(content[i].find("address") != -1):
                     systemConfig['ipAddr'] = content[i].split(' ')[len(content[i].split(' ')) - 1][:-2]
-                
+
                 if(content[i].find("netmask") != -1):
                     systemConfig['netmask'] = content[i].split(' ')[len(content[i].split(' ')) - 1][:-2]
-                
+
                 if(content[i].find("gateway") != -1):
                     systemConfig['gateway'] = content[i].split(' ')[len(content[i].split(' ')) - 1][:-2]
-                
+
                 i += 1
-    
+
     return systemConfig
 
 
@@ -145,6 +144,15 @@ def readSystemFiles():
 
 def updateSystemFiles(userConfig):
     localConfig = readSystemFiles()
+    if(localConfig['hostname'] != userConfig['hostname']):
+        os.system("sudo /PASTA-Box/settings/change_hostname.sh " + userConfig['hostname'])
 
 
-# print(readSystemFiles())
+# testConfig = {
+#    "ipAddr": "",
+#    "netmask": "",
+#    "gateway": "",
+#    "hostname": "Risitas"
+# }
+
+# updateSystemFiles(testConfig)

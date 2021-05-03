@@ -20,6 +20,7 @@ from api.routes.devices import devices
 from web.routes.admin.index import homepage, index
 from web.routes.admin.web_frames import web_frames
 from web.routes.admin.web_firewall import web_firewall
+from web.routes.admin.web_mapping import web_mapping
 
 app = Flask(__name__)
 # API
@@ -31,6 +32,7 @@ app.register_blueprint(devices, url_prefix="/api/devices")
 app.register_blueprint(index, url_prefix="/admin")
 app.register_blueprint(web_frames, url_prefix="/admin/frames")
 app.register_blueprint(web_firewall, url_prefix="/admin/firewall")
+app.register_blueprint(web_mapping, url_prefix="/admin/map")
 
 
 @app.route('/')

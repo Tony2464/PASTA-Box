@@ -39,10 +39,10 @@
                         <legend class="col-form-label pt-0"><u>Hostname :</u></legend>
                     </div>
                     <input onkeyup="checkHostname('hostname')" type="text" class="form-control" id="hostname"
-                        value="{{content.hostname}}">
+                        value="{{content.hostname}}" {% if content.restart == "true" %} disabled {% endif %}>
                 </div>
-                <legend class="col-form-label pt-0"><i>Note : if you change the hostname of the Pasta-Box,
-                        don't forget to restart the system to make it effective.</i></legend>
+                <legend class="col-form-label pt-0"><i>Note : if you changed the hostname of the Pasta-Box,
+                        you have to restart the system to make it effective.</i></legend>
                 <button style="margin-top:2em;width:100%;" onclick="checkMainSettingsInputs()" type="button"
                     class="btn btn-primary">Save</button>
             </div>

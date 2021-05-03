@@ -32,6 +32,9 @@ hostname = '''^([a-zA-Z0-9](?:(?:[a-zA-Z0-9-]*|(?<!-)\.(?![-.]))*[a-zA-Z0-9]+)?)
 # Settings configuration file
 pastaConfigFile = "/PASTA-Box/settings/config.json"
 
+# Temp file
+pastaNetworkSettingsFile = "/PASTA-Box/settings/ipSettings.temp"
+
 # Network bridge interface
 interface = "br0"
 
@@ -108,12 +111,19 @@ def applyConfig(userConfig):
     return 0
 
 
-# Read configuration files from the operating system
+# Parse network file in Raspbian
 
-def readSystemFiles():
+def readNetworkFile():
     with open("/etc/network/interfaces", encoding="utf8", errors="ignore") as networkFile:
         content = networkFile.readlines()
         networkFile.close()
+    return content
+
+
+# Read configuration files from the operating system
+
+def parseNetworkFile():
+    data = readNetworkFile()
 
     systemConfig = {
         "ipAddr": "",
@@ -122,18 +132,18 @@ def readSystemFiles():
         "hostname": socket.gethostname()
     }
 
-    for i in range(len(content)):
-        if(content[i].find("auto " + interface) != -1):
+    for i in range(len(data)):
+        if(data[i].find("auto " + interface) != -1):
             i += 1
-            while(i < len(content) and content[i].find("auto") == -1):
-                if(content[i].find("address") != -1):
-                    systemConfig['ipAddr'] = content[i].split(' ')[len(content[i].split(' ')) - 1][:-2]
+            while(i < len(data) and data[i].find("auto") == -1):
+                if(data[i].find("address") != -1):
+                    systemConfig['ipAddr'] = data[i].split(' ')[len(data[i].split(' ')) - 1][:-1] # Delete \n
 
-                if(content[i].find("netmask") != -1):
-                    systemConfig['netmask'] = content[i].split(' ')[len(content[i].split(' ')) - 1][:-2]
+                if(data[i].find("netmask") != -1):
+                    systemConfig['netmask'] = data[i].split(' ')[len(data[i].split(' ')) - 1][:-1] # Delete \n
 
-                if(content[i].find("gateway") != -1):
-                    systemConfig['gateway'] = content[i].split(' ')[len(content[i].split(' ')) - 1][:-2]
+                if(data[i].find("gateway") != -1):
+                    systemConfig['gateway'] = data[i].split(' ')[len(data[i].split(' ')) - 1][:-1] # Delete \n
 
                 i += 1
 
@@ -143,16 +153,52 @@ def readSystemFiles():
 # Change configuration files in the operating system
 
 def updateSystemFiles(userConfig):
-    localConfig = readSystemFiles()
-    if(localConfig['hostname'] != userConfig['hostname']):
+    localConfig = parseNetworkFile()
+    if(localConfig['hostname'] != userConfig['hostname'] and localConfig['restart'] == "false"):
         os.system("sudo /PASTA-Box/settings/change_hostname.sh " + userConfig['hostname'])
+        setRestart()
+    
+    if((localConfig['ipAddr'] != userConfig['ipAddr']) or (localConfig['netmask'] != userConfig['netmask']) or (localConfig['gateway'] != userConfig['gateway'])):
+        data = readNetworkFile()
+        for i in range(len(data)):
+            if(data[i].find("auto " + interface) != -1): 
+                i += 1
+                while(i < len(data) and data[i].find("auto") == -1):
+                    if(data[i].find("address") != -1):
+                        data[i] = (data[i].split(' ')[0] + ' ' + userConfig['ipAddr'] + '\n')
 
+                    if(data[i].find("netmask") != -1):
+                        data[i] = (data[i].split(' ')[0] + ' ' + userConfig['netmask'] + '\n')
+                    
+                    if(data[i].find("gateway") != -1):
+                        data[i] = (data[i].split(' ')[0] + ' ' + userConfig['gateway'] + '\n')
+                    
+                    i += 1
+                    
+        with open(pastaNetworkSettingsFile, "w") as networkTempFile:
+            networkTempFile.writelines(data)
+            networkTempFile.close()
+        os.system("sudo /PASTA-Box/settings/change_IP.sh ")
+
+        return data
+
+
+# Set restart = true in config.json
+
+def setRestart():
+    with open(pastaConfigFile, "r+") as configFile:
+        jsonData = json.load(configFile)
+
+        jsonData["restart"] = "true"
+
+        configFile.seek(0)
+        json.dump(jsonData, configFile, indent=4)
+        configFile.truncate()
+        configFile.close()
 
 # testConfig = {
-#    "ipAddr": "",
-#    "netmask": "",
-#    "gateway": "",
-#    "hostname": "Risitas"
+#    "ipAddr": "192.168.5.2",
+#    "netmask": "255.255.255.0",
+#    "gateway": "192.168.5.1",
+#    "hostname": "PASTA-Box"
 # }
-
-# updateSystemFiles(testConfig)

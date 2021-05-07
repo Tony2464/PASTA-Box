@@ -55,16 +55,72 @@
         <form>
             <div class="form-group row" style="margin-top:1em;">
 
-                <button onclick="" type="button" class="btn btn-primary submit-settings">Restart all the
+                <button data-bs-toggle="modal" data-bs-target="#ModalCmd1" type="button" class="btn btn-primary submit-settings">Restart all the
                     services</button>
             </div>
         </form>
         <div class="form-row">
             <div class="form-group col-md-6">
-                <button style="width: 100%;" onclick="" type="button" class="btn btn-danger">Restart Pasta-Box</button>
+                <button data-bs-toggle="modal" data-bs-target="#ModalCmd2" style="width: 100%;" type="button" class="btn btn-danger">Restart Pasta-Box</button>
             </div>
             <div class="form-group col-md-6">
-                <button style="width: 100%;" onclick="" type="button" class="btn btn-danger">Shutdown Pasta-Box</button>
+                <button data-bs-toggle="modal" data-bs-target="#ModalCmd3" style="width: 100%;" type="button" class="btn btn-danger">Shutdown Pasta-Box</button>
+            </div>
+        </div>
+        <div class="modal fade" id="ModalCmd1" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Restart all the services</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Do you really want to restart all the services of the PASTA-Box ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                        <button onclick="sendComand('restart_services')" type="button" data-bs-dismiss="modal"
+                            class="btn btn-primary">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="ModalCmd2" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Restart the PASTA-Box</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Do you really want to restart the PASTA-Box ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                        <button onclick="sendComand('restart')" type="button" data-bs-dismiss="modal"
+                            class="btn btn-primary">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="ModalCmd3" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Shutdown the PASTA-Box</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Do you really want to shutdown the PASTA-Box ?
+                        <br>
+                        Your system will neither be monitored nor secure.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                        <button onclick="sendComand('shutdown')" type="button" data-bs-dismiss="modal"
+                            class="btn btn-primary">Yes</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

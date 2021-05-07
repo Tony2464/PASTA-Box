@@ -102,3 +102,30 @@ function displayConfigError(error) {
     }
 
 }
+
+function sendComand(cmd){
+
+    var req = new XMLHttpRequest();
+    req.onreadystatechange = function () {
+        if (req.readyState == 4) {
+            if (req.status == 200) {
+
+                console.log(req.responseText);
+                displaySuccess("Configuration updated successfully !");
+
+            } else {
+
+                displayConfigError(req.responseText);
+
+            }
+
+        }
+    }
+
+    req.open('POST', '/admin/settings/actions');
+    req.setRequestHeader("Content-type", "application/data");
+    req.send(JSON.stringify({
+        action: cmd
+    }));
+
+}

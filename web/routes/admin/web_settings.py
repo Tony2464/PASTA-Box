@@ -7,6 +7,7 @@ import database.db_config as config
 from database import db_manager
 
 from settings.systemSettings import *
+from settings.systemCommands import *
 
 dbManager = db_manager.DbManager(
     config.dbConfig["user"],
@@ -46,8 +47,19 @@ def switchError(result):
         -2: "error_gw",
         -3: "error_hostname",
         -4: "len_hostname",
-        -5: "error_mask"
+        -5: "error_mask",
+        -6: "error_cmd"
 
     }
 
     return switcher.get(result, 1)
+
+@web_settings.route('/system/actions/', methods=['POST'])
+def getCommand():
+    action = request.get_json()
+    res = getCmd(action['command'])
+
+    if(res != 0):
+        return switchError(res)
+    else:
+        return success.return_response(status=200)

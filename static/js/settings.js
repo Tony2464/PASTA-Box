@@ -95,6 +95,10 @@ function displayConfigError(error) {
             displayError("Invalid netmask");
             break;
 
+        case "error_cmd":
+            displayError("Invali command");
+            break;
+
         default:
             console.log(error); //debugging
             displayError("Oups, server error :(");
@@ -103,7 +107,7 @@ function displayConfigError(error) {
 
 }
 
-function sendComand(cmd){
+function sendComand(cmd) {
 
     var req = new XMLHttpRequest();
     req.onreadystatechange = function () {
@@ -111,7 +115,23 @@ function sendComand(cmd){
             if (req.status == 200) {
 
                 console.log(req.responseText);
-                displaySuccess("Configuration updated successfully !");
+
+                switch (cmd) {
+
+                    case "restart":
+                        displaySuccess("The PASTA-Box will restart in few seconds...");
+                        break;
+
+                    case "shutdown":
+                        displaySuccess("The PASTA-Box will shutdown in few seconds...");
+                        break;
+
+                    case "restart_services":
+                        displaySuccess("The PASTA-Box is reloading all the services...");
+                        break;
+
+                }
+
 
             } else {
 
@@ -122,10 +142,10 @@ function sendComand(cmd){
         }
     }
 
-    req.open('POST', '/admin/settings/actions');
-    req.setRequestHeader("Content-type", "application/data");
+    req.open('POST', '/admin/settings/system/actions');
+    req.setRequestHeader("Content-type", "application/json");
     req.send(JSON.stringify({
-        action: cmd
+        command: cmd
     }));
 
 }

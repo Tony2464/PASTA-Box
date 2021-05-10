@@ -35,4 +35,3 @@ def getCmd(cmd):
 def executeCmd(numberCmd):
     time.sleep(5)
     os.system("sudo /PASTA-Box/settings/execute_command.sh " + str(numberCmd))
-    print("efefef")

@@ -1,13 +1,11 @@
-from flask import Blueprint, json, render_template, request
-from flask.helpers import url_for
-from flask_http_response import success, result, error
-
 # Local
+
 import database.db_config as config
 from database import db_manager
-
-from settings.systemSettings import *
+from flask import Blueprint, render_template, request
+from flask_http_response import success
 from settings.systemCommands import *
+from settings.systemSettings import *
 
 dbManager = db_manager.DbManager(
     config.dbConfig["user"],
@@ -18,6 +16,7 @@ dbManager = db_manager.DbManager(
 )
 
 web_settings = Blueprint("web_settings", __name__)
+
 
 @web_settings.route('/')
 @web_settings.route('/system/')
@@ -53,6 +52,7 @@ def switchError(result):
     }
 
     return switcher.get(result, 1)
+
 
 @web_settings.route('/system/actions/', methods=['POST'])
 def getCommand():

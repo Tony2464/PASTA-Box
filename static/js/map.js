@@ -145,6 +145,13 @@ function drawMap(devices) {
             // Add computers
             deviceId = devices[i].id
             deviceIp = devices[i].ipAddr
+
+            if (devices[i].activeStatus) {
+                deviceStatus = "Active"
+            } else {
+                deviceStatus = "Not active"
+            }
+            deviceLastConnection = devices[i].lastConnection
             nodes.push({
                 id: deviceId,
                 label: "Device\n" + deviceIp,
@@ -154,63 +161,30 @@ function drawMap(devices) {
                 opacity: 1,
             });
             edges.push({ from: "thirdRange", to: deviceId, length: EDGE_LENGTH_SUB });
+
+            $("#modals").append(`
+            <div class="modal fade" id="modal`+ deviceId + `">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"><b>Device `+ deviceIp + `</b></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Status : `+ deviceStatus + `</p>
+                            <p>Last seen : `+ deviceLastConnection + `</p>
+                        </div>
+                        <div class="modal-footer">
+                            <a type="button" class="btn btn-primary" href="/admin/device/`+ deviceId + `" target="_blank">See more <img src="/static/icons/eye-fill.svg" alt="" width="20" height="20"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `)
         }
         // console.log(devices[i].ipAddr)
         // console.log(ipPrivateClass(devices[i].ipAddr))
     }
-
-    // nodes.push({
-    //     id: 2,
-    //     label: "Network",
-    //     image: DIR + "hdd-network.svg",
-    //     shape: "image",
-    // });
-    // nodes.push({
-    //     id: 3,
-    //     label: "Network",
-    //     image: DIR + "hdd-network.svg",
-    //     shape: "image",
-    // });
-    // edges.push({ from: 1, to: 2, length: EDGE_LENGTH_MAIN, color: { color: "red" } });
-    // edges.push({ from: 1, to: 3, length: EDGE_LENGTH_MAIN, color: { color: "red" } });
-
-    // for (var i = 1000; i <= 1007; i++) {
-    //     nodes.push({
-    //         id: i,
-    //         label: "Computer",
-    //         image: DIR + "laptop.svg",
-    //         shape: "image",
-    //         group: "computer",
-    //         opacity: 1,
-    //     });
-    //     edges.push({ from: 2, to: i, length: EDGE_LENGTH_SUB });
-    // }
-
-    // nodes.push({
-    //     id: 101,
-    //     label: "Printer",
-    //     image: DIR + "printer.svg",
-    //     shape: "image",
-    // });
-    // edges.push({ from: 2, to: 101, length: EDGE_LENGTH_SUB });
-
-    // nodes.push({
-    //     id: 102,
-    //     label: "Laptop",
-    //     image: DIR + "laptop.svg",
-    //     shape: "image",
-    // });
-    // edges.push({ from: 3, to: 102, length: EDGE_LENGTH_SUB });
-
-    // for (var i = 200; i <= 210; i++) {
-    //     nodes.push({
-    //         id: i,
-    //         label: "Laptop",
-    //         image: DIR + "laptop.svg",
-    //         shape: "image",
-    //     });
-    //     edges.push({ from: 3, to: i, length: EDGE_LENGTH_SUB });
-    // }
 
     // create a network
     var container = document.getElementById("mynetwork");
@@ -230,8 +204,9 @@ function drawMap(devices) {
     };
     network = new vis.Network(container, data, options);
     network.on('click', function (properties) {
-        if (properties.nodes != "")
-            alert('clicked node ' + properties.nodes);
+        if (properties.nodes != "") {
+            $("#modal" + properties.nodes).modal("show")
+        }
     });
     // network.on('nodeHover', function(properties){
     //     alert("hoverEdge");

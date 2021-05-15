@@ -20,6 +20,7 @@ from api.routes.devices import devices
 from web.routes.admin.index import homepage, index
 from web.routes.admin.web_frames import web_frames
 from web.routes.admin.web_firewall import web_firewall
+from web.routes.admin.web_settings import web_settings
 
 app = Flask(__name__)
 # API
@@ -31,16 +32,17 @@ app.register_blueprint(devices, url_prefix="/api/devices")
 app.register_blueprint(index, url_prefix="/admin")
 app.register_blueprint(web_frames, url_prefix="/admin/frames")
 app.register_blueprint(web_firewall, url_prefix="/admin/firewall")
+app.register_blueprint(web_settings, url_prefix="/admin/settings")
 
 
 @app.route('/')
 def home():
     return redirect("/admin", code=301)
 
-### Web Scocket for Live frames
+# Web Scocket for Live frames
 
 
-#turn the flask app into a socketio app
+# turn the flask app into a socketio app
 socketio = SocketIO(app, async_mode=None, logger=True, engineio_logger=True)
 
 thread = Thread()
@@ -68,7 +70,7 @@ def test_connect():
 
     thread_stop_event.clear()
 
-    #Start the random number generator thread only if the thread has not been started before.
+    # Start the random number generator thread only if the thread has not been started before.
     if not thread.isAlive():
         print("Starting Thread")
         thread = socketio.start_background_task(sendFrames)
@@ -79,7 +81,8 @@ def test_disconnect():
     print('Client disconnected')
     thread_stop_event.set()
 
-### 404 web page
+
+# 404 web page
 
 @app.errorhandler(404)
 def page_not_found(e):

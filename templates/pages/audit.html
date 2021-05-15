@@ -1,0 +1,30 @@
+{% extends "base/base.html" %}
+{% block title %} Pasta-Box - Internal Audit {% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <br>
+    <div class="container">
+        <h1 style="text-align: center;">INTERNAL AUDIT</h1>
+        <div class="divider div-transparent div-arrow-down"></div>
+    </div>
+    <div style="padding-right:inherit;" class="col-md-6 half-body">
+        <h3 style="text-align: center;">Audit mode</h3>
+        <br id="errorAnchor">
+        <br>
+        <form>
+            
+        </form>
+    </div><!--
+ --><div style="padding-left:inherit;" class="col-md-6 half-body">
+        <h3 style="text-align: center;">Alerts : </h3>
+        <br>
+        <br>
+    </div>
+</div>
+
+{% endblock %}
+{% block js %}
+
+<script src="{{ url_for('static', filename='js/form.js') }}"></script>
+
+{% endblock %}

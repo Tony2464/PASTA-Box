@@ -22,6 +22,7 @@ from web.routes.admin.web_frames import web_frames
 from web.routes.admin.web_firewall import web_firewall
 from web.routes.admin.web_mapping import web_mapping
 from web.routes.admin.web_settings import web_settings
+from web.routes.admin.web_audit import web_audit
 
 app = Flask(__name__)
 # API
@@ -35,6 +36,7 @@ app.register_blueprint(web_frames, url_prefix="/admin/frames")
 app.register_blueprint(web_firewall, url_prefix="/admin/firewall")
 app.register_blueprint(web_mapping, url_prefix="/admin/map")
 app.register_blueprint(web_settings, url_prefix="/admin/settings")
+app.register_blueprint(web_audit, url_prefix="/admin/audit")
 
 
 @app.route('/')
@@ -89,6 +91,7 @@ def test_disconnect():
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('pages/404.html'), 404
+
 
 if __name__ == "__main__":
     # app.run(host=config.hostConfig, debug=config.debugMode)

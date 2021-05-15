@@ -30,14 +30,15 @@ def apiGetDevices():
     for row in data:
         d = {}
         d["id"] = row[0]
-        d["idNetwork"] = row[1]
-        d["macAddr"] = row[2]
-        d["ipAddr"] = row[3]
-        d["securityScore"] = row[4]
-        d["netBios"] = row[5]
-        d["activeStatus"] = row[6]
-        d["firstConnection"] = row[7]
-        d["lastConnection"] = row[8]
+        d["role"] = row[1]
+        d["idNetwork"] = row[2]
+        d["macAddr"] = row[3]
+        d["ipAddr"] = row[4]
+        d["securityScore"] = row[5]
+        d["netBios"] = row[6]
+        d["activeStatus"] = row[7]
+        d["firstConnection"] = row[8]
+        d["lastConnection"] = row[9]
         objects_list.append(d)
     dbManager.close()
     return jsonify(objects_list)
@@ -60,6 +61,9 @@ def apiPostDevice():
         device = request.get_json()
 
         # Check every key and its value
+        if "role" not in device or device["role"] == "":
+            device["role"] = None
+
         if "idNetwork" not in device or device["idNetwork"] == "":
             device["idNetwork"] = None
 
@@ -84,8 +88,9 @@ def apiPostDevice():
         if "lastConnection" not in device or device["lastConnection"] == "":
             device["lastConnection"] = None
 
-        dbManager.queryInsert("INSERT INTO `Device` (`idNetwork`, `macAddr`, `ipAddr`, `securityScore`, `netBios`, `activeStatus`, `firstConnection`, `lastConnection`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        dbManager.queryInsert("INSERT INTO `Device` (`role`, `idNetwork`, `macAddr`, `ipAddr`, `securityScore`, `netBios`, `activeStatus`, `firstConnection`, `lastConnection`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                               [
+                                  device["role"],
                                   device["idNetwork"],
                                   device["macAddr"],
                                   device["ipAddr"],
@@ -115,6 +120,11 @@ def apiPutDevice(id=None):
             params = []
             req = []
             req.append("UPDATE `Device` SET ")
+
+            # role
+            if "role" in device and device["role"] != "":
+                req.append("`role` = ?")
+                params.append(device["role"])
 
             # idNetwork
             if "idNetwork" in device and device["idNetwork"] != "":

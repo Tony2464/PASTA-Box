@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_http_response import success, error
+import ipaddress
 
 # Local
 import database.db_config as config
@@ -189,3 +190,27 @@ def apiPutDevice(id=None):
 @devices.route('/<id>', methods=['DELETE'])
 def apiDeleteDevice(id=None):
     return 0
+
+# Give all devices for map
+
+
+@devices.route('/mapDevices')
+def apiMapDevices():
+    dbManager = initDb()
+    data = dbManager.queryGet("SELECT * FROM Device", [])
+    objects_list = []
+    for row in data:
+        d = {}
+        d["id"] = row[0]
+        d["idNetwork"] = row[1]
+        d["macAddr"] = row[2]
+        d["ipAddr"] = row[3]
+        d["securityScore"] = row[4]
+        d["netBios"] = row[5]
+        d["activeStatus"] = row[6]
+        d["firstConnection"] = row[7]
+        d["lastConnection"] = row[8]
+        if d["ipAddr"] != None and ipaddress.ip_address(d["ipAddr"]).is_private:
+            objects_list.append(d)
+    dbManager.close()
+    return jsonify(objects_list)

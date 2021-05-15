@@ -1,13 +1,39 @@
-var nodes = null;
-var edges = null;
-var network = null;
 
-var DIR = "/static/icons/";
-var EDGE_LENGTH_MAIN = 200;
-var EDGE_LENGTH_SUB = 200;
-
-// Called when the Visualization API is loaded.
+// Called to draw the map
 function draw() {
+    // Get all devices to show
+    var devices = []
+    $.ajax({
+        method: "GET",
+        url: '/api/devices/mapDevices',
+        success: function (response) {
+            //Beginning
+            devices = response
+            drawMap(devices)
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    });
+}
+
+// Actually drawing the map
+function drawMap(devices) {
+
+    console.log(devices)
+
+    var nodes = null;
+    var edges = null;
+    var network = null;
+
+    var DIR = "/static/icons/";
+    var EDGE_LENGTH_MAIN = 200;
+    var EDGE_LENGTH_SUB = 200;
+
+    var changeChosenNodeSize = function (values, id, selected, hovering) {
+        values.shadow = true;
+    };
+
     // Create a data table with nodes.
     nodes = [];
 
@@ -20,6 +46,8 @@ function draw() {
         image: "/static/img/favicon.png",
         shape: "image",
         opacity: 0.7,
+        // chosen: { label: false, node: changeChosenNodeShadow },
+        chosen: { label: true, node: changeChosenNodeSize },
     });
     nodes.push({
         id: 2,
@@ -42,6 +70,7 @@ function draw() {
             label: "Computer",
             image: DIR + "laptop.svg",
             shape: "image",
+
             group: "computer",
             opacity: 1,
         });
@@ -81,13 +110,13 @@ function draw() {
         edges: edges,
     };
     var options = {
-        nodes: {
-            opacity: .5
-        },
         groups: {
             computer: {
                 opacity: 0.3,
             },
+        },
+        interaction: {
+            hover: true,
         },
     };
     network = new vis.Network(container, data, options);
@@ -95,4 +124,8 @@ function draw() {
         if (properties.nodes != "")
             alert('clicked node ' + properties.nodes);
     });
+    // network.on('nodeHover', function(properties){
+    //     alert("hoverEdge");
+    // }
+    // );
 }

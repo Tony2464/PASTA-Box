@@ -103,6 +103,14 @@ body {
 
 }
 
+.submit-settings {
+
+	width: calc(100% - 20px) !important;
+	margin: auto !important;
+	margin-top: 1em !important;
+
+}
+
 .port-group {
 
 	display: block !important;

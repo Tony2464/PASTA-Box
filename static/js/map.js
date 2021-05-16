@@ -101,6 +101,8 @@ function drawMap(devices) {
                 opacity: 1,
             });
             edges.push({ from: "firstRange", to: deviceId, length: EDGE_LENGTH_SUB });
+
+            createModal()
         }
         // Second range
         if (ipPrivateClass(deviceIp) == 2) {
@@ -128,6 +130,8 @@ function drawMap(devices) {
                 opacity: 1,
             });
             edges.push({ from: "secondRange", to: deviceId, length: EDGE_LENGTH_SUB });
+
+            createModal()
         }
         // Third range
         if (ipPrivateClass(deviceIp) == 3) {
@@ -162,25 +166,7 @@ function drawMap(devices) {
             });
             edges.push({ from: "thirdRange", to: deviceId, length: EDGE_LENGTH_SUB });
 
-            $("#modals").append(`
-            <div class="modal fade" id="modal`+ deviceId + `">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title"><b>Device `+ deviceIp + `</b></h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Status : `+ deviceStatus + `</p>
-                            <p>Last seen : `+ deviceLastConnection + `</p>
-                        </div>
-                        <div class="modal-footer">
-                            <a type="button" class="btn btn-primary" href="/admin/device/`+ deviceId + `" target="_blank">See more <img src="/static/icons/eye-fill.svg" alt="" width="20" height="20"></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            `)
+            createModal()
         }
         // console.log(devices[i].ipAddr)
         // console.log(ipPrivateClass(devices[i].ipAddr))
@@ -200,6 +186,8 @@ function drawMap(devices) {
         },
         interaction: {
             hover: true,
+            navigationButtons: true,
+            keyboard: true,
         },
     };
     network = new vis.Network(container, data, options);
@@ -212,4 +200,26 @@ function drawMap(devices) {
     //     alert("hoverEdge");
     // }
     // );
+}
+
+function createModal(){
+    $("#modals").append(`
+            <div class="modal fade" id="modal`+ deviceId + `">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"><b>Device `+ deviceIp + `</b></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Status : `+ deviceStatus + `</p>
+                            <p>Last seen : `+ deviceLastConnection + `</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="window.open('/admin/device/`+ deviceId + `');">See more <img src="/static/icons/eye-fill.svg" alt="" width="20" height="20"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `)
 }

@@ -1,11 +1,12 @@
 # Local
-
 import database.db_config as config
 from database import db_manager
+
+# Flask
 from flask import Blueprint, render_template, request
 from flask_http_response import success
-from settings.systemCommands import *
-from settings.systemSettings import *
+from settings.systemCommands import getCmd
+from settings.systemSettings import getConfig, applyConfig, updateSystemFiles
 
 dbManager = db_manager.DbManager(
     config.dbConfig["user"],

@@ -125,11 +125,17 @@ def readNetworkFile():
 def parseNetworkFile():
     data = readNetworkFile()
 
+    with open(pastaConfigFile, "r") as configFile:
+        jsonData = json.load(configFile)
+        restartValue = jsonData["restart"]
+        configFile.close()
+
     systemConfig = {
         "ipAddr": "",
         "netmask": "",
         "gateway": "",
-        "hostname": socket.gethostname()
+        "hostname": socket.gethostname(),
+        "restart": restartValue
     }
 
     for i in range(len(data)):
@@ -137,13 +143,16 @@ def parseNetworkFile():
             i += 1
             while(i < len(data) and data[i].find("auto") == -1):
                 if(data[i].find("address") != -1):
-                    systemConfig['ipAddr'] = data[i].split(' ')[len(data[i].split(' ')) - 1][:-1] # Delete \n
+                    systemConfig['ipAddr'] = data[i].split(
+                        ' ')[len(data[i].split(' ')) - 1][:-1]  # Delete \n
 
                 if(data[i].find("netmask") != -1):
-                    systemConfig['netmask'] = data[i].split(' ')[len(data[i].split(' ')) - 1][:-1] # Delete \n
+                    systemConfig['netmask'] = data[i].split(
+                        ' ')[len(data[i].split(' ')) - 1][:-1]  # Delete \n
 
                 if(data[i].find("gateway") != -1):
-                    systemConfig['gateway'] = data[i].split(' ')[len(data[i].split(' ')) - 1][:-1] # Delete \n
+                    systemConfig['gateway'] = data[i].split(
+                        ' ')[len(data[i].split(' ')) - 1][:-1]  # Delete \n
 
                 i += 1
 
@@ -155,26 +164,30 @@ def parseNetworkFile():
 def updateSystemFiles(userConfig):
     localConfig = parseNetworkFile()
     if(localConfig['hostname'] != userConfig['hostname'] and localConfig['restart'] == "false"):
-        os.system("sudo /PASTA-Box/settings/change_hostname.sh " + userConfig['hostname'])
+        os.system("sudo /PASTA-Box/settings/change_hostname.sh " +
+                  userConfig['hostname'])
         setRestart()
-    
+
     if((localConfig['ipAddr'] != userConfig['ipAddr']) or (localConfig['netmask'] != userConfig['netmask']) or (localConfig['gateway'] != userConfig['gateway'])):
         data = readNetworkFile()
         for i in range(len(data)):
-            if(data[i].find("auto " + interface) != -1): 
+            if(data[i].find("auto " + interface) != -1):
                 i += 1
                 while(i < len(data) and data[i].find("auto") == -1):
                     if(data[i].find("address") != -1):
-                        data[i] = (data[i].split(' ')[0] + ' ' + userConfig['ipAddr'] + '\n')
+                        data[i] = (data[i].split(' ')[0] + ' ' +
+                                   userConfig['ipAddr'] + '\n')
 
                     if(data[i].find("netmask") != -1):
-                        data[i] = (data[i].split(' ')[0] + ' ' + userConfig['netmask'] + '\n')
-                    
+                        data[i] = (data[i].split(' ')[0] + ' ' +
+                                   userConfig['netmask'] + '\n')
+
                     if(data[i].find("gateway") != -1):
-                        data[i] = (data[i].split(' ')[0] + ' ' + userConfig['gateway'] + '\n')
-                    
+                        data[i] = (data[i].split(' ')[0] + ' ' +
+                                   userConfig['gateway'] + '\n')
+
                     i += 1
-                    
+
         with open(pastaNetworkSettingsFile, "w") as networkTempFile:
             networkTempFile.writelines(data)
             networkTempFile.close()
@@ -195,10 +208,3 @@ def setRestart():
         json.dump(jsonData, configFile, indent=4)
         configFile.truncate()
         configFile.close()
-
-# testConfig = {
-#    "ipAddr": "192.168.5.2",
-#    "netmask": "255.255.255.0",
-#    "gateway": "192.168.5.1",
-#    "hostname": "PASTA-Box"
-# }

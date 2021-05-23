@@ -15,9 +15,10 @@ import database.db_config as config
 from api.routes.frames import frames
 from api.routes.rules import rules
 from api.routes.devices import devices
+from api.routes.system import system
 
 # Web pages routes
-from web.routes.admin.index import homepage, index
+from web.routes.admin.web_index import web_index
 from web.routes.admin.web_frames import web_frames
 from web.routes.admin.web_firewall import web_firewall
 from web.routes.admin.web_mapping import web_mapping
@@ -29,9 +30,10 @@ app = Flask(__name__)
 app.register_blueprint(frames, url_prefix="/api/frames")
 app.register_blueprint(rules, url_prefix="/api/rules")
 app.register_blueprint(devices, url_prefix="/api/devices")
+app.register_blueprint(system, url_prefix="/api/system")
 
 # Web Pages
-app.register_blueprint(index, url_prefix="/admin")
+app.register_blueprint(web_index, url_prefix="/admin")
 app.register_blueprint(web_frames, url_prefix="/admin/frames")
 app.register_blueprint(web_firewall, url_prefix="/admin/firewall")
 app.register_blueprint(web_mapping, url_prefix="/admin/map")

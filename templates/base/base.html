@@ -8,7 +8,6 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>{% block title %}{% endblock %}</title>
-
     <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/style-base.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
@@ -18,16 +17,46 @@
 
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#"><img
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="/admin"><img
                 style="width:40px;margin-right: 8%;vertical-align: middle;"
-                src="{{ url_for('static', filename='img/favicon.png') }}" alt=""><p style="vertical-align:middle;display:inline;">PASTA-BOX</p></a>
+                src="{{ url_for('static', filename='img/favicon.png') }}" alt="">
+            <p style="vertical-align:middle;display:inline;">PASTA-BOX</p>
+        </a>
         <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i
                 class="fas fa-bars"></i></button>
-        <!-- Navbar Search-->
-        <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
-            <div class="input-group">
+        <!-- Navbar Stat -->
+        <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
+            <div class="row align-items-center">
+                <div class="col">
+                    <div id="hostname" class="text-light">
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="progress" style="height:4px">
+                        <div class="progress-bar progress-bar-success" style="width:0%" id="barMem">
+                            <div id="totalMem" class="text-light" style="width:120px"></div>
+                        </div>
+                    </div>
+                    <div class="text-center text-white">
+                        <div id="totalMemText" data-toggle="tooltip" title="" data-bs-placement="bottom"></div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="progress" style="height:4px">
+                        <div class="progress-bar progress-bar-success" style="width:0%" id="barCpu">
+                            <div id="totalCpu" class="text-light" style="width:120px"></div>
+                        </div>
+                    </div>
+                    <div class="text-center text-white">
+                        <div id="totalCpuText"></div>
+                    </div>
+                </div>
+                <!-- <div class="col">
+                    <p data-toggle="tooltip" title="Hooray!" data-bs-placement="bottom">Hover over me</p>
+                </div> -->
             </div>
-        </form>
+        </div>
         <!-- Navbar-->
         <ul class="navbar-nav ml-auto ml-md-0">
             <li class="nav-item dropdown">
@@ -48,43 +77,52 @@
                 <div class="sb-sidenav-menu">
                     <div class="nav">
                         <a style="margin-top:1.5em;" class="nav-link" href="/admin">
-                        <div class="sb-nav-link-icon"><img src="{{ url_for('static', filename='icons/speedometer.svg') }}" alt="" ></div>
+                            <div class="sb-nav-link-icon"><img
+                                    src="{{ url_for('static', filename='icons/speedometer.svg') }}" alt=""></div>
                             Home
                         </a>
                         <div class="sb-sidenav-menu-heading">Monitoring</div>
-                         <a class="nav-link" href="#">
-                            <div class="sb-nav-link-icon"><img src="{{ url_for('static', filename='icons/shield-shaded.svg') }}" alt="" ></div>
+                        <a class="nav-link" href="#">
+                            <div class="sb-nav-link-icon"><img
+                                    src="{{ url_for('static', filename='icons/shield-shaded.svg') }}" alt=""></div>
                             Security Dashboard
                         </a>
                         <a class="nav-link" href="/admin/frames">
-                            <div class="sb-nav-link-icon"><img src="{{ url_for('static', filename='icons/search.svg') }}" alt="" ></div>
+                            <div class="sb-nav-link-icon"><img
+                                    src="{{ url_for('static', filename='icons/search.svg') }}" alt=""></div>
                             Frames Viewer
                         </a>
                         <div class="sb-sidenav-menu-heading">My Network</div>
                         <a class="nav-link" href="/admin/map">
-                            <div class="sb-nav-link-icon"><img src="{{ url_for('static', filename='icons/diagram-3-fill.svg') }}" alt="" ></div>
+                            <div class="sb-nav-link-icon"><img
+                                    src="{{ url_for('static', filename='icons/diagram-3-fill.svg') }}" alt=""></div>
                             Map
                         </a>
                         <a class="nav-link" href="#">
-                            <div class="sb-nav-link-icon"><img src="{{ url_for('static', filename='icons/bug-fill.svg') }}" alt="" ></div>
+                            <div class="sb-nav-link-icon"><img
+                                    src="{{ url_for('static', filename='icons/bug-fill.svg') }}" alt=""></div>
                             Internal Audit
                         </a>
                         <div class="sb-sidenav-menu-heading">Firewall</div>
                         <a class="nav-link" href="/admin/firewall">
-                            <div class="sb-nav-link-icon"><img src="{{ url_for('static', filename='icons/bricks.svg') }}" alt="" ></div>
+                            <div class="sb-nav-link-icon"><img
+                                    src="{{ url_for('static', filename='icons/bricks.svg') }}" alt=""></div>
                             Rules Configuration
                         </a>
                         <div class="sb-sidenav-menu-heading">Settings</div>
                         <a class="nav-link" href="/admin/settings/system">
-                            <div class="sb-nav-link-icon"><img src="{{ url_for('static', filename='icons/hdd-network-fill.svg') }}" alt="" ></div>
+                            <div class="sb-nav-link-icon"><img
+                                    src="{{ url_for('static', filename='icons/hdd-network-fill.svg') }}" alt=""></div>
                             System Settings
                         </a>
                         <a class="nav-link" href="#">
-                            <div class="sb-nav-link-icon"><img src="{{ url_for('static', filename='icons/server.svg') }}" alt="" ></div>
+                            <div class="sb-nav-link-icon"><img
+                                    src="{{ url_for('static', filename='icons/server.svg') }}" alt=""></div>
                             Internal Database
                         </a>
                         <a class="nav-link" href="#">
-                            <div class="sb-nav-link-icon"><img src="{{ url_for('static', filename='icons/gear-wide.svg') }}" alt="" ></div>
+                            <div class="sb-nav-link-icon"><img
+                                    src="{{ url_for('static', filename='icons/gear-wide.svg') }}" alt=""></div>
                             Firewall Settings
                         </a>
                     </div>
@@ -96,9 +134,12 @@
             </nav>
         </div>
         <div id="layoutSidenav_content">
-            
+            <!-- <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                title="Tooltip on bottom">
+                Tooltip on bottom
+            </button> -->
+            <!-- <p data-toggle="tooltip" title="Hooray!" data-bs-placement="bottom">Hover over me</p> -->
             {% block content%} {% endblock %}
-
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid">
                     <div class="d-flex align-items-center justify-content-between small">

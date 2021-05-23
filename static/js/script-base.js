@@ -35,7 +35,8 @@ function getSysInfo() {
         url: '/api/system/info',
         success: function (response) {
             totalCpu = response["totalCpu"]
-            totalMem = response["totalMemPercent"]
+            totalMemPercent = response["totalMemPercent"]
+            totalMem = response["totalMem"]
             usedMem = response["usedMem"]
             hostname = response["hostname"]
 
@@ -71,13 +72,13 @@ function getSysInfo() {
             // Mem Bar
             $('#totalMem').empty();
             $('#totalMemText').empty();
-            $('#barMem').css("width", totalMem + "%")
-            if (totalMem > 80) {
+            $('#barMem').css("width", totalMemPercent + "%")
+            if (totalMemPercent > 80) {
                 // Above 80%
                 $('#barMem').addClass("bg-danger")
                 $('#barMem').removeClass("bg-warning")
                 $('#barMem').removeClass("bg-success")
-            } else if (totalMem > 50) {
+            } else if (totalMemPercent > 50) {
                 // Between 50% and 80%
                 $('#barMem').addClass("bg-warning")
                 $('#barMem').removeClass("bg-danger")
@@ -90,9 +91,9 @@ function getSysInfo() {
             }
 
             $('#totalMemText').append(
-                '<div class="float-left">Mem : </div><b>' + totalMem + ' <div class="float-right">%</div>'
+                '<div class="float-left">Mem : </div><b>' + totalMemPercent + ' <div class="float-right">%</div>'
             )
-            $('#totalMemText').attr('title', usedMem + ' used')
+            $('#totalMemText').attr('title', usedMem + ' / ' + totalMem + ' used')
 
             // Hostname Bar
             $('#hostname').empty()

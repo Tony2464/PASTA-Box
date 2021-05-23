@@ -96,8 +96,8 @@ function getSysInfo() {
             $('#totalMemText').attr('title', usedMem + ' / ' + totalMem + ' used')
 
             // Hostname Bar
-            $('#hostname').empty()
-            $('#hostname').append(
+            $('#hostnameBar').empty()
+            $('#hostnameBar').append(
                 hostname
             )
 

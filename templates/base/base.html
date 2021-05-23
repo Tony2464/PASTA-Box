@@ -28,8 +28,16 @@
         <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
             <div class="row align-items-center">
                 <div class="col">
-                    <div id="hostname" class="text-light">
-
+                    <div id="hostnameBar" class="text-light"></div>
+                </div>
+                <div class="col">
+                    <div class="progress" style="height:4px">
+                        <div class="progress-bar progress-bar-success" style="width:0%" id="barCpu">
+                            <div id="totalCpu" class="text-light" style="width:120px"></div>
+                        </div>
+                    </div>
+                    <div class="text-center text-white">
+                        <div id="totalCpuText"></div>
                     </div>
                 </div>
                 <div class="col">
@@ -40,16 +48,6 @@
                     </div>
                     <div class="text-center text-white">
                         <div id="totalMemText" data-toggle="tooltip" title="" data-bs-placement="bottom"></div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="progress" style="height:4px">
-                        <div class="progress-bar progress-bar-success" style="width:0%" id="barCpu">
-                            <div id="totalCpu" class="text-light" style="width:120px"></div>
-                        </div>
-                    </div>
-                    <div class="text-center text-white">
-                        <div id="totalCpuText"></div>
                     </div>
                 </div>
                 <!-- <div class="col">

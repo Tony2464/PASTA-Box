@@ -132,7 +132,6 @@ function sendComand(cmd) {
 
                 }
 
-
             } else {
 
                 displayConfigError(req.responseText);

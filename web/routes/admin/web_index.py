@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template
 
 # Local
 import database.db_config as config
@@ -12,8 +12,10 @@ dbManager = db_manager.DbManager(
     config.dbConfig["database"]
 )
 
-index = Blueprint("index", __name__)
+web_index = Blueprint("web_index", __name__)
 
-@index.route('/')
+@web_index.route('/')
 def homepage():
     return render_template('pages/index.html')
+
+

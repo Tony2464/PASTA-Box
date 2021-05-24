@@ -1,12 +1,12 @@
-from flask import Blueprint, render_template, request, jsonify
-from flask_http_response import success, result, error
-import requests
-
 # Local
 import database.db_config as config
+import requests
 from database import db_manager
 
+# Flask
 from firewall.customRules import buildCustomRules
+from flask import Blueprint, render_template, request
+from flask_http_response import result, success
 
 dbManager = db_manager.DbManager(
     config.dbConfig["user"],

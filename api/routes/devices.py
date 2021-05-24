@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_http_response import success, error
+import ipaddress
 
 # Local
 import database.db_config as config
@@ -49,7 +50,24 @@ def apiGetDevices():
 @devices.route('/', methods=['GET'])
 @devices.route('/<id>', methods=['GET'])
 def apiGetDevice(id=None):
-    return 0
+    dbManager = initDb()
+    data = dbManager.queryGet("SELECT * FROM Device WHERE id = ?", [id])
+    objects_list = []
+    for row in data:
+        d = {}
+        d["id"] = row[0]
+        d["role"] = row[1]
+        d["idNetwork"] = row[2]
+        d["macAddr"] = row[3]
+        d["ipAddr"] = row[4]
+        d["securityScore"] = row[5]
+        d["netBios"] = row[6]
+        d["activeStatus"] = row[7]
+        d["firstConnection"] = row[8]
+        d["lastConnection"] = row[9]
+        objects_list.append(d)
+    dbManager.close()
+    return jsonify(objects_list)
 
 # POST
 
@@ -127,6 +145,11 @@ def apiPutDevice(id=None):
                 params.append(device["role"])
 
             # idNetwork
+            if "role" in device and device["role"] != "":
+                req.append("`role` = ?")
+                params.append(device["role"])
+
+            # idNetwork
             if "idNetwork" in device and device["idNetwork"] != "":
                 req.append("`idNetwork` = ?")
                 params.append(device["idNetwork"])
@@ -198,3 +221,28 @@ def apiPutDevice(id=None):
 @devices.route('/<id>', methods=['DELETE'])
 def apiDeleteDevice(id=None):
     return 0
+
+# Give all devices for map
+
+
+@devices.route('/mapDevices')
+def apiMapDevices():
+    dbManager = initDb()
+    data = dbManager.queryGet("SELECT * FROM Device", [])
+    objects_list = []
+    for row in data:
+        d = {}
+        d["id"] = row[0]
+        d["role"] = row[1]
+        d["idNetwork"] = row[2]
+        d["macAddr"] = row[3]
+        d["ipAddr"] = row[4]
+        d["securityScore"] = row[5]
+        d["netBios"] = row[6]
+        d["activeStatus"] = row[7]
+        d["firstConnection"] = row[8]
+        d["lastConnection"] = row[9]
+        if d["ipAddr"] != None and ipaddress.ip_address(d["ipAddr"]).is_private:
+            objects_list.append(d)
+    dbManager.close()
+    return jsonify(objects_list)

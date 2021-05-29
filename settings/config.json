@@ -1,7 +1,7 @@
 {
     "ipAddr": "192.168.1.40",
     "netmask": "255.255.255.0",
-    "gateway": "192.168.1.1",
+    "gateway": "192.168.1.254",
     "hostname": "PASTA-Box",
     "restart": "false"
 }

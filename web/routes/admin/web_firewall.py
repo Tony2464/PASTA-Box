@@ -6,7 +6,7 @@ from database import db_manager
 # Flask
 from firewall.customRules import buildCustomRules
 from flask import Blueprint, render_template, request
-from flask_http_response import result, success
+from flask_http_response import success, error
 
 dbManager = db_manager.DbManager(
     config.dbConfig["user"],
@@ -32,8 +32,8 @@ def addRule():
     Rule = request.get_json()
 
     res = buildCustomRules(Rule, True)
-    if res != 0:
-        return switchError(res)
+    if(res != 0):
+        return error.return_response(message=switchError(res))
 
     requests.post("http://localhost/api/rules", json=Rule)
     return success.return_response(status=200)

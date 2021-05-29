@@ -1,44 +1,15 @@
 import re
 import os
 import requests
-
-# Regex IPv4
-ipv4 = """^(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(  
-            25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(  
-            25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(  
-            25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$"""
-
-# Regex IPv6
-ipv6 = """(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}| 
-        ([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:) 
-        {1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1 
-        ,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4} 
-        :){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{ 
-        1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA 
-        -F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a 
-        -fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0 
-        -9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0, 
-        4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1} 
-        :){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9 
-        ])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0 
-        -9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4] 
-        |1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4] 
-        |1{0,1}[0-9]){0,1}[0-9]))"""
-
-# Accorting to the ebtables documentation
-# The --ip-protocol option must be specified as TCP, UDP, DCCP or SCTP
-# Only if a destination/source port is specified
-ebtablesPortProtocols = [6, 17, 33, 132]
+from ipaddress import ip_address, IPv4Address
 
 
 # Check IP version
 
-def checkIP(string):
-    if re.search(ipv4, string):
-        return 1
-    elif re.search(ipv6, string):
-        return 2
-    else:
+def checkIP(IP):
+    try:
+        return 1 if type(ip_address(IP)) is IPv4Address else 2
+    except ValueError:
         return 3
 
 

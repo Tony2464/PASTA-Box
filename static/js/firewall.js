@@ -110,7 +110,8 @@ function sendFirewallRule(rule) {
 
             } else {
 
-                displayServerError(req.responseText);
+                var jsonString = JSON.parse(req.responseText);
+                displayConfigError(jsonString["message"]);
 
             }
 

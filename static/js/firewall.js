@@ -192,24 +192,39 @@ function flushRuleInputs() {
 
 function deleteRule(id) {
 
-    fetch(getDomain() + '/api/rules/' + id, {
-        method: 'DELETE'
-    });
+    var req = new XMLHttpRequest();
+    req.onreadystatechange = function () {
+        if (req.readyState == 4) {
+            if (req.status == 200) {
 
-    let rules = document.getElementsByTagName('tr');
-    for (let index = 1; index < rules.length; index++) {
+                let rules = document.getElementsByTagName('tr');
+                for (let index = 1; index < rules.length; index++) {
 
-        let header = rules[index].getElementsByTagName('td')[0].innerHTML;
-        if (parseInt(header, 10) == id) {
+                    let header = rules[index].getElementsByTagName('td')[0].innerHTML;
+                    if (parseInt(header, 10) == id) {
 
-            rules[index].remove();
-            break;
+                        rules[index].remove();
+                        break;
+
+                    }
+
+                }
+
+                displaySuccess("Rule n°" + id + " deleted successfully !");
+
+            } else {
+
+                console.log(req.responseText); //debugging
+                displayError("Oups, server error :(");
+
+            }
 
         }
-
     }
 
-    displaySuccess("Rule n°" + id + " deleted successfully !");
+    req.open('POST', '/admin/firewall/rule/delete');
+    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    req.send("id=" + id);
 
 }
 

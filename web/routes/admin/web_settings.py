@@ -4,7 +4,7 @@ from database import db_manager
 
 # Flask
 from flask import Blueprint, render_template, request
-from flask_http_response import success
+from flask_http_response import success, error
 from settings.systemCommands import getCmd
 from settings.systemSettings import getConfig, applyConfig, updateSystemFiles
 
@@ -32,7 +32,7 @@ def updateConfig():
 
     res = applyConfig(config)
     if(res != 0):
-        return switchError(res)
+        return error.return_response(message=switchError(res))
     else:
         updateSystemFiles(config)
         return success.return_response(status=200)
@@ -61,6 +61,6 @@ def getCommand():
     res = getCmd(action['command'])
 
     if(res != 0):
-        return switchError(res)
+        return error.return_response(message=switchError(res))
     else:
         return success.return_response(status=200)

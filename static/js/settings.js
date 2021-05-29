@@ -49,12 +49,14 @@ function sendConfig(config) {
         if (req.readyState == 4) {
             if (req.status == 200) {
 
+                console.log(req.status);
                 console.log(req.responseText);
                 displaySuccess("Configuration updated successfully !");
 
             } else {
 
-                displayConfigError(req.responseText);
+                var jsonString = JSON.parse(req.responseText);
+                displayConfigError(jsonString["message"]);
 
             }
 
@@ -134,7 +136,8 @@ function sendComand(cmd) {
 
             } else {
 
-                displayConfigError(req.responseText);
+                var jsonString = JSON.parse(req.responseText);
+                displayConfigError(jsonString["message"]);
 
             }
 

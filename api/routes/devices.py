@@ -1,10 +1,10 @@
-from flask import Blueprint, request, jsonify
-from flask_http_response import success, error
-
 # Local
 import database.db_config as config
 from database import db_manager
 
+import ipaddress
+from flask import Blueprint, jsonify, request
+from flask_http_response import error, success
 
 def initDb():
     dbManager = db_manager.DbManager(
@@ -30,28 +30,46 @@ def apiGetDevices():
     for row in data:
         d = {}
         d["id"] = row[0]
-        d["idNetwork"] = row[1]
-        d["macAddr"] = row[2]
-        d["ipAddr"] = row[3]
-        d["securityScore"] = row[4]
-        d["netBios"] = row[5]
-        d["activeStatus"] = row[6]
-        d["firstConnection"] = row[7]
-        d["lastConnection"] = row[8]
+        d["role"] = row[1]
+        d["idNetwork"] = row[2]
+        d["macAddr"] = row[3]
+        d["ipAddr"] = row[4]
+        d["securityScore"] = row[5]
+        d["netBios"] = row[6]
+        d["activeStatus"] = row[7]
+        d["firstConnection"] = row[8]
+        d["lastConnection"] = row[9]
         objects_list.append(d)
     dbManager.close()
     return jsonify(objects_list)
 
-# GET ONE
 
+# GET ONE
 
 @devices.route('/', methods=['GET'])
 @devices.route('/<id>', methods=['GET'])
 def apiGetDevice(id=None):
-    return 0
+    dbManager = initDb()
+    data = dbManager.queryGet("SELECT * FROM Device WHERE id = ?", [id])
+    objects_list = []
+    for row in data:
+        d = {}
+        d["id"] = row[0]
+        d["role"] = row[1]
+        d["idNetwork"] = row[2]
+        d["macAddr"] = row[3]
+        d["ipAddr"] = row[4]
+        d["securityScore"] = row[5]
+        d["netBios"] = row[6]
+        d["activeStatus"] = row[7]
+        d["firstConnection"] = row[8]
+        d["lastConnection"] = row[9]
+        objects_list.append(d)
+    dbManager.close()
+    return jsonify(objects_list)
+
 
 # POST
-
 
 @devices.route('/', methods=['POST'])
 def apiPostDevice():
@@ -60,6 +78,9 @@ def apiPostDevice():
         device = request.get_json()
 
         # Check every key and its value
+        if "role" not in device or device["role"] == "":
+            device["role"] = None
+
         if "idNetwork" not in device or device["idNetwork"] == "":
             device["idNetwork"] = None
 
@@ -84,8 +105,9 @@ def apiPostDevice():
         if "lastConnection" not in device or device["lastConnection"] == "":
             device["lastConnection"] = None
 
-        dbManager.queryInsert("INSERT INTO `Device` (`idNetwork`, `macAddr`, `ipAddr`, `securityScore`, `netBios`, `activeStatus`, `firstConnection`, `lastConnection`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        dbManager.queryInsert("INSERT INTO `Device` (`role`, `idNetwork`, `macAddr`, `ipAddr`, `securityScore`, `netBios`, `activeStatus`, `firstConnection`, `lastConnection`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                               [
+                                  device["role"],
                                   device["idNetwork"],
                                   device["macAddr"],
                                   device["ipAddr"],
@@ -100,8 +122,8 @@ def apiPostDevice():
     else:
         return error.return_response(status=400, message="Need JSON data")
 
-# PUT
 
+# PUT
 
 @devices.route('/', methods=['PUT'])
 @devices.route('/<id>', methods=['PUT'])
@@ -115,6 +137,11 @@ def apiPutDevice(id=None):
             params = []
             req = []
             req.append("UPDATE `Device` SET ")
+
+            # idNetwork
+            if "role" in device and device["role"] != "":
+                req.append("`role` = ?")
+                params.append(device["role"])
 
             # idNetwork
             if "idNetwork" in device and device["idNetwork"] != "":
@@ -184,8 +211,41 @@ def apiPutDevice(id=None):
 
 # DELETE
 
-
 @devices.route('/', methods=['DELETE'])
 @devices.route('/<id>', methods=['DELETE'])
 def apiDeleteDevice(id=None):
     return 0
+
+
+# Give all devices for map
+
+@devices.route('/mapDevices')
+def apiMapDevices():
+    dbManager = initDb()
+    data = dbManager.queryGet("SELECT * FROM Device", [])
+    objects_list = []
+    for row in data:
+        d = {}
+        d["id"] = row[0]
+        d["role"] = row[1]
+        d["idNetwork"] = row[2]
+        d["macAddr"] = row[3]
+        d["ipAddr"] = row[4]
+        d["securityScore"] = row[5]
+        d["netBios"] = row[6]
+        d["activeStatus"] = row[7]
+        d["firstConnection"] = row[8]
+        d["lastConnection"] = row[9]
+        if d["ipAddr"] != None and checkIP(d["ipAddr"]) != 3 and ipaddress.ip_address(d["ipAddr"]).is_private:
+            objects_list.append(d)
+    dbManager.close()
+    return jsonify(objects_list)
+
+
+# Check IP version
+
+def checkIP(IP):
+    try:
+        return 1 if type(ipaddress.ip_address(IP)) is ipaddress.IPv4Address else 2
+    except ValueError:
+        return 3

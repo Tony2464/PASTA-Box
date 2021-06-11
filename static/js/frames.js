@@ -7,7 +7,7 @@ $(document).ready(function () {
             $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
     });
-    //Checkbox 
+    //Checkbox
     $("#checkIP").change(function () {
         if (this.checked) {
             $("#groupIP").hide()

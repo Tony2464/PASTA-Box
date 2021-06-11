@@ -49,7 +49,7 @@ def parseNmap(mode, ip):
     services = []
     ports = host.find('ports')
     if(ports != None):
-        
+
         for port in ports.findall('port'):
             if(port.find('state').attrib.get('state') == "open"):
 
@@ -57,8 +57,14 @@ def parseNmap(mode, ip):
                 proto = portAttributes.get('protocol')
                 serviceHost = port.find('service')
 
-                service = Service(proto, serviceHost.attrib.get(
-                    'product'), serviceHost.attrib.get('version'), port.attrib.get('portid'))
+                if(serviceHost.attrib.get('product') == None or serviceHost.attrib.get('product') == ""):
+                    serviceName = serviceHost.attrib.get('name')
+                else:
+                    serviceName = serviceHost.attrib.get('product')
+
+                # si product est nul alors prendre name
+                service = Service(proto, serviceName, serviceHost.attrib.get(
+                    'version'), port.attrib.get('portid'))
                 services.append(service)
     else:
         return None

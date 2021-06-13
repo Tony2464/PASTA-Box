@@ -7,6 +7,7 @@ import xml.etree.ElementTree as ET
 from objects.Device import Device
 from objects.Service import Service
 
+# Temporary files for nmap
 outputTempTcp = "/PASTA-Box/audit/temp/output_tcp.xml"
 outputTempUdp = "/PASTA-Box/audit/temp/output_udp.xml"
 
@@ -48,7 +49,7 @@ def parseNmap(mode, ip):
 
     services = []
     ports = host.find('ports')
-    if(ports != None):
+    if(ports != None): # Create of potential services objects in services array
 
         for port in ports.findall('port'):
             if(port.find('state').attrib.get('state') == "open"):
@@ -62,12 +63,9 @@ def parseNmap(mode, ip):
                 else:
                     serviceName = serviceHost.attrib.get('product')
 
-                # si product est nul alors prendre name
                 service = Service(proto, serviceName, serviceHost.attrib.get(
                     'version'), port.attrib.get('portid'))
                 services.append(service)
-    else:
-        return None
 
     for address in host.findall('address'):
         if((address.attrib.get('addrtype') == "ipv4" or address.attrib.get('addrtype') == "ipv6") and address.attrib.get('addr') == ip):

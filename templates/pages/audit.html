@@ -57,6 +57,9 @@
                 </div>
             </div>
         </div>
+        <button id="changeModeButton" style="display: none;" onclick="" type="button" class="btn btn-primary">Change mode</button>
+        <button id="buttonMode2" style="display: none;" onclick="" type="button" class="btn btn-primary">Start global scan</button>
+        <button id="buttonMode3" style="display: none;" onclick="window.open('/admin/map','_blank')" type="button" class="btn btn-primary">Select device</button>
     </div>
 </div>
 
@@ -66,6 +69,8 @@
 <script src="{{ url_for('static', filename='js/form.js') }}"></script>
 <script src="{{ url_for('static', filename='js/audit.js') }}"></script>
 <script>
+
+    updateMode({{content.mode}});
 
     {% if content.mode == 1 %}
     loadAutoMode();

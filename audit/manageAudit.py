@@ -11,3 +11,27 @@ def getAuditMode():
         configData = configFile.read()
         configFile.close()
     return json.loads(configData)
+
+
+# Change audit mode from the HMI
+
+def changeAuditMode(auditMode):
+
+    try:
+        mode = int(auditMode["mode"])
+    except:
+        return -1
+
+    if(mode < 1 or mode > 3):
+        return -1
+
+    with open(pastaAuditConfig, "r+") as configFile:
+        jsonData = json.load(configFile)
+        jsonData["mode"] = mode
+
+        configFile.seek(0)
+        json.dump(jsonData, configFile, indent=4)
+        configFile.truncate()
+        configFile.close()
+
+    return 0

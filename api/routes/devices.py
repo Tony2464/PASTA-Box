@@ -1,11 +1,10 @@
-from flask import Blueprint, request, jsonify
-from flask_http_response import success, error
-import ipaddress
-
 # Local
 import database.db_config as config
 from database import db_manager
 
+import ipaddress
+from flask import Blueprint, jsonify, request
+from flask_http_response import error, success
 
 def initDb():
     dbManager = db_manager.DbManager(
@@ -44,8 +43,8 @@ def apiGetDevices():
     dbManager.close()
     return jsonify(objects_list)
 
-# GET ONE
 
+# GET ONE
 
 @devices.route('/', methods=['GET'])
 @devices.route('/<id>', methods=['GET'])
@@ -69,8 +68,8 @@ def apiGetDevice(id=None):
     dbManager.close()
     return jsonify(objects_list)
 
-# POST
 
+# POST
 
 @devices.route('/', methods=['POST'])
 def apiPostDevice():
@@ -123,8 +122,8 @@ def apiPostDevice():
     else:
         return error.return_response(status=400, message="Need JSON data")
 
-# PUT
 
+# PUT
 
 @devices.route('/', methods=['PUT'])
 @devices.route('/<id>', methods=['PUT'])
@@ -212,14 +211,13 @@ def apiPutDevice(id=None):
 
 # DELETE
 
-
 @devices.route('/', methods=['DELETE'])
 @devices.route('/<id>', methods=['DELETE'])
 def apiDeleteDevice(id=None):
     return 0
 
-# Give all devices for map
 
+# Give all devices for map
 
 @devices.route('/mapDevices')
 def apiMapDevices():
@@ -238,7 +236,16 @@ def apiMapDevices():
         d["activeStatus"] = row[7]
         d["firstConnection"] = row[8]
         d["lastConnection"] = row[9]
-        if d["ipAddr"] != None and ipaddress.ip_address(d["ipAddr"]).is_private:
+        if d["ipAddr"] != None and checkIP(d["ipAddr"]) != 3 and ipaddress.ip_address(d["ipAddr"]).is_private:
             objects_list.append(d)
     dbManager.close()
     return jsonify(objects_list)
+
+
+# Check IP version
+
+def checkIP(IP):
+    try:
+        return 1 if type(ipaddress.ip_address(IP)) is ipaddress.IPv4Address else 2
+    except ValueError:
+        return 3

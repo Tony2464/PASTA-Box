@@ -11,6 +11,14 @@ function checkPort(id) {
 function checkIP(id) {
 
     let input = document.getElementById(id).value.trim();
+
+    if (input == "") {
+
+        flushAlerts();
+        return;
+
+    }
+
     if (checkIpVersion(input) == 3) {
 
         if (id == "netmask")

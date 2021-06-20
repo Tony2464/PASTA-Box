@@ -24,6 +24,7 @@ from web.routes.admin.web_mapping import web_mapping
 from web.routes.admin.web_settings import web_settings
 from web.routes.admin.web_device import web_device
 from web.routes.admin.web_connection import web_connection
+from web.routes.admin.web_audit import web_audit
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'PASTA-Box'
@@ -40,6 +41,7 @@ app.register_blueprint(web_frames, url_prefix="/admin/frames")
 app.register_blueprint(web_firewall, url_prefix="/admin/firewall")
 app.register_blueprint(web_mapping, url_prefix="/admin/map")
 app.register_blueprint(web_settings, url_prefix="/admin/settings")
+app.register_blueprint(web_audit, url_prefix="/admin/audit")
 app.register_blueprint(web_device, url_prefix="/admin/device")
 app.register_blueprint(web_connection, url_prefix="/admin/account")
 

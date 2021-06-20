@@ -28,7 +28,9 @@
         <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
             <div class="row align-items-center">
                 <div class="col">
-                    <div class="text-light"><small>Hostname :</small><div id="hostnameBar" class=""></div></div>
+                    <div class="text-light"><small>Hostname :</small>
+                        <div id="hostnameBar" class=""></div>
+                    </div>
                 </div>
                 <div class="col">
                     <div class="progress" style="height:4px">
@@ -56,7 +58,7 @@
             </div>
         </div>
         <!-- Navbar-->
-        <ul class="navbar-nav ml-auto ml-md-0">
+        <!-- <ul class="navbar-nav ml-auto ml-md-0">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
@@ -67,7 +69,24 @@
                     <a class="dropdown-item" href="login.html">Logout</a>
                 </div>
             </li>
+        </ul> -->
+        <!-- <div class="collapse navbar-collapse" id="navbarNavDarkDropdown"> -->
+        <ul class="navbar-nav ml-auto ml-md-0">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user fa-fw"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark dropdown-menu dropdown-menu-end"
+                    aria-labelledby="navbarDarkDropdownMenuLink">
+                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                    <!-- <li><a class="dropdown-item" href="#">Activity Log</a></li> -->
+                    <div class="dropdown-divider"></div>
+                    <li><a class="dropdown-item" href="/admin/account/logout">Logout</a></li>
+                </ul>
+            </li>
         </ul>
+        <!-- </div> -->
     </nav>
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
@@ -127,7 +146,7 @@
                 </div>
                 <div class="sb-sidenav-footer">
                     <div class="small">Logged in as:</div>
-                    Admin
+                    {{ session['firstname'] }}
                 </div>
             </nav>
         </div>

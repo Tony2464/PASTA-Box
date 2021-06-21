@@ -1,11 +1,10 @@
-from . import web_connection_required as web_connect
 from flask import Blueprint, render_template, session, current_app, url_for
 import requests
 
 # Local
 import database.db_config as config
 from database import db_manager
-
+from . import web_connection_required as web_connect
 
 from flask import request, redirect
 import jwt
@@ -82,12 +81,15 @@ def login():
                 session['id'] = data[0]['id']
                 session['firstname'] = data[0]['firstname']
                 return render_template('pages/index.html')
+            # Badd request, missing email or password keys or values
             if returnCode == "400":
                 return render_template('pages/login.html')
+            # Wrong password
             if returnCode == "403":
-                return render_template('pages/login.html')
+                return render_template('pages/login.html', message="Sorry, wrong password.")
+            # User not found
             if returnCode == "404":
-                return render_template('pages/login.html')
+                return render_template('pages/login.html', message="Sorry, wrong email.")
 
             return "Ah"
 
@@ -110,6 +112,7 @@ def login():
 
 
 @web_connection.route('/logout', methods=['GET'])
+@web_connect.web_connection_required
 def logOut():
     session.pop('id', default=None)
     session.pop('firstname', default=None)

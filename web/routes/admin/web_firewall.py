@@ -2,6 +2,7 @@
 import database.db_config as config
 import requests
 from database import db_manager
+from . import web_connection_required as web_connect
 
 # Flask
 from firewall.customRules import buildCustomRules
@@ -20,6 +21,7 @@ web_firewall = Blueprint("web_firewall", __name__)
 
 
 @web_firewall.route("/")
+@web_connect.web_connection_required
 def homepage():
     r = requests.get("http://localhost/api/rules")
     data = r.json()

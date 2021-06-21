@@ -1,6 +1,7 @@
 # Local
 import database.db_config as config
 from database import db_manager
+from . import web_connection_required as web_connect
 
 # Flask
 from flask import Blueprint, render_template, request
@@ -21,6 +22,7 @@ web_settings = Blueprint("web_settings", __name__)
 
 @web_settings.route('/')
 @web_settings.route('/system/')
+@web_connect.web_connection_required
 def systemHomepage():
     configPasta = getConfig()
     return render_template('pages/system_settings.html', content=configPasta)

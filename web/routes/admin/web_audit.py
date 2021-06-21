@@ -3,6 +3,7 @@ from audit.manageAudit import getAuditMode, changeAuditMode
 from database import db_manager
 from flask import Blueprint, render_template, request
 from flask_http_response import success, error
+from . import web_connection_required as web_connect
 
 dbManager = db_manager.DbManager(
     config.dbConfig["user"],
@@ -16,6 +17,7 @@ web_audit = Blueprint("web_audit", __name__)
 
 
 @web_audit.route('/')
+@web_connect.web_connection_required
 def systemHomepage():
     auditMode = getAuditMode()
     return render_template('pages/audit.html', content=auditMode)

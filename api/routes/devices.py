@@ -39,6 +39,8 @@ def apiGetDevices():
         d["activeStatus"] = row[7]
         d["firstConnection"] = row[8]
         d["lastConnection"] = row[9]
+        d["lastScan"] = row[10]
+        d["systemOS"] = row[11]
         objects_list.append(d)
     dbManager.close()
     return jsonify(objects_list)
@@ -64,6 +66,8 @@ def apiGetDevice(id=None):
         d["activeStatus"] = row[7]
         d["firstConnection"] = row[8]
         d["lastConnection"] = row[9]
+        d["lastScan"] = row[10]
+        d["systemOS"] = row[11]
         objects_list.append(d)
     dbManager.close()
     return jsonify(objects_list)
@@ -105,7 +109,13 @@ def apiPostDevice():
         if "lastConnection" not in device or device["lastConnection"] == "":
             device["lastConnection"] = None
 
-        dbManager.queryInsert("INSERT INTO `Device` (`role`, `idNetwork`, `macAddr`, `ipAddr`, `securityScore`, `netBios`, `activeStatus`, `firstConnection`, `lastConnection`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        if "lastScan" not in device or device["lastScan"] == "":
+            device["lastScan"] = None
+
+        if "systemOS" not in device or device["systemOS"] == "":
+            device["systemOS"] = None
+
+        dbManager.queryInsert("INSERT INTO `Device` (`role`, `idNetwork`, `macAddr`, `ipAddr`, `securityScore`, `netBios`, `activeStatus`, `firstConnection`, `lastConnection`, `lastScan`, `systemOS`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                               [
                                   device["role"],
                                   device["idNetwork"],
@@ -115,7 +125,9 @@ def apiPostDevice():
                                   device["netBios"],
                                   device["activeStatus"],
                                   device["firstConnection"],
-                                  device["lastConnection"]
+                                  device["lastConnection"],
+                                  device["lastScan"],
+                                  device["systemOS"]
                               ])
         dbManager.close()
         return success.return_response(status=201, message="Device added successfully")
@@ -183,6 +195,16 @@ def apiPutDevice(id=None):
                 req.append("`lastConnection` = ?")
                 params.append(device["lastConnection"])
 
+            # lastScan
+            if "lastScan" in device and device["lastScan"] != "":
+                req.append("`lastScan` = ?")
+                params.append(device["lastScan"])
+            
+            # systemOS
+            if "systemOS" in device and device["systemOS"] != "":
+                req.append("`systemOS` = ?")
+                params.append(device["systemOS"])
+
             # Concataining all the previous params
             finalReq = ""
             if len(device) > 1:
@@ -236,6 +258,8 @@ def apiMapDevices():
         d["activeStatus"] = row[7]
         d["firstConnection"] = row[8]
         d["lastConnection"] = row[9]
+        d["lastScan"] = row[10]
+        d["systemOS"] = row[11]
         if d["ipAddr"] != None and checkIP(d["ipAddr"]) != 3 and ipaddress.ip_address(d["ipAddr"]).is_private:
             objects_list.append(d)
     dbManager.close()

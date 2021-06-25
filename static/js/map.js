@@ -56,7 +56,7 @@ function drawMap(devices) {
     edges = [];
 
     nodes.push({
-        id: 1,
+        id: -1,
         label: "PASTA-Box",
         image: "/static/img/favicon.png",
         shape: "image",
@@ -86,7 +86,7 @@ function drawMap(devices) {
                     image: DIR + "hdd-network.svg",
                     shape: "image",
                 });
-                edges.push({ from: 1, to: "firstRange", length: EDGE_LENGTH_MAIN, color: { color: "red" } });
+                edges.push({ from: -1, to: "firstRange", length: EDGE_LENGTH_MAIN, color: { color: "red" } });
                 firstRange = true
             }
             // Add computers
@@ -115,7 +115,7 @@ function drawMap(devices) {
                     image: DIR + "hdd-network.svg",
                     shape: "image",
                 });
-                edges.push({ from: 1, to: "secondRange", length: EDGE_LENGTH_MAIN, color: { color: "red" } });
+                edges.push({ from: -1, to: "secondRange", length: EDGE_LENGTH_MAIN, color: { color: "red" } });
                 secondRange = true
             }
             // Add computers
@@ -143,7 +143,7 @@ function drawMap(devices) {
                     image: DIR + "hdd-network.svg",
                     shape: "image",
                 });
-                edges.push({ from: 1, to: "thirdRange", length: EDGE_LENGTH_MAIN, color: { color: "red" } });
+                edges.push({ from: -1, to: "thirdRange", length: EDGE_LENGTH_MAIN, color: { color: "red" } });
                 thirdRange = true
             }
             // Add computers

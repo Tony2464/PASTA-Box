@@ -1,0 +1,136 @@
+{% extends "base/base.html" %}
+{% block title %} Pasta-Box - System Settings {% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <br>
+    <div class="container">
+        <h1 style="text-align: center;">SYSTEM SETTINGS</h1>
+        <div class="divider div-transparent div-arrow-down"></div>
+    </div>
+    <div style="padding-right:inherit;" class="col-md-6 half-body">
+        <h3 style="text-align: center;">Main Settings</h3>
+        <br id="errorAnchor">
+        <br>
+        <form>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <div class="row">
+                        <legend class="col-form-label pt-0"><u>IP address :</u></legend>
+                    </div>
+                    <input onkeyup="checkIP('ipAddr')" type="text" class="form-control" id="ipAddr"
+                        value="{{content.ipAddr}}">
+                </div>
+                <div class="form-group col-md-6">
+                    <div class="row">
+                        <legend class="col-form-label pt-0"><u>Netmask :</u></legend>
+                    </div>
+                    <input onkeyup="checkIP('netmask')" type="text" class="form-control" id="netmask"
+                        value="{{content.netmask}}">
+                </div>
+                <div class="form-group col-md-6">
+                    <div class="row">
+                        <legend class="col-form-label pt-0"><u>Gateway :</u></legend>
+                    </div>
+                    <input onkeyup="checkIP('gateway')" type="text" class="form-control" id="gateway"
+                        value="{{content.gateway}}">
+                </div>
+                <div class="form-group col-md-6">
+                    <div class="row">
+                        <legend class="col-form-label pt-0"><u>Hostname :</u></legend>
+                    </div>
+                    <input onkeyup="checkHostname('hostname')" type="text" class="form-control" id="hostname"
+                        value="{{content.hostname}}" {% if content.restart == "true" %} disabled {% endif %}>
+                </div>
+                <legend class="col-form-label pt-0"><i>Note : if you changed the hostname of the Pasta-Box,
+                        you have to restart the system to make it effective.</i></legend>
+                <button style="margin-top:2em;width:100%;" onclick="checkMainSettingsInputs()" type="button"
+                    class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div><!--
+--><div style="padding-right:inherit;" class="col-md-6 half-body">
+        <h3 style="text-align: center;">Manage Pasta-Box</h3>
+        <br>
+        <br>
+        <form>
+            <div class="form-group row" style="margin-top:1em;">
+
+                <button data-bs-toggle="modal" data-bs-target="#ModalCmd1" type="button" class="btn btn-primary submit-settings">Restart all the
+                    services</button>
+            </div>
+        </form>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <button data-bs-toggle="modal" data-bs-target="#ModalCmd2" style="width: 100%;" type="button" class="btn btn-danger">Restart Pasta-Box</button>
+            </div>
+            <div class="form-group col-md-6">
+                <button data-bs-toggle="modal" data-bs-target="#ModalCmd3" style="width: 100%;" type="button" class="btn btn-danger">Shutdown Pasta-Box</button>
+            </div>
+        </div>
+        <div class="modal fade" id="ModalCmd1" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Restart all the services</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Do you really want to restart all the services of the PASTA-Box ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                        <button onclick="sendComand('restart_services')" type="button" data-bs-dismiss="modal"
+                            class="btn btn-primary">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="ModalCmd2" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Restart the PASTA-Box</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Do you really want to restart the PASTA-Box ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                        <button onclick="sendComand('restart')" type="button" data-bs-dismiss="modal"
+                            class="btn btn-primary">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="ModalCmd3" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Shutdown the PASTA-Box</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Do you really want to shutdown the PASTA-Box ?
+                        <br>
+                        Your system will neither be monitored nor secure.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                        <button onclick="sendComand('shutdown')" type="button" data-bs-dismiss="modal"
+                            class="btn btn-primary">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block js %}
+
+<script src="{{ url_for('static', filename='js/form.js') }}"></script>
+<script src="{{ url_for('static', filename='js/network.js') }}"></script>
+<script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+
+{% endblock %}

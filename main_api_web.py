@@ -15,6 +15,7 @@ import database.db_config as config
 from api.routes.frames import frames
 from api.routes.rules import rules
 from api.routes.devices import devices
+from api.routes.services import services
 
 # Web pages routes
 from web.routes.admin.index import homepage, index
@@ -29,6 +30,7 @@ app = Flask(__name__)
 app.register_blueprint(frames, url_prefix="/api/frames")
 app.register_blueprint(rules, url_prefix="/api/rules")
 app.register_blueprint(devices, url_prefix="/api/devices")
+app.register_blueprint(services, url_prefix="/api/services")
 
 # Web Pages
 app.register_blueprint(index, url_prefix="/admin")

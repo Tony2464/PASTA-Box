@@ -2,6 +2,7 @@
 import database.db_config as config
 from database import db_manager
 
+import json
 import ipaddress
 from flask import Blueprint, jsonify, request
 from flask_http_response import error, success
@@ -24,8 +25,14 @@ devices = Blueprint("devices", __name__)
 
 @devices.route('/', methods=['GET'])
 def apiGetDevices():
+    if request.args.get("macAddr") and request.args.get("ipAddr"):
+        req = "SELECT * FROM Device WHERE macAddr = ? AND ipAddr = ?"
+        params = [request.args.get("macAddr"), request.args.get("ipAddr")]
+    else:
+        req = "SELECT * FROM Device"
+        params = []
     dbManager = initDb()
-    data = dbManager.queryGet("SELECT * FROM Device", [])
+    data = dbManager.queryGet(req, params)
     objects_list = []
     for row in data:
         d = {}
@@ -43,7 +50,10 @@ def apiGetDevices():
         d["systemOS"] = row[11]
         objects_list.append(d)
     dbManager.close()
-    return jsonify(objects_list)
+    if(len(objects_list) == 1):
+        return jsonify(objects_list[0])
+    else:
+        return jsonify(objects_list)
 
 
 # GET ONE
@@ -70,7 +80,7 @@ def apiGetDevice(id=None):
         d["systemOS"] = row[11]
         objects_list.append(d)
     dbManager.close()
-    return jsonify(objects_list)
+    return jsonify(objects_list[0])
 
 
 # POST
@@ -199,7 +209,7 @@ def apiPutDevice(id=None):
             if "lastScan" in device and device["lastScan"] != "":
                 req.append("`lastScan` = ?")
                 params.append(device["lastScan"])
-            
+
             # systemOS
             if "systemOS" in device and device["systemOS"] != "":
                 req.append("`systemOS` = ?")
@@ -219,7 +229,7 @@ def apiPutDevice(id=None):
 
             # final id
             finalReq += " WHERE `Device`.`id` = ?"
-            params += id
+            params.append(str(id))
 
             dbManager.queryInsert(finalReq, params)
             dbManager.close()

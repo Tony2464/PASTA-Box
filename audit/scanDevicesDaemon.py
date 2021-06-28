@@ -1,3 +1,4 @@
+import json
 import requests
 import threading
 import subprocess
@@ -17,6 +18,21 @@ outputTempUdp = "/PASTA-Box/audit/temp/output_udp.xml"
 def getActiveDevices():
     data = requests.get('http://localhost/api/devices/mapDevices')
     return data.json()
+
+
+# Return protocol integer value depending of the service protocol
+
+def protocolMode(protocol):
+    if(protocol.lower() == "tcp"):
+        return 1
+
+    if(protocol.lower() == "udp"):
+        return 2
+
+    if(protocol.lower() == "icmp"):
+        return 3
+
+    return 0
 
 
 # Scan devices on the network with the rights parameters (TCP or UDP)
@@ -49,7 +65,7 @@ def parseNmap(mode, ip):
 
     services = []
     ports = host.find('ports')
-    if(ports != None): # Create of potential services objects in services array
+    if(ports != None):  # Create of potential services objects in services array
 
         for port in ports.findall('port'):
             if(port.find('state').attrib.get('state') == "open"):
@@ -111,20 +127,59 @@ def deleteTempFile(mode):
             os.remove(outputTempUdp)
 
 
+# Update device with nmap info
+
+def insertDevice(newDevice: Device, mode):
+    addrParams = {
+        'ipAddr': newDevice.ipAddr,
+        'macAddr': newDevice.macAddr
+    }
+
+    data = requests.get('http://localhost/api/devices', params=addrParams)
+    deviceBDD = data.json()
+
+    if(mode == 1):
+
+        deviceToInsert = {
+            "netBios": newDevice.netBios,
+            "systemOS": newDevice.systemOS
+        }
+        r = requests.put('http://localhost/api/devices/' +
+                         str(deviceBDD["id"]), json=deviceToInsert)
+
+    return deviceBDD["id"]
+
+
+# Update device with nmap info
+
+def insertService(newDevice: Device):
+    for service in newDevice.services:
+
+        serviceBDD = {
+            "idDevice": newDevice.id,
+            "numberPort": int(service.number),
+            "type": int(protocolMode(service.proto)),
+            "serviceName": service.name,
+            "serviceVersion": service.version
+        }
+
+        r = requests.post('http://localhost/api/services', json=serviceBDD)
+
+
 # Main function of the service
 
 def main(nodes, mode):
     for i in range(len(nodes)):
         scanDevices(nodes[i]['ipAddr'], mode)
         newDevice = parseNmap(mode, nodes[i]['ipAddr'])
-        # if(newDevice == None): # No insert in BDD
-        #     continue
-        print("==========================================================")
-        if(newDevice != None):
-            for service in newDevice.services:
-                print(service.toString())
-            print(newDevice.toString())
-        print("==========================================================")
+        if(newDevice == None):  # No insert in BDD
+            continue
+        else:
+            deviceID = insertDevice(newDevice, mode)
+            newDevice.updateID(deviceID)
+            if(len(newDevice.services) != 0):
+                insertService(newDevice)
+
         deleteTempFile(mode)
 
 

@@ -2,6 +2,7 @@
 import database.db_config as config
 from database import db_manager
 
+import json
 import ipaddress
 from flask import Blueprint, jsonify, request
 from flask_http_response import error, success
@@ -50,7 +51,10 @@ def apiGetDevices():
         d["systemOS"] = row[11]
         objects_list.append(d)
     dbManager.close()
-    return jsonify(objects_list)
+    if(len(objects_list) == 1):
+        return jsonify(objects_list[0])
+    else:
+        return jsonify(objects_list)
 
 
 # GET ONE
@@ -77,7 +81,7 @@ def apiGetDevice(id=None):
         d["systemOS"] = row[11]
         objects_list.append(d)
     dbManager.close()
-    return jsonify(objects_list)
+    return jsonify(objects_list[0])
 
 
 # POST
@@ -226,7 +230,7 @@ def apiPutDevice(id=None):
 
             # final id
             finalReq += " WHERE `Device`.`id` = ?"
-            params += id
+            params.append(str(id))
 
             dbManager.queryInsert(finalReq, params)
             dbManager.close()

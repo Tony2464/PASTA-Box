@@ -15,6 +15,7 @@ from api.routes.rules import rules
 from api.routes.devices import devices
 from api.routes.system import system
 from api.routes.user import user
+from api.routes.services import services
 
 # Web pages routes
 from web.routes.admin.web_index import web_index
@@ -32,6 +33,7 @@ app.config['SECRET_KEY'] = 'PASTA-Box'
 app.register_blueprint(frames, url_prefix="/api/frames")
 app.register_blueprint(rules, url_prefix="/api/rules")
 app.register_blueprint(devices, url_prefix="/api/devices")
+app.register_blueprint(services, url_prefix="/api/services")
 app.register_blueprint(system, url_prefix="/api/system")
 app.register_blueprint(user, url_prefix="/api/user")
 

@@ -3,6 +3,7 @@ from flask.templating import render_template
 from flask_socketio import SocketIO
 from threading import Thread, Event
 from subprocess import Popen, PIPE
+from datetime import timedelta
 
 # Local imports
 import web.conf.config as config
@@ -29,6 +30,8 @@ from web.routes.admin.web_audit import web_audit
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'PASTA-Box'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=4)
+
 # API
 app.register_blueprint(frames, url_prefix="/api/frames")
 app.register_blueprint(rules, url_prefix="/api/rules")

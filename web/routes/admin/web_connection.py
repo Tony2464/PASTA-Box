@@ -53,15 +53,6 @@ def token_required(func):
     # Continue
     return decorated
 
-# Test
-
-
-@web_connection.route('/auth', methods=['GET'])
-# @token_required
-@web_connect.web_connection_required
-def auth():
-    return "Session created, welcome."
-
 
 @web_connection.route('/login', methods=['GET', 'POST'])
 def login():
@@ -78,6 +69,8 @@ def login():
             # return returnCode
             if returnCode == "200":
                 data = r.json()
+                session.permanent = True
+                session.modified = True
                 session['id'] = data[0]['id']
                 session['firstname'] = data[0]['firstname']
                 return render_template('pages/index.html')

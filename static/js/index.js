@@ -1,3 +1,51 @@
+
+function getServicesOccurrence() {
+    $.ajax({
+        method: "GET",
+        url: '/api/frames/servicesOccurrence',
+        success: function (response) {
+            serviceBar(response)
+            $.each(response, function (index) {
+                // console.log(response[index].occurrence, response[index].protocolLayerApplicaction)
+            })
+            // console.log(response)
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    });
+}
+
+getServicesOccurrence()
+
+// Protocols
+function serviceBar(data) {
+    services = []
+    occurrence = []
+    $.each(data, function (index) {
+        // console.log(data[index].occurrence, data[index].protocolLayerApplicaction)
+        services.push(data[index].protocolLayerApplicaction)
+        occurrence.push(data[index].occurrence)
+    })
+
+    console.log(services)
+    console.log(occurrence)
+
+    var ctx = document.getElementById("chartProtocols");
+    var myLineChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: services,
+            datasets: [{
+                label: "Protocols",
+                backgroundColor: "#8892CA",
+                borderColor: "#111111",
+                data: occurrence,
+                barThickness: 40,
+            }],
+        },
+    });
+}
 // Bar Chart Example
 var ctx = document.getElementById("myBarChart");
 var myLineChart = new Chart(ctx, {
@@ -52,6 +100,6 @@ var myPieChart = new Chart(ctx, {
             data: [12.21, 15.58, 11.25, 8.32],
             backgroundColor: ['#007bff', '#dc3545', '#ffc107', '#28a745'],
         }],
-        aspectratio:0.5,
+        aspectratio: 0.5,
     },
 });

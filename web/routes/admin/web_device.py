@@ -4,6 +4,7 @@ import requests
 # Local
 import database.db_config as config
 from database import db_manager
+from . import web_connection_required as web_connect
 
 dbManager = db_manager.DbManager(
     config.dbConfig["user"],
@@ -18,6 +19,7 @@ web_device = Blueprint("web_device", __name__)
 
 @web_device.route('/<id>')
 @web_device.route('/')
+@web_connect.web_connection_required
 def getDevice(id=None):
     if not id:
         return redirect("/admin/map", code=400)

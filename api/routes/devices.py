@@ -1,10 +1,10 @@
-from flask import Blueprint, request, jsonify
-from flask_http_response import success, error
-import ipaddress
-
 # Local
 import database.db_config as config
 from database import db_manager
+
+import ipaddress
+from flask import Blueprint, jsonify, request
+from flask_http_response import error, success
 
 
 def initDb():
@@ -25,8 +25,14 @@ devices = Blueprint("devices", __name__)
 
 @devices.route('/', methods=['GET'])
 def apiGetDevices():
+    if request.args.get("macAddr") and request.args.get("ipAddr"):
+        req = "SELECT * FROM Device WHERE macAddr = ? AND ipAddr = ?"
+        params = [request.args.get("macAddr"), request.args.get("ipAddr")]
+    else:
+        req = "SELECT * FROM Device"
+        params = []
     dbManager = initDb()
-    data = dbManager.queryGet("SELECT * FROM Device", [])
+    data = dbManager.queryGet(req, params)
     objects_list = []
     for row in data:
         d = {}
@@ -40,12 +46,17 @@ def apiGetDevices():
         d["activeStatus"] = row[7]
         d["firstConnection"] = row[8]
         d["lastConnection"] = row[9]
+        d["lastScan"] = row[10]
+        d["systemOS"] = row[11]
         objects_list.append(d)
     dbManager.close()
-    return jsonify(objects_list)
+    if(len(objects_list) == 1):
+        return jsonify(objects_list[0])
+    else:
+        return jsonify(objects_list)
+
 
 # GET ONE
-
 
 @devices.route('/', methods=['GET'])
 @devices.route('/<id>', methods=['GET'])
@@ -65,12 +76,14 @@ def apiGetDevice(id=None):
         d["activeStatus"] = row[7]
         d["firstConnection"] = row[8]
         d["lastConnection"] = row[9]
+        d["lastScan"] = row[10]
+        d["systemOS"] = row[11]
         objects_list.append(d)
     dbManager.close()
-    return jsonify(objects_list)
+    return jsonify(objects_list[0])
+
 
 # POST
-
 
 @devices.route('/', methods=['POST'])
 def apiPostDevice():
@@ -106,7 +119,13 @@ def apiPostDevice():
         if "lastConnection" not in device or device["lastConnection"] == "":
             device["lastConnection"] = None
 
-        dbManager.queryInsert("INSERT INTO `Device` (`role`, `idNetwork`, `macAddr`, `ipAddr`, `securityScore`, `netBios`, `activeStatus`, `firstConnection`, `lastConnection`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        if "lastScan" not in device or device["lastScan"] == "":
+            device["lastScan"] = None
+
+        if "systemOS" not in device or device["systemOS"] == "":
+            device["systemOS"] = None
+
+        dbManager.queryInsert("INSERT INTO `Device` (`role`, `idNetwork`, `macAddr`, `ipAddr`, `securityScore`, `netBios`, `activeStatus`, `firstConnection`, `lastConnection`, `lastScan`, `systemOS`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                               [
                                   device["role"],
                                   device["idNetwork"],
@@ -116,15 +135,17 @@ def apiPostDevice():
                                   device["netBios"],
                                   device["activeStatus"],
                                   device["firstConnection"],
-                                  device["lastConnection"]
+                                  device["lastConnection"],
+                                  device["lastScan"],
+                                  device["systemOS"]
                               ])
         dbManager.close()
         return success.return_response(status=201, message="Device added successfully")
     else:
         return error.return_response(status=400, message="Need JSON data")
 
-# PUT
 
+# PUT
 
 @devices.route('/', methods=['PUT'])
 @devices.route('/<id>', methods=['PUT'])
@@ -189,6 +210,16 @@ def apiPutDevice(id=None):
                 req.append("`lastConnection` = ?")
                 params.append(device["lastConnection"])
 
+            # lastScan
+            if "lastScan" in device and device["lastScan"] != "":
+                req.append("`lastScan` = ?")
+                params.append(device["lastScan"])
+
+            # systemOS
+            if "systemOS" in device and device["systemOS"] != "":
+                req.append("`systemOS` = ?")
+                params.append(device["systemOS"])
+
             # Concataining all the previous params
             finalReq = ""
             if len(device) > 1:
@@ -203,7 +234,8 @@ def apiPutDevice(id=None):
 
             # final id
             finalReq += " WHERE `Device`.`id` = ?"
-            params.append(id)
+            params.append(str(id))
+
             dbManager.queryInsert(finalReq, params)
             dbManager.close()
 
@@ -216,14 +248,13 @@ def apiPutDevice(id=None):
 
 # DELETE
 
-
 @devices.route('/', methods=['DELETE'])
 @devices.route('/<id>', methods=['DELETE'])
 def apiDeleteDevice(id=None):
     return 0
 
-# Give all devices for map
 
+# Give all devices for map
 
 @devices.route('/mapDevices')
 def apiMapDevices():
@@ -242,7 +273,18 @@ def apiMapDevices():
         d["activeStatus"] = row[7]
         d["firstConnection"] = row[8]
         d["lastConnection"] = row[9]
-        if d["ipAddr"] != None and ipaddress.ip_address(d["ipAddr"]).is_private:
+        d["lastScan"] = row[10]
+        d["systemOS"] = row[11]
+        if d["ipAddr"] != None and checkIP(d["ipAddr"]) != 3 and ipaddress.ip_address(d["ipAddr"]).is_private:
             objects_list.append(d)
     dbManager.close()
     return jsonify(objects_list)
+
+
+# Check IP version
+
+def checkIP(IP):
+    try:
+        return 1 if type(ipaddress.ip_address(IP)) is ipaddress.IPv4Address else 2
+    except ValueError:
+        return 3

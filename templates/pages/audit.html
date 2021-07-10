@@ -1,0 +1,100 @@
+{% extends "base/base.html" %}
+{% block title %} Pasta-Box - Internal Audit {% endblock %}
+{% block content %}
+
+<div class="container-fluid">
+    <br>
+    <div class="container">
+        <h1 style="text-align: center;">INTERNAL AUDIT</h1>
+        <div class="divider div-transparent div-arrow-down"></div>
+    </div>
+    <div style="padding-right:inherit;" class="container col-md-6">
+        <h3 style="text-align: center;">Audit mode</h3>
+        <br id="errorAnchor">
+        <br>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <div class="row">
+                    <legend class="col-form-label pt-0"><u>Select your audit mode :</u></legend>
+                    <div class="form-check">
+                        <input onclick="flushAlerts()" onchange="changeAuditMode(1)" class="form-check-input"
+                            type="radio" name="gridRadiosAudit" {% if content.mode == 1 %} checked {% endif %}>
+                        <label class="form-check-label" for="gridRadios1">
+                            Automatic
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input onclick="flushAlerts()" onchange="changeAuditMode(2)" class="form-check-input"
+                            type="radio" name="gridRadiosAudit" {% if content.mode == 2 %} checked {% endif %}>
+                        <label class="form-check-label" for="gridRadios1">
+                            Semi-auto
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input onclick="flushAlerts()" onchange="changeAuditMode(3)" class="form-check-input"
+                            type="radio" name="gridRadiosAudit" {% if content.mode == 3 %} checked {% endif %}>
+                        <label class="form-check-label" for="gridRadios1">
+                            Manual mode
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <div id="des1" class="row description" style="display: none;">
+                    <legend class="col-form-label pt-0"><u>Description :</u></legend>
+                    <p>In the automatic audit mode, all your devices from your network are automatically scanned on a
+                        regular basis. Moreover, the automatic audit mode will also check your new devices autonomously.
+                    </p>
+                </div>
+                <div id="des2" class="row description" style="display: none;">
+                    <legend class="col-form-label pt-0"><u>Description :</u></legend>
+                    <p>In the semi-automatic audit mode, you can scanned all your devices whenever you want manually.
+                        All your devices from your network will be concerned.</p>
+                </div>
+                <div id="des3" class="row description" style="display: none;">
+                    <legend class="col-form-label pt-0"><u>Description :</u></legend>
+                    <p>In the manual audit mode, you choose to audit a particular device whenever you want manually.</p>
+                </div>
+            </div>
+        </div>
+        <button id="changeModeButton" style="display: none;" type="button" class="btn btn-primary">Change mode</button>
+        <button id="buttonMode2" style="display: none;" onclick="globalScan()" type="button"
+            class="btn btn-primary">Start global scan</button>
+        <button id="buttonMode3" style="display: none;" onclick="window.open('/admin/map','_blank')" type="button"
+            class="btn btn-primary">Select device</button>
+        <br>
+        <br>
+    </div>
+    <div style="padding-right:inherit;" class="container col-md-4">
+        <form class="form-inline">
+            <div class="form-group mb-2" style="margin: 0 auto;">
+                <label for="staticEmail2" class="sr-form-control-plaintext"><u>Scan a specific IP address :</u></label>
+            </div>
+            <div class="form-group mx-sm-3 mb-2" style="margin: 0 auto;">
+                <input type="text" onkeyup="checkIP('specificIpAddr')" class="form-control" id="specificIpAddr"
+                    placeholder="IP address">
+            </div>
+            <button type="submit" class="btn btn-primary mb-2" style="margin: 0 auto;">Scan</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+{% block js %}
+
+<script src="{{ url_for('static', filename='js/form.js') }}"></script>
+<script src="{{ url_for('static', filename='js/network.js') }}"></script>
+<script src="{{ url_for('static', filename='js/audit.js') }}"></script>
+<script>
+    updateMode({{content.mode}});
+
+    {% if content.mode == 1 %}
+    loadAutoMode(); 
+    {% elif content.mode == 2 %}
+    loadSemiAutoMode(); 
+    {% else %}
+    loadManualMode(); 
+    {% endif %}
+</script>
+
+{% endblock %}

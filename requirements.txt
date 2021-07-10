@@ -5,3 +5,4 @@ crontabs
 numpy
 flask-http-response
 psutil
+PyJWT

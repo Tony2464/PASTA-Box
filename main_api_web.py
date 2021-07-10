@@ -1,10 +1,9 @@
 from flask import Flask, redirect
-from flask.helpers import url_for
 from flask.templating import render_template
 from flask_socketio import SocketIO
-from time import sleep
 from threading import Thread, Event
 from subprocess import Popen, PIPE
+from datetime import timedelta
 
 # Local imports
 import web.conf.config as config
@@ -16,6 +15,10 @@ from api.routes.frames import frames
 from api.routes.rules import rules
 from api.routes.devices import devices
 from api.routes.system import system
+from api.routes.user import user
+from api.routes.services import services
+from api.routes.alertDevices import alertDevices
+from api.routes.alertProtocol import alertProtocol
 
 # Web pages routes
 from web.routes.admin.web_index import web_index
@@ -24,13 +27,22 @@ from web.routes.admin.web_firewall import web_firewall
 from web.routes.admin.web_mapping import web_mapping
 from web.routes.admin.web_settings import web_settings
 from web.routes.admin.web_device import web_device
+from web.routes.admin.web_connection import web_connection
+from web.routes.admin.web_audit import web_audit
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'PASTA-Box'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=4)
+
 # API
 app.register_blueprint(frames, url_prefix="/api/frames")
 app.register_blueprint(rules, url_prefix="/api/rules")
 app.register_blueprint(devices, url_prefix="/api/devices")
+app.register_blueprint(services, url_prefix="/api/services")
 app.register_blueprint(system, url_prefix="/api/system")
+app.register_blueprint(user, url_prefix="/api/user")
+app.register_blueprint(alertProtocol, url_prefix="/api/alert_protocol")
+app.register_blueprint(alertDevices, url_prefix="/api/alert_devices")
 
 # Web Pages
 app.register_blueprint(web_index, url_prefix="/admin")
@@ -38,7 +50,9 @@ app.register_blueprint(web_frames, url_prefix="/admin/frames")
 app.register_blueprint(web_firewall, url_prefix="/admin/firewall")
 app.register_blueprint(web_mapping, url_prefix="/admin/map")
 app.register_blueprint(web_settings, url_prefix="/admin/settings")
+app.register_blueprint(web_audit, url_prefix="/admin/audit")
 app.register_blueprint(web_device, url_prefix="/admin/device")
+app.register_blueprint(web_connection, url_prefix="/admin/account")
 
 
 @app.route('/')
@@ -93,6 +107,7 @@ def test_disconnect():
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('pages/404.html'), 404
+
 
 if __name__ == "__main__":
     # app.run(host=config.hostConfig, debug=config.debugMode)

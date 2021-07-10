@@ -37,16 +37,19 @@ def apiGetServices():
         d["serviceVersion"] = row[5]
         objects_list.append(d)
     dbManager.close()
-    return jsonify(objects_list)
+    if(len(objects_list) == 1):
+        return jsonify(objects_list[0])
+    else:
+        return jsonify(objects_list)
 
 
-# GET ONE
+# GET ALL BASED ON DEVICE
 
 @services.route('/', methods=['GET'])
 @services.route('/<id>', methods=['GET'])
 def apiGetService(id=None):
     dbManager = initDb()
-    data = dbManager.queryGet("SELECT * FROM Service WHERE idService = ?", [id])
+    data = dbManager.queryGet("SELECT * FROM Service WHERE idDevice = ?", [id])
     objects_list = []
     for row in data:
         d = {}
@@ -58,7 +61,10 @@ def apiGetService(id=None):
         d["serviceVersion"] = row[5]
         objects_list.append(d)
     dbManager.close()
-    return jsonify(objects_list[0])
+    if(len(objects_list) == 1):
+        return jsonify(objects_list[0])
+    else:
+        return jsonify(objects_list)
 
 
 # POST

@@ -16,6 +16,8 @@ from api.routes.frames import frames
 from api.routes.rules import rules
 from api.routes.devices import devices
 from api.routes.services import services
+from api.routes.alertDevices import alertDevices
+from api.routes.alertProtocol import alertProtocol
 
 # Web pages routes
 from web.routes.admin.index import homepage, index
@@ -31,6 +33,8 @@ app.register_blueprint(frames, url_prefix="/api/frames")
 app.register_blueprint(rules, url_prefix="/api/rules")
 app.register_blueprint(devices, url_prefix="/api/devices")
 app.register_blueprint(services, url_prefix="/api/services")
+app.register_blueprint(alertProtocol, url_prefix="/api/alert_protocol")
+app.register_blueprint(alertDevices, url_prefix="/api/alert_devices")
 
 # Web Pages
 app.register_blueprint(index, url_prefix="/admin")

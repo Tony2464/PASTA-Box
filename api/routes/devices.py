@@ -2,7 +2,6 @@
 import database.db_config as config
 from database import db_manager
 
-import json
 import ipaddress
 from flask import Blueprint, jsonify, request
 from flask_http_response import error, success
@@ -235,7 +234,7 @@ def apiPutDevice(id=None):
             dbManager.queryInsert(finalReq, params)
             dbManager.close()
 
-            return success.return_response(status=200, message="Frame updated successfully")
+            return success.return_response(status=200, message="Device updated successfully")
         else:
             return error.return_response(status=400, message="Need JSON data")
     else:

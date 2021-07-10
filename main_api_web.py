@@ -17,6 +17,8 @@ from api.routes.devices import devices
 from api.routes.system import system
 from api.routes.user import user
 from api.routes.services import services
+from api.routes.alertDevices import alertDevices
+from api.routes.alertProtocol import alertProtocol
 
 # Web pages routes
 from web.routes.admin.web_index import web_index
@@ -39,6 +41,8 @@ app.register_blueprint(devices, url_prefix="/api/devices")
 app.register_blueprint(services, url_prefix="/api/services")
 app.register_blueprint(system, url_prefix="/api/system")
 app.register_blueprint(user, url_prefix="/api/user")
+app.register_blueprint(alertProtocol, url_prefix="/api/alert_protocol")
+app.register_blueprint(alertDevices, url_prefix="/api/alert_devices")
 
 # Web Pages
 app.register_blueprint(web_index, url_prefix="/admin")

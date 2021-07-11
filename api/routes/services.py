@@ -61,10 +61,7 @@ def apiGetService(id=None):
         d["serviceVersion"] = row[5]
         objects_list.append(d)
     dbManager.close()
-    if(len(objects_list) == 1):
-        return jsonify(objects_list[0])
-    else:
-        return jsonify(objects_list)
+    return jsonify(objects_list)
 
 
 # POST

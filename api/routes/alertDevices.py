@@ -23,7 +23,7 @@ alertDevices = Blueprint("alertDevices", __name__)
 # GET ALL
 
 @alertDevices.route('/', methods=['GET'])
-def apiGetDevices():
+def apiGetDeviceAlerts():
     req = "SELECT * FROM DeviceAlert"
     params = []
     dbManager = initDb()
@@ -49,7 +49,7 @@ def apiGetDevices():
 
 @alertDevices.route('/', methods=['GET'])
 @alertDevices.route('/<id>', methods=['GET'])
-def apiGetDevices(id=None):
+def apiGetDeviceAlertsId(id=None):
     dbManager = initDb()
     data = dbManager.queryGet(
         "SELECT * FROM DeviceAlert HERE idDevice = ?", [id])
@@ -73,7 +73,7 @@ def apiGetDevices(id=None):
 # POST
 
 @alertDevices.route('/', methods=['POST'])
-def apiPostDevice():
+def apiPostDeviceAlert():
     if request.json:
         dbManager = initDb()
         alert = request.get_json()
@@ -112,5 +112,5 @@ def apiPostDevice():
 
 @alertDevices.route('/', methods=['DELETE'])
 @alertDevices.route('/<id>', methods=['DELETE'])
-def apiDeleteDevice(id=None):
+def apiDeleteDeviceAlert(id=None):
     return 0

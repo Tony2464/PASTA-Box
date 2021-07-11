@@ -23,7 +23,7 @@ alertProtocol = Blueprint("alertProtocol", __name__)
 # GET ALL
 
 @alertProtocol.route('/', methods=['GET'])
-def apiGetDevices():
+def apiGetProtocolAlerts():
     req = "SELECT * FROM ProtocolAlert"
     params = []
     dbManager = initDb()
@@ -49,7 +49,7 @@ def apiGetDevices():
 
 @alertProtocol.route('/', methods=['GET'])
 @alertProtocol.route('/<id>', methods=['GET'])
-def apiGetDevices(id=None):
+def apiGetProtocolAlertsId(id=None):
     dbManager = initDb()
     data = dbManager.queryGet(
         "SELECT * FROM ProtocolAlert WHERE idFrame = ?", [id])
@@ -73,7 +73,7 @@ def apiGetDevices(id=None):
 # POST
 
 @alertProtocol.route('/', methods=['POST'])
-def apiPostDevice():
+def apiPostProtocolAlert():
     if request.json:
         dbManager = initDb()
         alert = request.get_json()
@@ -112,5 +112,5 @@ def apiPostDevice():
 
 @alertProtocol.route('/', methods=['DELETE'])
 @alertProtocol.route('/<id>', methods=['DELETE'])
-def apiDeleteDevice(id=None):
+def apiDeleteProtocolAlert(id=None):
     return 0

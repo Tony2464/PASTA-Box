@@ -153,6 +153,42 @@ function updateAuditMode(mode) {
 
 }
 
+function scanSpecificIP() {
+
+    let ipAddr = document.getElementById('specificIpAddr').value.trim();
+    if (ipAddr == "") return;
+
+    var req = new XMLHttpRequest();
+    req.onreadystatechange = function () {
+
+        if (req.readyState == 4) {
+
+            if (req.status == 400) {
+
+                var jsonString = JSON.parse(req.responseText);
+                displayError(jsonString["message"]);
+
+            } else {
+
+                let a = document.createElement('a');
+                a.target = '_blank';
+                a.href = req.responseURL;
+                a.click();
+
+            }
+
+        }
+    }
+
+    req.open('POST', '/admin/audit/scanip');
+
+    req.setRequestHeader("Content-type", "application/json");
+    req.send(JSON.stringify({
+        ipAddr: ipAddr
+    }));
+
+}
+
 function redirect() {
 
     self.location.href = "/admin/audit";

@@ -6,7 +6,6 @@ import ipaddress
 from flask import Blueprint, jsonify, request
 from flask_http_response import error, success
 
-
 def initDb():
     dbManager = db_manager.DbManager(
         config.dbConfig["user"],
@@ -28,6 +27,9 @@ def apiGetDevices():
     if request.args.get("macAddr") and request.args.get("ipAddr"):
         req = "SELECT * FROM Device WHERE macAddr = ? AND ipAddr = ?"
         params = [request.args.get("macAddr"), request.args.get("ipAddr")]
+    elif request.args.get("ipAddr"):
+        req = "SELECT * FROM Device WHERE ipAddr = ?"
+        params = [request.args.get("ipAddr")]
     else:
         req = "SELECT * FROM Device"
         params = []

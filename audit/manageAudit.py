@@ -1,4 +1,8 @@
+from audit.objects.Device import Device
 import json
+import datetime
+import requests
+
 
 # Audit configuration file
 pastaAuditConfig = "/PASTA-Box/audit/config.json"
@@ -35,3 +39,23 @@ def changeAuditMode(auditMode):
         configFile.close()
 
     return 0
+
+
+# Add a temporary device in BDD
+
+def addTempDevice(ipAddr: str):
+    date = datetime.datetime.now()
+    newDevice = {
+        "ipAddr": ipAddr,
+        "firstConnection": date.strftime('%Y-%m-%d %H:%M:%S'),
+        "lastConnection": date.strftime('%Y-%m-%d %H:%M:%S')
+    }
+    jsonDeviceData = json.dumps(newDevice)
+    r = requests.post('http://localhost/api/devices', json=json.loads(jsonDeviceData))
+
+    r = requests.get('http://localhost/api/devices/', params=newDevice)
+    data = r.json()
+    
+    device = Device(data["netBios"], data["systemOS"], data["ipAddr"], data["macAddr"], None)
+    device.updateID(data["id"])
+    return device

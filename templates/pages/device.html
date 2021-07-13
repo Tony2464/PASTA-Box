@@ -10,24 +10,24 @@
                     <button type="button" class="btn-close" aria-label="Close" onclick="closeTab();"></button>
                 </div>
                 <div class="col text-center">
-                    Device {{device[0]["role"]}}
+                    Device {{device["role"]}}
                 </div>
             </div>
         </div>
 
         <div class="card-body">
             <h5 class="card-title">Infos</h5>
-            <p class="card-text">{{device[0]["macAddr"]}}</p>
-            <p class="card-text">{{device[0]["ipAddr"]}}</p>
-            <p class="card-text">{{device[0]["securityScore"]}}</p>
-            <p class="card-text">{{device[0]["netBios"]}}</p>
-            <p class="card-text">{{device[0]["firstConnection"]}}</p>
-            <p class="card-text">{{device[0]["lastConnection"]}}</p>
+            <p class="card-text">{{device["macAddr"]}}</p>
+            <p class="card-text">{{device["ipAddr"]}}</p>
+            <p class="card-text">{{device["securityScore"]}}</p>
+            <p class="card-text">{{device["netBios"]}}</p>
+            <p class="card-text">{{device["firstConnection"]}}</p>
+            <p class="card-text">{{device["lastConnection"]}}</p>
             <a href="#" class="btn btn-primary shadow">Security Audit <img
                     src="{{ url_for('static', filename='icons/bug-fill-white.svg') }}" alt=""></a>
         </div>
         <div class="card-footer text-muted">
-            Status : {{device[0]["activeStatus"]}}
+            Status : {{device["activeStatus"]}}
         </div>
     </div>
 </div>

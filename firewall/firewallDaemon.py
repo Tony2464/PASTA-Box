@@ -1,4 +1,5 @@
 import getIpAdresses
+import customRules
 import json
 import datetime
 import os
@@ -20,7 +21,8 @@ def subDate(dateConfig):
     current = datetime.datetime.now()
     dateConfigArray = dateConfig.split("/")
     dateConfigObject = datetime.datetime(
-        int(dateConfigArray[2]), int(dateConfigArray[1]), int(dateConfigArray[0]))
+        int(dateConfigArray[2]), int(dateConfigArray[1]), int(dateConfigArray[0])
+    )
     return current - dateConfigObject
 
 
@@ -33,11 +35,16 @@ with open(config, encoding="utf8", errors="ignore") as configFile:
 jsonData = json.loads(configData)
 sub = subDate(jsonData["LastFetch"])
 
-if(isOutdated(jsonData["Mode"], jsonData["Duration"], sub.days) == False or os.path.isfile("/PASTA-Box/firewall/rulesBackup.txt") == False):
+if (
+    isOutdated(jsonData["Mode"], jsonData["Duration"], sub.days) == False
+    or os.path.isfile("/PASTA-Box/firewall/rulesBackup.txt") == False
+):
+    customRules.getAllCustomRules()
     getIpAdresses.fetchIP()
 else:
     res = os.system(
-        "cat /PASTA-Box/firewall/rulesBackup.txt | sudo ebtables-nft-restore")
+        "cat /PASTA-Box/firewall/rulesBackup.txt | sudo ebtables-nft-restore"
+    )
 
 if jsonData["Mode"] == "1":  # Monthly job
     Cron().schedule(

@@ -1,11 +1,13 @@
 # Local
-
 import database.db_config as config
 from database import db_manager
+from . import web_connection_required as web_connect
+
+# Flask
 from flask import Blueprint, render_template, request
-from flask_http_response import success
-from settings.systemCommands import *
-from settings.systemSettings import *
+from flask_http_response import success, error
+from settings.systemCommands import getCmd
+from settings.systemSettings import getConfig, applyConfig, updateSystemFiles
 
 dbManager = db_manager.DbManager(
     config.dbConfig["user"],
@@ -20,6 +22,7 @@ web_settings = Blueprint("web_settings", __name__)
 
 @web_settings.route('/')
 @web_settings.route('/system/')
+@web_connect.web_connection_required
 def systemHomepage():
     configPasta = getConfig()
     return render_template('pages/system_settings.html', content=configPasta)
@@ -31,7 +34,7 @@ def updateConfig():
 
     res = applyConfig(config)
     if(res != 0):
-        return switchError(res)
+        return error.return_response(message=switchError(res))
     else:
         updateSystemFiles(config)
         return success.return_response(status=200)
@@ -60,6 +63,6 @@ def getCommand():
     res = getCmd(action['command'])
 
     if(res != 0):
-        return switchError(res)
+        return error.return_response(message=switchError(res))
     else:
         return success.return_response(status=200)

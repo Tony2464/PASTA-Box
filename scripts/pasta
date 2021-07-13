@@ -1,0 +1,58 @@
+#! /usr/bin/python3
+
+import requests
+import argparse
+
+
+def askYesNo(message):
+    while True:
+        choice = input(message+" [Yes/No] : ").lower()
+        yes = {'yes', 'y'}
+        no = {'no', 'n'}
+        if choice in yes:
+            return True
+        elif choice in no:
+            return False
+        else:
+            print("Please respond by yes or no.")
+
+
+def createNewUser():
+    print("Create new user")
+    # Verifs to do
+    email = input("Email : ")
+    firstname = input("Firstname : ")
+    surname = input("Surname : ")
+    password = input("Password : ")
+    admin = askYesNo("Admin")
+
+    params = {
+         "admin": admin,
+          "email": email,
+         "firstname": firstname,
+            "surname": surname,
+            "password": password
+         }
+    r = requests.post('http://localhost/api/user/register', json=params)
+    returnCode = r.status_code
+    if returnCode == 201:
+        print("User added successfully.")
+    if returnCode == 409:
+        print("User exists already.")
+
+
+# Instantiate the parser
+parser = argparse.ArgumentParser()
+# Required positional argument
+parser.add_argument('manage')
+
+# Required positional argument
+parser.add_argument('action')
+
+args = parser.parse_args()
+
+if args.manage == "user":
+    if args.action == "create":
+        createNewUser()
+
+# Example of usecase : ./pasta user create

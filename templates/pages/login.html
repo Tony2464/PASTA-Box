@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <title>PATSA-Box - Login</title>
+  <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/style-base.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+  <script src="{{ url_for('static', filename='js/icons-menu.js') }}"></script>
+  <link rel="icon" sizes="64x64" type="image/png" href="{{ url_for('static', filename='img/favicon.png') }}">
+</head>
+
+<style>
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    display: flex;
+    align-items: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    background-color: #f5f5f5;
+  }
+
+  .form-signin {
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: auto;
+  }
+
+  .form-signin .checkbox {
+    font-weight: 400;
+  }
+
+  .form-signin .form-floating:focus-within {
+    z-index: 2;
+  }
+
+  .form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+</style>
+
+<body class="text-center">
+
+  <div class="container">
+
+    <main class="form-signin">
+      <form action="" method="POST">
+        <img class="mb-4" src="{{ url_for('static', filename='img/favicon.png') }}" alt="" width="35%">
+        <h1 class="mb-3 display-6">Please log in</h1>
+        {% if message %}
+        <div class="alert alert-danger text-center" role="alert">
+          <div>
+            {{ message }}
+          </div>
+        </div>
+        {% endif %}
+        <div class="form-floating">
+          <input type="email" class="form-control" id="floatingInput" placeholder="" name="email" required>
+          <label for="floatingInput">Email address</label>
+        </div>
+        <div class="form-floating">
+          <input type="password" class="form-control" id="floatingPassword" placeholder="" name="password" required>
+          <label for="floatingPassword">Password</label>
+        </div>
+        <!-- <div class="checkbox mb-3">
+                    <label>
+                        <input type="checkbox" value="remember-me"> Remember me
+                    </label>
+                </div> -->
+        <button class="w-100 btn btn-lg btn-outline-primary" type="submit">Log in</button>
+        <p class="mt-5 mb-3 text-muted">PASTA-Box &copy;</p>
+      </form>
+    </main>
+  </div>
+</body>
+
+</html>

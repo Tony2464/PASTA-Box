@@ -6,6 +6,7 @@ import ipaddress
 from flask import Blueprint, jsonify, request
 from flask_http_response import error, success
 
+
 def initDb():
     dbManager = db_manager.DbManager(
         config.dbConfig["user"],

@@ -199,27 +199,33 @@ def apiGetFrame(id=None):
     if id:
         dbManager = initDb()
         data = dbManager.queryGet("SELECT * FROM Frame WHERE id=?", [id])
-        d = {}
-        d["id"] = data[0]
-        d["portSource"] = data[1]
-        d["portDest"] = data[2]
-        d["ipSource"] = data[3]
-        d["ipDest"] = data[4]
-        d["macAddrSource"] = data[5]
-        d["macAddrDest"] = data[6]
-        d["protocolLayerApplication"] = data[7]
-        d["protocolLayerTransport"] = data[8]
-        d["protocolLayerNetwork"] = data[9]
-        d["date"] = data[10]
-        d["domain"] = data[11]
-        d["info"] = data[12]
+        objects_list = []
+        for row in data:
+            d = {}
+            d["id"] = row[0]
+            d["portSource"] = row[1]
+            d["portDest"] = row[2]
+            d["ipSource"] = row[3]
+            d["ipDest"] = row[4]
+            d["macAddrSource"] = row[5]
+            d["macAddrDest"] = row[6]
+            d["protocolLayerApplication"] = row[7]
+            d["protocolLayerTransport"] = row[8]
+            d["protocolLayerNetwork"] = row[9]
+            d["date"] = row[10]
+            d["domain"] = row[11]
+            d["info"] = row[12]
+            objects_list.append(d)
         dbManager.close()
-        return jsonify(d)
+        if(len(objects_list) == 1):
+            return jsonify(objects_list[0])
+        else:
+            return jsonify(objects_list)
     else:
         return error.return_response(status=400, message="Need an ID")
 
-# Get unique MAC address from frames
 
+# Get unique MAC address from frames
 
 @frames.route('/macAddr', methods=['GET'])
 def apiGetMac():
@@ -235,8 +241,8 @@ def apiGetMac():
     dbManager.close()
     return jsonify(objects_list)
 
-# Get new MAC address to insert
 
+# Get new MAC address to insert
 
 @frames.route('/macToInsert', methods=['GET'])
 def apiGetMacToInsert():
@@ -248,6 +254,23 @@ def apiGetMacToInsert():
         d = {}
         d["macAddr"] = row[0]
         d["date"] = row[1]
+        objects_list.append(d)
+    dbManager.close()
+    return jsonify(objects_list)
+
+
+# Get number of services' packets
+
+@frames.route('/servicesOccurrence', methods=['GET'])
+def apiGetServiceOccurrence():
+    dbManager = initDb()
+    req = "SELECT protocolLayerApplication, COUNT(1) as occurrence FROM Frame GROUP BY protocolLayerApplication"
+    data = dbManager.queryGet(req, [])
+    objects_list = []
+    for row in data:
+        d = {}
+        d["protocolLayerApplicaction"] = row[0]
+        d["occurrence"] = row[1]
         objects_list.append(d)
     dbManager.close()
     return jsonify(objects_list)

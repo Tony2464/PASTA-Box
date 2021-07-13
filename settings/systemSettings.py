@@ -2,29 +2,9 @@ import json
 import os
 import re
 import socket
-
-# Regex IPv4
-ipv4 = '''^(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(  
-            25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(  
-            25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(  
-            25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$'''
-
-# Regex IPv6
-ipv6 = '''(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}| 
-        ([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:) 
-        {1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1 
-        ,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4} 
-        :){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{ 
-        1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA 
-        -F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a 
-        -fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0 
-        -9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0, 
-        4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1} 
-        :){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9 
-        ])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0 
-        -9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4] 
-        |1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4] 
-        |1{0,1}[0-9]){0,1}[0-9]))'''
+import time
+import threading
+from ipaddress import ip_address, IPv4Address
 
 # Regex hostname
 hostname = '''^([a-zA-Z0-9](?:(?:[a-zA-Z0-9-]*|(?<!-)\.(?![-.]))*[a-zA-Z0-9]+)?)$'''
@@ -49,12 +29,10 @@ def isNetmask(string):
 
 # Check IP version
 
-def checkIP(string):
-    if re.search(ipv4, string):
-        return 1
-    elif re.search(ipv6, string):
-        return 2
-    else:
+def checkIP(IP):
+    try:
+        return 1 if type(ip_address(IP)) is IPv4Address else 2
+    except ValueError:
         return 3
 
 
@@ -125,11 +103,17 @@ def readNetworkFile():
 def parseNetworkFile():
     data = readNetworkFile()
 
+    with open(pastaConfigFile, "r") as configFile:
+        jsonData = json.load(configFile)
+        restartValue = jsonData["restart"]
+        configFile.close()
+
     systemConfig = {
         "ipAddr": "",
         "netmask": "",
         "gateway": "",
-        "hostname": socket.gethostname()
+        "hostname": socket.gethostname(),
+        "restart": restartValue
     }
 
     for i in range(len(data)):
@@ -137,13 +121,16 @@ def parseNetworkFile():
             i += 1
             while(i < len(data) and data[i].find("auto") == -1):
                 if(data[i].find("address") != -1):
-                    systemConfig['ipAddr'] = data[i].split(' ')[len(data[i].split(' ')) - 1][:-1] # Delete \n
+                    systemConfig['ipAddr'] = data[i].split(
+                        ' ')[len(data[i].split(' ')) - 1][:-1]  # Delete \n
 
                 if(data[i].find("netmask") != -1):
-                    systemConfig['netmask'] = data[i].split(' ')[len(data[i].split(' ')) - 1][:-1] # Delete \n
+                    systemConfig['netmask'] = data[i].split(
+                        ' ')[len(data[i].split(' ')) - 1][:-1]  # Delete \n
 
                 if(data[i].find("gateway") != -1):
-                    systemConfig['gateway'] = data[i].split(' ')[len(data[i].split(' ')) - 1][:-1] # Delete \n
+                    systemConfig['gateway'] = data[i].split(
+                        ' ')[len(data[i].split(' ')) - 1][:-1]  # Delete \n
 
                 i += 1
 
@@ -155,32 +142,32 @@ def parseNetworkFile():
 def updateSystemFiles(userConfig):
     localConfig = parseNetworkFile()
     if(localConfig['hostname'] != userConfig['hostname'] and localConfig['restart'] == "false"):
-        os.system("sudo /PASTA-Box/settings/change_hostname.sh " + userConfig['hostname'])
+        os.system("sudo /PASTA-Box/settings/change_hostname.sh " +
+                  userConfig['hostname'])
         setRestart()
-    
+
     if((localConfig['ipAddr'] != userConfig['ipAddr']) or (localConfig['netmask'] != userConfig['netmask']) or (localConfig['gateway'] != userConfig['gateway'])):
         data = readNetworkFile()
         for i in range(len(data)):
-            if(data[i].find("auto " + interface) != -1): 
+            if(data[i].find("auto " + interface) != -1):
                 i += 1
                 while(i < len(data) and data[i].find("auto") == -1):
                     if(data[i].find("address") != -1):
-                        data[i] = (data[i].split(' ')[0] + ' ' + userConfig['ipAddr'] + '\n')
+                        data[i] = (data[i].split(' ')[0] + ' ' +
+                                   userConfig['ipAddr'] + '\n')
 
                     if(data[i].find("netmask") != -1):
-                        data[i] = (data[i].split(' ')[0] + ' ' + userConfig['netmask'] + '\n')
-                    
-                    if(data[i].find("gateway") != -1):
-                        data[i] = (data[i].split(' ')[0] + ' ' + userConfig['gateway'] + '\n')
-                    
-                    i += 1
-                    
-        with open(pastaNetworkSettingsFile, "w") as networkTempFile:
-            networkTempFile.writelines(data)
-            networkTempFile.close()
-        os.system("sudo /PASTA-Box/settings/change_IP.sh ")
+                        data[i] = (data[i].split(' ')[0] + ' ' +
+                                   userConfig['netmask'] + '\n')
 
-        return data
+                    if(data[i].find("gateway") != -1):
+                        data[i] = (data[i].split(' ')[0] + ' ' +
+                                   userConfig['gateway'] + '\n')
+
+                    i += 1
+
+        t = threading.Thread(target=changeIP, args=(data,))
+        t.start()
 
 
 # Set restart = true in config.json
@@ -196,9 +183,12 @@ def setRestart():
         configFile.truncate()
         configFile.close()
 
-# testConfig = {
-#    "ipAddr": "192.168.5.2",
-#    "netmask": "255.255.255.0",
-#    "gateway": "192.168.5.1",
-#    "hostname": "PASTA-Box"
-# }
+
+# Change IP of the equipment
+
+def changeIP(data):
+    time.sleep(5)
+    with open(pastaNetworkSettingsFile, "w") as networkTempFile:
+            networkTempFile.writelines(data)
+            networkTempFile.close()
+    os.system("sudo /PASTA-Box/settings/change_IP.sh ")

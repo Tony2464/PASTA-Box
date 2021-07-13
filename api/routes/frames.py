@@ -220,12 +220,12 @@ def apiGetFrame(id=None):
         if(len(objects_list) == 1):
             return jsonify(objects_list[0])
         else:
-            return  jsonify(objects_list)
+            return jsonify(objects_list)
     else:
         return error.return_response(status=400, message="Need an ID")
 
-# Get unique MAC address from frames
 
+# Get unique MAC address from frames
 
 @frames.route('/macAddr', methods=['GET'])
 def apiGetMac():
@@ -241,8 +241,8 @@ def apiGetMac():
     dbManager.close()
     return jsonify(objects_list)
 
-# Get new MAC address to insert
 
+# Get new MAC address to insert
 
 @frames.route('/macToInsert', methods=['GET'])
 def apiGetMacToInsert():
@@ -260,6 +260,7 @@ def apiGetMacToInsert():
 
 
 # Get number of services' packets
+
 @frames.route('/servicesOccurrence', methods=['GET'])
 def apiGetServiceOccurrence():
     dbManager = initDb()

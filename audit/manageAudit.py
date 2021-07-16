@@ -51,11 +51,13 @@ def addTempDevice(ipAddr: str):
         "lastConnection": date.strftime('%Y-%m-%d %H:%M:%S')
     }
     jsonDeviceData = json.dumps(newDevice)
-    r = requests.post('http://localhost/api/devices', json=json.loads(jsonDeviceData))
+    r = requests.post('http://localhost/api/devices',
+                      json=json.loads(jsonDeviceData))
 
     r = requests.get('http://localhost/api/devices/', params=newDevice)
     data = r.json()
-    
-    device = Device(data["netBios"], data["systemOS"], data["ipAddr"], data["macAddr"], None)
+
+    device = Device(data["netBios"], data["systemOS"],
+                    data["ipAddr"], data["macAddr"], None)
     device.updateID(data["id"])
     return device

@@ -96,7 +96,7 @@ def apiPostDeviceAlert():
 
         dbManager.queryInsert("INSERT INTO `DeviceAlert` (`level`, `date`, `type`, `description`, `idDevice`) VALUES (?, ?, ?, ?, ?)",
                               [
-                                  alert["role"],
+                                  alert["level"],
                                   alert["date"],
                                   alert["type"],
                                   alert["description"],

@@ -1,0 +1,9 @@
+[Unit]
+Description=Run devices
+
+[Timer]
+OnBootSec=1s
+OnUnitActiveSec=5m
+
+[Install]
+WantedBy=timers.target

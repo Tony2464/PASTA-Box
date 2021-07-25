@@ -162,6 +162,11 @@ def apiPutDevice(id=None):
             req = []
             req.append("UPDATE `Device` SET ")
 
+            # role
+            if "role" in device and device["role"] != "":
+                req.append("`role` = ?")
+                params.append(device["role"])
+
             # idNetwork
             if "role" in device and device["role"] != "":
                 req.append("`role` = ?")
@@ -232,7 +237,6 @@ def apiPutDevice(id=None):
             # final id
             finalReq += " WHERE `Device`.`id` = ?"
             params.append(str(id))
-
             dbManager.queryInsert(finalReq, params)
             dbManager.close()
 

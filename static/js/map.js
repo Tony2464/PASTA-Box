@@ -55,15 +55,20 @@ function drawMap(devices) {
     // Create a data table with links.
     edges = [];
 
+
+    //Get PASTA-Box info
+
     nodes.push({
         id: -1,
-        label: "PASTA-Box",
+        label: "PASTA-Box\n" + getPastaIP().ipAddr,
         image: "/static/img/favicon.png",
         shape: "image",
         opacity: 0.7,
         // chosen: { label: false, node: changeChosenNodeShadow },
         chosen: { label: true, node: changeChosenNodeSize },
     });
+
+    createPastaModal()
 
     //10.0.0.0 – 10.255.255.255
     firstRange = false
@@ -202,7 +207,7 @@ function drawMap(devices) {
     // );
 }
 
-function createModal(){
+function createModal() {
     $("#modals").append(`
             <div class="modal fade" id="modal`+ deviceId + `">
                 <div class="modal-dialog modal-dialog-centered">
@@ -222,4 +227,44 @@ function createModal(){
                 </div>
             </div>
             `)
+}
+
+function createPastaModal(){
+    var pastaInfo = getPastaIP()
+    $("#modals").append(`
+            <div class="modal fade" id="modal-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"><b>PASTA-Box</b></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>IP address : `+ pastaInfo.ipAddr + `</p>
+                            <p>Hostname : `+ pastaInfo.hostname + `</p>
+                            <p>Gateway : `+ pastaInfo.gateway + `</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="window.location.replace('/admin/settings/system/');">Go to settings <img src="/static/icons/gear-wide-white.svg" alt="" width="20" height="20"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `)
+}
+
+function getPastaIP() {
+    var res = " "
+    $.ajax({
+        method: "GET",
+        url: '/api/devices/pasta-info',
+        async: false,
+        success: function (response) {
+            res = response
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    });
+    return res
 }

@@ -5,6 +5,7 @@ from database import db_manager
 import ipaddress
 from flask import Blueprint, jsonify, request
 from flask_http_response import error, success
+import json
 
 def initDb():
     dbManager = db_manager.DbManager(
@@ -282,7 +283,19 @@ def apiMapDevices():
     return jsonify(objects_list)
 
 
+# Settings configuration file
+pastaConfigFile = "/PASTA-Box/settings/config.json"
+
+# Get PASTA-Box system info
+@devices.route('/pasta-info')
+def apiGetPastaInfo():
+    with open(pastaConfigFile, encoding="utf8", errors="ignore") as configFile:
+        configData = configFile.read()
+        configFile.close()
+    return json.loads(configData)
+
 # Check IP version
+
 
 def checkIP(IP):
     try:

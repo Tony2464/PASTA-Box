@@ -27,7 +27,13 @@
                     src="{{ url_for('static', filename='icons/bug-fill-white.svg') }}" alt=""></a>
         </div>
         <div class="card-footer text-muted">
-            Status : {{device["activeStatus"]}}
+            {% if device["activeStatus"] == 0 %}
+            Status : Inactive
+            {% elif device["activeStatus"] == 1 %}
+            Status : Active
+            {% else %}
+            Status : Being scanned
+            {% endif %}
         </div>
     </div>
 </div>
@@ -35,7 +41,7 @@
 
 {% block js %}
 <script>
-    function closeTab(){
+    function closeTab() {
         window.close();
     }
 </script>

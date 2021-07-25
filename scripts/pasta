@@ -38,7 +38,7 @@ def createNewUser():
     if returnCode == 201:
         print("User added successfully.")
     if returnCode == 409:
-        print("User exists already.")
+        print("This user already exists.")
 
 
 # Instantiate the parser

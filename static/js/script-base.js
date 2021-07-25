@@ -91,7 +91,7 @@ function getSysInfo() {
             }
 
             $('#totalMemText').append(
-                '<div class="float-left">Mem : </div><b>' + totalMemPercent + ' <div class="float-right">%</div>'
+                '<div class="float-left">RAM : </div><b>' + totalMemPercent + ' <div class="float-right">%</div>'
             )
             $('#totalMemText').attr('title', usedMem + ' / ' + totalMem + ' used')
 

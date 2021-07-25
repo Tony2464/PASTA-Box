@@ -1,7 +1,6 @@
 from flask.helpers import url_for
 import requests
 import ipaddress
-import json
 import database.db_config as config
 from audit.objects.Device import Device
 from audit.scanVulnDevices import main as scanIP
@@ -76,7 +75,7 @@ def scanSpecificIP():
             newDevice = Device(device["netBios"], device["systemOS"],
                                device["ipAddr"], device["macAddr"], None)
             deviceID = device["id"]
-            scanIP(newDevice)
+            scanIP(newDevice, deviceID)
 
         else:
             return error.return_response(status=400, message="This IP address is used by several devices")

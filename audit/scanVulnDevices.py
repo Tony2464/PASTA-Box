@@ -25,33 +25,40 @@ def returnNmapCmd(service, ipAddr):
 
     # SSH
     if(service["numberPort"] == "22" or re.search('ssh', service["serviceName"], re.IGNORECASE) == True):
-        cmd = "sudo nmap " + ipAddr + " -p " + \
-            str(service["numberPort"]) + \
-            " -sV --script ssh*.nse -oX " + outputVulnServiceScan + " -T5"
+        # cmd = "sudo nmap " + ipAddr + " -p " + \
+        #     str(service["numberPort"]) + \
+        #     " -sV --script ssh*.nse -oX " + outputVulnServiceScan + " -T5"
+        cmd = ['sudo', 'nmap', ipAddr, "-p",
+               str(service["numberPort"]), '-sV', '--script', 'ssh*.nse', '-oX', outputVulnServiceScan, '-T5']
 
     # Web
     if(service["numberPort"] == "80" or service["numberPort"] == "443" or re.search('http', service["serviceName"], re.IGNORECASE) == True or re.search('apache', service["serviceName"], re.IGNORECASE) == True or re.search('nginx', service["serviceName"], re.IGNORECASE) == True):
-        cmd = "sudo nmap " + ipAddr + " -p " + \
-            service["numberPort"] + \
-            " -sV -oX " + outputVulnServiceScan + " --script http*.nse -T5"
+        # cmd = "sudo nmap " + ipAddr + " -p " + \
+        #     service["numberPort"] + \
+        #     " -sV -oX " + outputVulnServiceScan + " --script http*.nse -T5"
+        cmd = ['sudo', 'nmap', ipAddr, '-p', str(service["numberPort"]), '-sV', '-oX', outputVulnServiceScan, '--script', 'http*.nse', '-T5']
 
     # DNS
     if(service["numberPort"] == "53" or re.search('dns', service["serviceName"], re.IGNORECASE) == True):
-        cmd = "sudo nmap " + ipAddr + " -p " + \
-            str(service["numberPort"]) + \
-            " -sV -oX " + outputVulnServiceScan + " --script dns*.nse -T5"
+        #cmd = "sudo nmap " + ipAddr + " -p " + \
+            # str(service["numberPort"]) + \
+            # " -sV -oX " + outputVulnServiceScan + " --script dns*.nse -T5"
+        cmd = ['sudo', 'nmap', ipAddr, "-p", str(service["numberPort"]), '-sV', '-oX', outputVulnServiceScan, '--script', 'dns*.nse', '-T5']
 
     # FTP
     if(service["numberPort"] == "20" or service["numberPort"] == "21" or (re.search('ftp', service["serviceName"], re.IGNORECASE) == True and re.search('sftp', service["serviceName"], re.IGNORECASE) == False)):
-        cmd = "sudo nmap " + ipAddr + " -p " + \
-            str(service["numberPort"]) + \
-            " -sV -oX " + outputVulnServiceScan + " --script ftp*.nse -T5"
+        # cmd = "sudo nmap " + ipAddr + " -p " + \
+        #     str(service["numberPort"]) + \
+        #     " -sV -oX " + outputVulnServiceScan + " --script ftp*.nse -T5"
+        cmd = ['sudo', 'nmap', ipAddr, '-p', str(service["numberPort"]), '-sV', '-oX', outputVulnServiceScan, '--script', 'ftp*.nse', '-T5']
 
     # Samba
     if(service["numberPort"] == "139" or service["numberPort"] == "445" or re.search('samba', service["serviceName"], re.IGNORECASE) == True or re.search('smdb', service["serviceName"], re.IGNORECASE) == False):
-        cmd = "sudo nmap " + ipAddr + " -p " + \
-            str(service["numberPort"]) + " -sV -oX " + \
-            outputVulnServiceScan + " --script smb*.nse -T5"
+        # cmd = "sudo nmap " + ipAddr + " -p " + \
+        #     str(service["numberPort"]) + " -sV -oX " + \
+        #     outputVulnServiceScan + " --script smb*.nse -T5"
+        cmd = ['sudo', 'nmap', ipAddr, '-p',
+               str(service["numberPort"]), '-sV', '-oX', outputVulnServiceScan, '--script', 'smb*.nse', '-T5']
 
     return cmd
 
@@ -65,22 +72,22 @@ def getActiveServices(id: str):
 
 # Set scanned status on the device
 
-def setScannedStatus(device: Device):
+def setScannedStatus(id):
     data = {
         "activeStatus": 2
     }
     r = requests.put('http://localhost/api/devices/' +
-                     str(device.id), params=data)
+                     str(id), params=data)
 
 
 # Set active status on the device
 
-def unsetScannedStatus(device: Device):
+def unsetScannedStatus(id):
     data = {
         "activeStatus": 1
     }
     r = requests.put('http://localhost/api/devices/' +
-                     str(device.id), params=data)
+                     str(id), params=data)
 
 
 # Create and insert alert for outdated services like Telnet for example
@@ -201,8 +208,12 @@ def getCVE(CVE: str):
 # Calculate and insert in database the security score
 
 def insertSecurityScore(scoreCVSS, nbAlerts, id):
-    value = scoreCVSS / nbAlerts
-    value = round(value, 1)
+    if(nbAlerts == 0):
+        value = 0
+    else:
+        value = scoreCVSS / nbAlerts
+        value = round(value, 1)
+    
     newScore = 10 - value
     data = {
         "securityScore": newScore
@@ -236,11 +247,10 @@ def parseNmapXMLVulners(id):
                         if(elems[1] == "cve"):
                             CVE = elems[0].text
                             scoreCVSS += float(elems[2].text)
-
-                        CVEDescription = getCVE(CVE)
-                        newAlert = DeviceAlert(3, date.strftime(
-                            '%Y-%m-%d %H:%M:%S'), "Vulnerability : " + CVE, CVEDescription)
-                        alerts.append(newAlert)
+                            CVEDescription = getCVE(CVE)
+                            newAlert = DeviceAlert(3, date.strftime(
+                                '%Y-%m-%d %H:%M:%S'), "Vulnerability : " + CVE, CVEDescription)
+                            alerts.append(newAlert)
 
     insertSecurityScore(scoreCVSS, len(alerts), id)
     return alerts
@@ -249,8 +259,7 @@ def parseNmapXMLVulners(id):
 # Scan the device with the vulners nse script from Nmap
 
 def vulnersScan(device: Device):
-    vulnersCmd = "sudo nmap -sV --script vulners -oX " + \
-        outputVulnersScan + " " + device.ipAddr + " -T5"
+    vulnersCmd = ['sudo', 'nmap', device.ipAddr, '-sV', '--script', 'vulners', '-oX', outputVulnersScan, '-T5']
     with open(os.devnull, 'wb') as devnull:
         subprocess.check_call(vulnersCmd, stdout=devnull, stderr=devnull)
 
@@ -274,7 +283,7 @@ def deleteTempFile():
 
 # Main function : scan one device per one
 
-def main(device: Device):
+def main(device: Device, id):
     setScannedStatus(device)
     requests.delete('http://localhost/api/alert_devices/' + str(device.id))
     scanServices(device)

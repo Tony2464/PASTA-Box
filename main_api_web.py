@@ -72,7 +72,7 @@ thread_stop_event = Event()
 def sendFrames():
     print("Sending frames")
     # Loop unless disconnection
-    cmd = "tshark -i br0"
+    cmd = "sudo tshark -i br0"
     with Popen(cmd, shell=True, stdout=PIPE, bufsize=1, universal_newlines=True) as p:
         for line in p.stdout:
             print(line, end='')  # process line here

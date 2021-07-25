@@ -194,3 +194,31 @@ function redirect() {
     self.location.href = "/admin/audit";
 
 }
+
+function scanDevice(id) {
+
+    var req = new XMLHttpRequest();
+    req.onreadystatechange = function () {
+
+        if (req.readyState == 4) {
+
+            if (req.status == 200) {
+
+                var jsonString = JSON.parse(req.responseText);
+                displaySuccess(jsonString["message"]);
+
+            } else {
+
+                var jsonString = JSON.parse(req.responseText);
+                displayError(jsonString["message"]);
+
+            }
+
+        }
+    }
+
+    req.open('POST', '/admin/device/scan/' + id);
+    req.setRequestHeader("Content-type", "application/json");
+    req.send();
+
+}

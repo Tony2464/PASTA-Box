@@ -66,7 +66,7 @@ def scanSpecificIP():
         newDevice = addTempDevice(data["ipAddr"])
         deviceID = newDevice.id
     else:
-        
+
         try:
 
             temp = device[0]["ip"]
@@ -74,10 +74,10 @@ def scanSpecificIP():
         except Exception:
 
             newDevice = Device(device["netBios"], device["systemOS"],
-                                device["ipAddr"], device["macAddr"], None)
+                               device["ipAddr"], device["macAddr"], None)
             deviceID = device["id"]
-            # scanIP(newDevice)
-            
+            scanIP(newDevice)
+
         else:
             return error.return_response(status=400, message="This IP address is used by several devices")
 

@@ -126,7 +126,7 @@ def deleteTempFile(mode):
             os.remove(outputTempUdp)
 
 
-# Update device with nmap info
+# Update device with Nmap info
 
 def insertDevice(newDevice: Device, mode):
     addrParams = {
@@ -149,7 +149,7 @@ def insertDevice(newDevice: Device, mode):
     return deviceBDD["id"]
 
 
-# Update device with nmap info
+# Update device with Nmap info
 
 def insertService(newDevice: Device):
     for service in newDevice.services:

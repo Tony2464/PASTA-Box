@@ -40,7 +40,7 @@
                 <li class="list-group-item w-25">{{device["lastConnection"]}}</li>
             </ul>
             <br>
-            <button data-bs-toggle="modal" data-bs-target="#Modal" type="button" class="btn btn-primary shadow" {% if device["activeStatus"] == 2 %} disabled {% endif %}>Security Audit <img
+            <button data-bs-toggle="modal" data-bs-target="#Modal" type="button" class="btn btn-primary shadow mb-3" {% if device["activeStatus"] == 2 %} disabled {% endif %}>Security Audit <img
                     src="{{ url_for('static', filename='icons/bug-fill-white.svg') }}" alt=""></button>
             <br>
         </div>

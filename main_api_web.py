@@ -72,10 +72,10 @@ thread_stop_event = Event()
 def sendFrames():
     print("Sending frames")
     # Loop unless disconnection
-    cmd = "sudo tshark -i br0"
+    cmd = "sudo tshark -i br0 -T tabs"
     with Popen(cmd, shell=True, stdout=PIPE, bufsize=1, universal_newlines=True) as p:
         for line in p.stdout:
-            print(line, end='')  # process line here
+            # print(line, end='')  # process line here
             socketio.emit('newnumber', {'id': line}, namespace='/test')
             socketio.sleep(0.04)
             if thread_stop_event.is_set():

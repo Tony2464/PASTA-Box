@@ -3,25 +3,25 @@
 
 {% block content %}
 
-<div class="container-fluid">
-    <div class="container" id="content">
-        <div class="row text-center">
-            <h1>Live Frames</h1>
+<div class="container">
+
+    <br>
+    <h1 class="text-center">LIVE FRAMES</h1>
+    <div class="divider div-transparent div-arrow-down"></div>
+
+    <div class="row">
+        <div class="col">
+            <a href="/admin/frames/" class="badge badge-pill badge-primary">Quit</a>
         </div>
-        <div class="row">
-            <div class="col">
-                <a href="/admin/frames/" class="badge badge-pill badge-primary">Quit</a>
-            </div>
-        </div>
-        <div class="row">
-            <div id="log">
-                <div class="text-center">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="sr-only text-center">Loading...</span>
-                    </div>
+    </div>
+    <div class="row">
+        <div id="log">
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only text-center">Loading...</span>
                 </div>
-            </div> <!-- /#log -->
-        </div>
+            </div>
+        </div> <!-- /#log -->
     </div>
 </div>
 {% endblock %}

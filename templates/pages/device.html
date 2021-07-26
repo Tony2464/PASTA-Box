@@ -14,17 +14,35 @@
                 </div>
             </div>
         </div>
-
-        <div class="card-body">
-            <h5 class="card-title">Infos</h5>
-            <p class="card-text">{{device["macAddr"]}}</p>
-            <p class="card-text">{{device["ipAddr"]}}</p>
-            <p class="card-text">{{device["securityScore"]}}</p>
-            <p class="card-text">{{device["netBios"]}}</p>
-            <p class="card-text">{{device["firstConnection"]}}</p>
-            <p class="card-text">{{device["lastConnection"]}}</p>
+        <div class="container mt-4">
+            <ul class="list-group list-group-horizontal-sm justify-content-center">
+                <li class="list-group-item w-25">IP address</li>
+                <li class="list-group-item w-25">{{device["ipAddr"]}}</li>
+            </ul>
+            <ul class="list-group list-group-horizontal-sm justify-content-center">
+                <li class="list-group-item w-25">MAC address</li>
+                <li class="list-group-item w-25">{{device["macAddr"]}}</li>
+            </ul>
+            <ul class="list-group list-group-horizontal-sm justify-content-center">
+                <li class="list-group-item w-25">Security score</li>
+                <li class="list-group-item w-25">{{device["securityScore"]}}</li>
+            </ul>
+            <ul class="list-group list-group-horizontal-sm justify-content-center">
+                <li class="list-group-item w-25">Hostname</li>
+                <li class="list-group-item w-25">{{device["netBios"]}}</li>
+            </ul>
+            <ul class="list-group list-group-horizontal-sm justify-content-center">
+                <li class="list-group-item w-25">First connection</li>
+                <li class="list-group-item w-25">{{device["firstConnection"]}}</li>
+            </ul>
+            <ul class="list-group list-group-horizontal-sm justify-content-center">
+                <li class="list-group-item w-25">Last connection</li>
+                <li class="list-group-item w-25">{{device["lastConnection"]}}</li>
+            </ul>
+            <br>
             <button data-bs-toggle="modal" data-bs-target="#Modal" type="button" class="btn btn-primary shadow" {% if device["activeStatus"] == 2 %} disabled {% endif %}>Security Audit <img
                     src="{{ url_for('static', filename='icons/bug-fill-white.svg') }}" alt=""></button>
+            <br>
         </div>
         <div class="card-footer text-muted">
             {% if device["activeStatus"] == 0 %}

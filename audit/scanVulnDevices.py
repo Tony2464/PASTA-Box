@@ -24,34 +24,29 @@ def returnNmapCmd(service, ipAddr):
     cmd = None
 
     # SSH
-    if(service["numberPort"] == "22" or re.search('ssh', service["serviceName"], re.IGNORECASE) == True):
-        cmd = "sudo nmap " + ipAddr + " -p " + \
-            str(service["numberPort"]) + \
-            " -sV --script ssh*.nse -oX " + outputVulnServiceScan + " -T5"
+    if(service["numberPort"] == 22 or re.search('ssh', service["serviceName"], re.IGNORECASE)):
+        cmd = ['sudo', 'nmap', ipAddr, "-p",
+               str(service["numberPort"]), '-sV', '--script', 'ssh*.nse', '-oX', outputVulnServiceScan, '-T5']
 
     # Web
-    if(service["numberPort"] == "80" or service["numberPort"] == "443" or re.search('http', service["serviceName"], re.IGNORECASE) == True or re.search('apache', service["serviceName"], re.IGNORECASE) == True or re.search('nginx', service["serviceName"], re.IGNORECASE) == True):
-        cmd = "sudo nmap " + ipAddr + " -p " + \
-            service["numberPort"] + \
-            " -sV -oX " + outputVulnServiceScan + " --script http*.nse -T5"
+    if(service["numberPort"] == 80 or service["numberPort"] == 443 or re.search('http', service["serviceName"], re.IGNORECASE) or re.search('apache', service["serviceName"], re.IGNORECASE) or re.search('nginx', service["serviceName"], re.IGNORECASE)):
+        cmd = ['sudo', 'nmap', ipAddr, '-p',
+               str(service["numberPort"]), '-sV', '-oX', outputVulnServiceScan, '--script', 'http*.nse', '-T5']
 
     # DNS
-    if(service["numberPort"] == "53" or re.search('dns', service["serviceName"], re.IGNORECASE) == True):
-        cmd = "sudo nmap " + ipAddr + " -p " + \
-            str(service["numberPort"]) + \
-            " -sV -oX " + outputVulnServiceScan + " --script dns*.nse -T5"
+    if(service["numberPort"] == 53 or re.search('dns', service["serviceName"], re.IGNORECASE)):
+        cmd = ['sudo', 'nmap', ipAddr, "-p",
+               str(service["numberPort"]), '-sV', '-oX', outputVulnServiceScan, '--script', 'dns*.nse', '-T5']
 
     # FTP
-    if(service["numberPort"] == "20" or service["numberPort"] == "21" or (re.search('ftp', service["serviceName"], re.IGNORECASE) == True and re.search('sftp', service["serviceName"], re.IGNORECASE) == False)):
-        cmd = "sudo nmap " + ipAddr + " -p " + \
-            str(service["numberPort"]) + \
-            " -sV -oX " + outputVulnServiceScan + " --script ftp*.nse -T5"
+    if(service["numberPort"] == 20 or service["numberPort"] == 21 or (re.search('ftp', service["serviceName"], re.IGNORECASE) and not re.search('sftp', service["serviceName"], re.IGNORECASE))):
+        cmd = ['sudo', 'nmap', ipAddr, '-p',
+               str(service["numberPort"]), '-sV', '-oX', outputVulnServiceScan, '--script', 'ftp*.nse', '-T5']
 
     # Samba
-    if(service["numberPort"] == "139" or service["numberPort"] == "445" or re.search('samba', service["serviceName"], re.IGNORECASE) == True or re.search('smdb', service["serviceName"], re.IGNORECASE) == False):
-        cmd = "sudo nmap " + ipAddr + " -p " + \
-            str(service["numberPort"]) + " -sV -oX " + \
-            outputVulnServiceScan + " --script smb*.nse -T5"
+    if(service["numberPort"] == 139 or service["numberPort"] == 445 or re.search('samba', service["serviceName"], re.IGNORECASE) or re.search('smdb', service["serviceName"], re.IGNORECASE)):
+        cmd = ['sudo', 'nmap', ipAddr, '-p',
+               str(service["numberPort"]), '-sV', '-oX', outputVulnServiceScan, '--script', 'smb*.nse', '-T5']
 
     return cmd
 
@@ -65,22 +60,24 @@ def getActiveServices(id: str):
 
 # Set scanned status on the device
 
-def setScannedStatus(device: Device):
+def setScannedStatus(id):
     data = {
         "activeStatus": 2
     }
+    jsonDeviceData = json.dumps(data)
     r = requests.put('http://localhost/api/devices/' +
-                     str(device.id), params=data)
+                     str(id), json=json.loads(jsonDeviceData))
 
 
 # Set active status on the device
 
-def unsetScannedStatus(device: Device):
+def unsetScannedStatus(id):
     data = {
         "activeStatus": 1
     }
+    jsonDeviceData = json.dumps(data)
     r = requests.put('http://localhost/api/devices/' +
-                     str(device.id), params=data)
+                     str(id), json=json.loads(jsonDeviceData))
 
 
 # Create and insert alert for outdated services like Telnet for example
@@ -110,7 +107,7 @@ def createOutdatedAlert(service):
 
 def insertAlert(alerts, id):
     for i in range(len(alerts)):
-        alert = {
+        data = {
             "level": alerts[i].level,
             # "date": date.strftime('%Y-%m-%d %H:%M:%S'),
             "date": alerts[i].date,
@@ -118,8 +115,8 @@ def insertAlert(alerts, id):
             "description": unescape(alerts[i].description),
             "idDevice": id
         }
-        jsonDeviceData = json.dumps(alert)
-        r = requests.post('http://localhost/api/alert_devices',
+        jsonDeviceData = json.dumps(data)
+        r = requests.post('http://localhost/api/alert_devices/',
                           json=json.loads(jsonDeviceData))
 
 
@@ -153,7 +150,7 @@ def parseNmapXMLService():
                 alerts.append(newAlert)
 
     if(hostscript != None):
-        for script in scripts.findall('port'):
+        for script in hostscript.findall('port'):
             newAlert = DeviceAlert(2, date.strftime(
                 '%Y-%m-%d %H:%M:%S'), script.attrib.get('id'), script.attrib.get('output'))
             alerts.append(newAlert)
@@ -163,15 +160,15 @@ def parseNmapXMLService():
 
 # Get all the services from the device and scan them
 
-def scanServices(device: Device):
-    r = requests.get('http://localhost/api/services/' + str(device.id))
+def scanServices(device: Device, id):
+    r = requests.get('http://localhost/api/services/' + str(id))
     services = r.json()
-
     for i in range(len(services)):
         if services[i]["numberPort"] in outdatedServices:
             createOutdatedAlert(services[i])
         else:
             cmd = returnNmapCmd(services[i], device.ipAddr)
+
             if(cmd == None):  # No Nmap cmd based on this service
                 continue
 
@@ -182,7 +179,7 @@ def scanServices(device: Device):
             if(alerts == None):  # No vuln detected on this service
                 continue
 
-            insertAlert(alerts, device.id)
+            insertAlert(alerts, id)
             deleteTempFile()
 
 
@@ -190,24 +187,34 @@ def scanServices(device: Device):
 
 def getCVE(CVE: str):
     data = crawler.get_cve_detail(CVE)
-    description = data[0][1] + "\n"
-    for link in data[0][2]:
-        description += link
-        description += "\n"
-
+    description = data[0][1]
+    for i in range (2, len(data[0])):
+        if(type(data[0][i]) is list):    
+            for j in range(len(data[0][i])):
+                description += "\n"
+                description += data[0][i][j]
+        else:
+            description += data[0][i]
+        
     return description
 
 
 # Calculate and insert in database the security score
 
 def insertSecurityScore(scoreCVSS, nbAlerts, id):
-    value = scoreCVSS / nbAlerts
-    value = round(value, 1)
+    if(nbAlerts == 0):
+        value = 0
+    else:
+        value = scoreCVSS / nbAlerts
+        value = round(value, 1)
+
     newScore = 10 - value
     data = {
         "securityScore": newScore
     }
-    r = requests.put('http://localhost/api/devices/' + str(id), params=data)
+    jsonDeviceData = json.dumps(data)
+    r = requests.put('http://localhost/api/devices/' +
+                     str(id), json=json.loads(jsonDeviceData))
 
 
 # Parse XML Nmap output from the vulners NSE script
@@ -223,24 +230,32 @@ def parseNmapXMLVulners(id):
     ports = host.find('ports')
     alerts = []
     scoreCVSS = 0
+    isCVE = False
     date = datetime.datetime.now()
     if(ports != None):
         for port in ports.findall('port'):
             scripts = port.findall('script')
             if(scripts == None):
                 continue
+
             for script in scripts:
                 if(script.attrib.get("id") == "vulners"):
                     for table in script.find("table").findall('table'):
                         elems = table.findall("elem")
-                        if(elems[1] == "cve"):
-                            CVE = elems[0].text
-                            scoreCVSS += float(elems[2].text)
+                        for elem in elems:
+                            if(re.search('CVE-', elem.text)):
+                                isCVE = True
+                                CVE = elem.text
 
-                        CVEDescription = getCVE(CVE)
-                        newAlert = DeviceAlert(3, date.strftime(
-                            '%Y-%m-%d %H:%M:%S'), "Vulnerability : " + CVE, CVEDescription)
-                        alerts.append(newAlert)
+                        if(isCVE == True):
+                            for elem in elems:
+                                if(elem.attrib.get('key') == "cvss"):
+                                    scoreCVSS += float(elem.text)
+                            CVEDescription = getCVE(CVE)
+                            newAlert = DeviceAlert(3, date.strftime(
+                                '%Y-%m-%d %H:%M:%S'), "Vulnerability : " + CVE, CVEDescription)
+                            alerts.append(newAlert)
+                        isCVE = False
 
     insertSecurityScore(scoreCVSS, len(alerts), id)
     return alerts
@@ -248,17 +263,17 @@ def parseNmapXMLVulners(id):
 
 # Scan the device with the vulners nse script from Nmap
 
-def vulnersScan(device: Device):
-    vulnersCmd = "sudo nmap -sV --script vulners -oX " + \
-        outputVulnersScan + " " + device.ipAddr + " -T5"
+def vulnersScan(device: Device, id):
+    vulnersCmd = ['sudo', 'nmap', device.ipAddr, '-sV',
+                  '--script', 'vulners', '-oX', outputVulnersScan, '-T5']
     with open(os.devnull, 'wb') as devnull:
         subprocess.check_call(vulnersCmd, stdout=devnull, stderr=devnull)
 
-    alerts = parseNmapXMLVulners(device.id)
+    alerts = parseNmapXMLVulners(id)
     if(alerts != None):
-        insertAlert(alerts, device.id)
-    
-    deleteTempFile()
+        insertAlert(alerts, id)
+
+    # deleteTempFile()
 
 
 # Delete temporary XML files in temp folder
@@ -274,9 +289,9 @@ def deleteTempFile():
 
 # Main function : scan one device per one
 
-def main(device: Device):
-    setScannedStatus(device)
-    requests.delete('http://localhost/api/alert_devices/' + str(device.id))
-    scanServices(device)
-    vulnersScan(device)
-    unsetScannedStatus(device)
+def main(device: Device, id):
+    setScannedStatus(id)
+    requests.delete('http://localhost/api/alert_devices/' + str(id))
+    scanServices(device, id)
+    vulnersScan(device, id)
+    unsetScannedStatus(id)

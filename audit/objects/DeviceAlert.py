@@ -10,10 +10,10 @@ class DeviceAlert:
 
     # class default constructor
     def __init__(self, level, date, type, description):
-        self.ipAddr = level
-        self.macAddr = date
-        self.netBios = type
-        self.systemOS = description
+        self.level = level
+        self.date = date
+        self.type = type
+        self.description = description
 
     def toString(self):
         array = []

@@ -10,7 +10,7 @@
                     <button type="button" class="btn-close" aria-label="Close" onclick="closeTab();"></button>
                 </div>
                 <div class="col text-center">
-                    Device {{device["role"]}}
+                    Device n°{{device["id"]}}
                 </div>
             </div>
         </div>
@@ -40,8 +40,8 @@
                 <li class="list-group-item w-25">{{device["lastConnection"]}}</li>
             </ul>
             <br>
-            <a href="#" class="btn btn-primary shadow mb-3">Security Audit <img
-                    src="{{ url_for('static', filename='icons/bug-fill-white.svg') }}" alt=""></a>
+            <button data-bs-toggle="modal" data-bs-target="#Modal" type="button" class="btn btn-primary shadow mb-3" {% if device["activeStatus"] == 2 %} disabled {% endif %}>Security Audit <img
+                    src="{{ url_for('static', filename='icons/bug-fill-white.svg') }}" alt=""></button>
             <br>
         </div>
         <div class="card-footer text-muted">
@@ -54,6 +54,25 @@
             {% endif %}
         </div>
     </div>
+        <div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Scan the device n°{{device["id"]}}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Do you want to scan this device to the IP address : {{device["ipAddr"]}} ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button onclick="scanDevice({{device["id"]}})" type="button" data-bs-dismiss="modal"
+                            class="btn btn-primary">Scan the device</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br id="errorAnchor">
 </div>
 {% endblock %}
 
@@ -63,4 +82,6 @@
         window.close();
     }
 </script>
+<script src="{{ url_for('static', filename='js/audit.js') }}"></script>
+<script src="{{ url_for('static', filename='js/form.js') }}"></script>
 {% endblock %}

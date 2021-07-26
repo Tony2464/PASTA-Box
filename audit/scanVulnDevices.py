@@ -107,7 +107,7 @@ def createOutdatedAlert(service):
 
 def insertAlert(alerts, id):
     for i in range(len(alerts)):
-        alert = {
+        data = {
             "level": alerts[i].level,
             # "date": date.strftime('%Y-%m-%d %H:%M:%S'),
             "date": alerts[i].date,
@@ -115,7 +115,7 @@ def insertAlert(alerts, id):
             "description": unescape(alerts[i].description),
             "idDevice": id
         }
-        jsonDeviceData = json.dumps(alert)
+        jsonDeviceData = json.dumps(data)
         r = requests.post('http://localhost/api/alert_devices/',
                           json=json.loads(jsonDeviceData))
 
@@ -187,11 +187,15 @@ def scanServices(device: Device, id):
 
 def getCVE(CVE: str):
     data = crawler.get_cve_detail(CVE)
-    description = data[0][1] + "\n"
-    for link in data[0][2]:
-        description += link
-        description += "\n"
-
+    description = data[0][1]
+    for i in range (2, len(data[0])):
+        if(type(data[0][i]) is list):    
+            for j in range(len(data[0][i])):
+                description += "\n"
+                description += data[0][i][j]
+        else:
+            description += data[0][i]
+        
     return description
 
 
@@ -265,7 +269,7 @@ def vulnersScan(device: Device, id):
     with open(os.devnull, 'wb') as devnull:
         subprocess.check_call(vulnersCmd, stdout=devnull, stderr=devnull)
 
-    alerts = parseNmapXMLVulners(device.id)
+    alerts = parseNmapXMLVulners(id)
     if(alerts != None):
         insertAlert(alerts, id)
 

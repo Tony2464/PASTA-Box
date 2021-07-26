@@ -206,6 +206,7 @@ function scanDevice(id) {
 
                 var jsonString = JSON.parse(req.responseText);
                 displaySuccess(jsonString["message"]);
+                document.getElementById('scanButton').disabled = true;
 
             } else {
 

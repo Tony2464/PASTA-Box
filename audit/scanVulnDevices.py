@@ -150,7 +150,7 @@ def parseNmapXMLService():
                 alerts.append(newAlert)
 
     if(hostscript != None):
-        for script in hostscript.findall('port'):
+        for script in hostscript.findall('script'):
             newAlert = DeviceAlert(2, date.strftime(
                 '%Y-%m-%d %H:%M:%S'), script.attrib.get('id'), script.attrib.get('output'))
             alerts.append(newAlert)
@@ -188,14 +188,14 @@ def scanServices(device: Device, id):
 def getCVE(CVE: str):
     data = crawler.get_cve_detail(CVE)
     description = data[0][1]
-    for i in range (2, len(data[0])):
-        if(type(data[0][i]) is list):    
+    for i in range(2, len(data[0])):
+        if(type(data[0][i]) is list):
             for j in range(len(data[0][i])):
                 description += "\n"
                 description += data[0][i][j]
         else:
             description += data[0][i]
-        
+
     return description
 
 
@@ -273,7 +273,7 @@ def vulnersScan(device: Device, id):
     if(alerts != None):
         insertAlert(alerts, id)
 
-    # deleteTempFile()
+    deleteTempFile()
 
 
 # Delete temporary XML files in temp folder

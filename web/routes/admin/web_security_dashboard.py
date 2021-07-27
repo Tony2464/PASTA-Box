@@ -26,3 +26,19 @@ def securityHomepage():
     data = r.json()
     return render_template('pages/security_dashboard.html', content=data)
 
+
+@web_security_dashboard.route('/alert/delete', methods=['POST'])
+@web_connect.web_connection_required
+def deleteAlert():
+    id = request.form['id']
+    if(id):
+
+        r = requests.get("http://localhost/api/alert_devices/" + str(id))
+        if(r.status_code == 200):
+            requests.delete("http://localhost/api/alert_devices/" + str(id))
+            return success.return_response(status=200)
+        else:
+            return error.return_response(status=400)
+
+    else:
+        return error.return_response(status=400)

@@ -102,7 +102,7 @@ def apiPostDeviceAlert():
         return error.return_response(status=400, message="Need JSON data")
 
 
-# DELETE ALERTS FROM A DEVICE
+# DELETE ALERT
 
 @alertDevices.route('/', methods=['DELETE'])
 @alertDevices.route('/<id>', methods=['DELETE'])
@@ -110,8 +110,7 @@ def apiDeleteDeviceAlerts(id=None):
     if id:
         dbManager = initDb()
         dbManager.queryInsert(
-            "DELETE FROM DeviceAlert WHERE idDevice = ?", [id])
-        return success.return_response(status=200, message="Alert(s) deleted successfully")
+            "DELETE FROM DeviceAlert WHERE id = ?", [id])
+        return success.return_response(status=200, message="Alert deleted successfully")
     else:
         return error.return_response(status=400, message="Need an ID")
-    return 0

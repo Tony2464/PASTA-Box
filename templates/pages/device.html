@@ -10,33 +10,88 @@
                     <button type="button" class="btn-close" aria-label="Close" onclick="closeTab();"></button>
                 </div>
                 <div class="col text-center">
-                    Device {{device[0]["role"]}}
+                    Device n°{{device["id"]}}
                 </div>
             </div>
         </div>
-
-        <div class="card-body">
-            <h5 class="card-title">Infos</h5>
-            <p class="card-text">{{device[0]["macAddr"]}}</p>
-            <p class="card-text">{{device[0]["ipAddr"]}}</p>
-            <p class="card-text">{{device[0]["securityScore"]}}</p>
-            <p class="card-text">{{device[0]["netBios"]}}</p>
-            <p class="card-text">{{device[0]["firstConnection"]}}</p>
-            <p class="card-text">{{device[0]["lastConnection"]}}</p>
-            <a href="#" class="btn btn-primary shadow">Security Audit <img
-                    src="{{ url_for('static', filename='icons/bug-fill-white.svg') }}" alt=""></a>
+        <div class="container mt-4">
+            <ul class="list-group list-group-horizontal-sm justify-content-center">
+                <li class="list-group-item w-25">IP address</li>
+                <li class="list-group-item w-25">{{device["ipAddr"]}}</li>
+            </ul>
+            <ul class="list-group list-group-horizontal-sm justify-content-center">
+                <li class="list-group-item w-25">MAC address</li>
+                <li class="list-group-item w-25">{{device["macAddr"]}}</li>
+            </ul>
+            <ul class="list-group list-group-horizontal-sm justify-content-center">
+                <li class="list-group-item w-25">Security score</li>
+                {% block securityScore %}
+                {% if max < 4 %}
+                <li class="list-group-item w-25"><div class="badge bg-success">GOOD</div></li>
+                {% elif max < 7 %}
+                <li class="list-group-item w-25"><div class="badge bg-warning">MEDIUM</div></li>
+                {% elif max < 10 %}
+                <li class="list-group-item w-25"><div class="badge bg-danger">BAD</div></li>
+                {% else %}
+                <li class="list-group-item w-25"><div class="badge bg-danger">CRITICAL</div></li>
+                {% endif %}
+                {% endblock %}
+            </ul>
+            <ul class="list-group list-group-horizontal-sm justify-content-center">
+                <li class="list-group-item w-25">Hostname</li>
+                <li class="list-group-item w-25">{{device["netBios"]}}</li>
+            </ul>
+            <ul class="list-group list-group-horizontal-sm justify-content-center">
+                <li class="list-group-item w-25">First connection</li>
+                <li class="list-group-item w-25">{{device["firstConnection"]}}</li>
+            </ul>
+            <ul class="list-group list-group-horizontal-sm justify-content-center">
+                <li class="list-group-item w-25">Last connection</li>
+                <li class="list-group-item w-25">{{device["lastConnection"]}}</li>
+            </ul>
+            <br>
+            <button id="scanButton" data-bs-toggle="modal" data-bs-target="#Modal" type="button" class="btn btn-primary shadow mb-3" {% if device["activeStatus"] != 1 %} disabled {% endif %}>Security Audit <img
+                    src="{{ url_for('static', filename='icons/bug-fill-white.svg') }}" alt=""></button>
+            <br>
         </div>
         <div class="card-footer text-muted">
-            Status : {{device[0]["activeStatus"]}}
+            {% if device["activeStatus"] == 0 %}
+            Status : Inactive (This device cannot be scanned yet)
+            {% elif device["activeStatus"] == 1 %}
+            Status : Active
+            {% else %}
+            Status : No available (Still being scanned)
+            {% endif %}
         </div>
     </div>
+        <div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Scan the device n°{{device["id"]}}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Do you want to scan this device to the IP address : {{device["ipAddr"]}} ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button onclick="scanDevice({{device["id"]}})" type="button" data-bs-dismiss="modal"
+                            class="btn btn-primary">Scan the device</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br id="errorAnchor">
 </div>
 {% endblock %}
 
 {% block js %}
 <script>
-    function closeTab(){
+    function closeTab() {
         window.close();
     }
 </script>
+<script src="{{ url_for('static', filename='js/audit.js') }}"></script>
+<script src="{{ url_for('static', filename='js/form.js') }}"></script>
 {% endblock %}

@@ -128,7 +128,7 @@ function ajaxGetFrame() {
                     '<td>' + response[index].macAddrSource + '</td>' +
                     '<td>' + response[index].macAddrDest + '</td>' +
                     '<td>' + response[index].protocolLayerApplication + '</td>' +
-                    '<td>' + response[index].protocolLayerTransport + '</td>' +
+                    '<td>' + formatToString(response[index].protocolLayerTransport) + '</td>' +
                     '<td>' + response[index].protocolLayerNetwork + '</td>' +
                     '<td>' + response[index].domain + '</td>' +
                     '<td>' + response[index].date + '</td>' +
@@ -141,6 +141,36 @@ function ajaxGetFrame() {
             console.log(error);
         }
     });
+}
+
+// Transform IP protocol numbers into actual names
+function formatToString(number) {
+    switch (number) {
+        case '1':
+            return "ICMP"
+        case '6':
+            return "TCP"
+        case '17':
+            return "UDP"
+            break;
+        case '27':
+            return "RDP"
+            break;
+        case '41':
+            return "IPv6"
+            break;
+        case '6':
+            return "EIGRP"
+            break;
+        case '89':
+            return "OSPF"
+            break;
+        case '143':
+            return "Ethernet"
+            break;
+        default:
+            return number
+    }
 }
 
 $(document).ready(function () {

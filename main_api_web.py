@@ -29,6 +29,7 @@ from web.routes.admin.web_settings import web_settings
 from web.routes.admin.web_device import web_device
 from web.routes.admin.web_connection import web_connection
 from web.routes.admin.web_audit import web_audit
+from web.routes.admin.web_security_dashboard import web_security_dashboard
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'PASTA-Box'
@@ -53,7 +54,7 @@ app.register_blueprint(web_settings, url_prefix="/admin/settings")
 app.register_blueprint(web_audit, url_prefix="/admin/audit")
 app.register_blueprint(web_device, url_prefix="/admin/device")
 app.register_blueprint(web_connection, url_prefix="/admin/account")
-
+app.register_blueprint(web_security_dashboard, url_prefix="/admin/security")
 
 @app.route('/')
 def home():
@@ -72,10 +73,10 @@ thread_stop_event = Event()
 def sendFrames():
     print("Sending frames")
     # Loop unless disconnection
-    cmd = "tshark -i br0"
+    cmd = "sudo tshark -i br0 -T tabs"
     with Popen(cmd, shell=True, stdout=PIPE, bufsize=1, universal_newlines=True) as p:
         for line in p.stdout:
-            print(line, end='')  # process line here
+            # print(line, end='')  # process line here
             socketio.emit('newnumber', {'id': line}, namespace='/test')
             socketio.sleep(0.04)
             if thread_stop_event.is_set():

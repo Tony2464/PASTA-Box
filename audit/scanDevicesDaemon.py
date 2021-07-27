@@ -1,12 +1,11 @@
-import json
 import requests
 import threading
 import subprocess
 import os
 import xml.etree.ElementTree as ET
 
-from objects.Device import Device
-from objects.Service import Service
+from audit.objects.Device import Device
+from audit.objects.Service import Service
 
 # Temporary files for nmap
 outputTempTcp = "/PASTA-Box/audit/temp/output_tcp.xml"
@@ -127,7 +126,7 @@ def deleteTempFile(mode):
             os.remove(outputTempUdp)
 
 
-# Update device with nmap info
+# Update device with Nmap info
 
 def insertDevice(newDevice: Device, mode):
     addrParams = {
@@ -150,7 +149,7 @@ def insertDevice(newDevice: Device, mode):
     return deviceBDD["id"]
 
 
-# Update device with nmap info
+# Update device with Nmap info
 
 def insertService(newDevice: Device):
     for service in newDevice.services:

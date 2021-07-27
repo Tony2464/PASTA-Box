@@ -5,6 +5,7 @@ from database import db_manager
 import ipaddress
 from flask import Blueprint, jsonify, request
 from flask_http_response import error, success
+import json
 
 
 def initDb():
@@ -28,6 +29,9 @@ def apiGetDevices():
     if request.args.get("macAddr") and request.args.get("ipAddr"):
         req = "SELECT * FROM Device WHERE macAddr = ? AND ipAddr = ?"
         params = [request.args.get("macAddr"), request.args.get("ipAddr")]
+    elif request.args.get("ipAddr"):
+        req = "SELECT * FROM Device WHERE ipAddr = ?"
+        params = [request.args.get("ipAddr")]
     else:
         req = "SELECT * FROM Device"
         params = []
@@ -235,7 +239,6 @@ def apiPutDevice(id=None):
             # final id
             finalReq += " WHERE `Device`.`id` = ?"
             params.append(str(id))
-
             dbManager.queryInsert(finalReq, params)
             dbManager.close()
 
@@ -281,10 +284,37 @@ def apiMapDevices():
     return jsonify(objects_list)
 
 
+# Settings configuration file
+pastaConfigFile = "/PASTA-Box/settings/config.json"
+
+# Get PASTA-Box system info
+@devices.route('/pasta-info')
+def apiGetPastaInfo():
+    with open(pastaConfigFile, encoding="utf8", errors="ignore") as configFile:
+        configData = configFile.read()
+        configFile.close()
+    return json.loads(configData)
+
 # Check IP version
+
 
 def checkIP(IP):
     try:
         return 1 if type(ipaddress.ip_address(IP)) is ipaddress.IPv4Address else 2
     except ValueError:
         return 3
+
+
+@devices.route('/osRepartition', methods=['GET'])
+def apiGetOsRepartition():
+    dbManager = initDb()
+    req = 'SELECT systemOS, COUNT(1) as occurrence FROM Device GROUP BY systemOS ORDER BY occurrence'
+    data = dbManager.queryGet(req, [])
+    objects_list = []
+    for row in data:
+        d = {}
+        d["systemOS"] = row[0]
+        d["occurrence"] = row[1]
+        objects_list.append(d)
+    dbManager.close()
+    return jsonify(objects_list)

@@ -5,13 +5,16 @@ from flask_http_response import success, error
 import database.db_config as config
 from database import db_manager
 
-dbManager = db_manager.DbManager(
-    config.dbConfig["user"],
-    config.dbConfig["password"],
-    config.dbConfig["host"],
-    config.dbConfig["port"],
-    config.dbConfig["database"]
-)
+
+def initDb():
+    dbManager = db_manager.DbManager(
+        config.dbConfig["user"],
+        config.dbConfig["password"],
+        config.dbConfig["host"],
+        config.dbConfig["port"],
+        config.dbConfig["database"]
+    )
+    return dbManager
 
 rules = Blueprint("rules", __name__)
 
@@ -20,6 +23,7 @@ rules = Blueprint("rules", __name__)
 
 @rules.route('/', methods=['GET'])
 def apiRules():
+    dbManager = initDb()
     data = dbManager.queryGet("SELECT * FROM RuleFirewall", [])
     objects_list = []
     for row in data:
@@ -41,6 +45,7 @@ def apiRules():
 @rules.route('/<id>', methods=['GET'])
 def apiRulesId(id=None):
     if id:
+        dbManager = initDb()
         data = dbManager.queryGet(
             "SELECT * FROM RuleFirewall WHERE id=?", [id])
         d = {}
@@ -70,6 +75,7 @@ def apiRulesCreate():
             rule["protocol"] = None
         if(rule["ipVersion"] == ""):
             rule["ipVersion"] = None
+        dbManager = initDb()
         dbManager.queryInsert("INSERT INTO `RuleFirewall` (`ipDest`, `ipSource`, `portDest`, `portSource`, `protocol`, `ipVersion`) VALUES (?, ?, ?, ?, ?, ?)",
                               [
                                   rule["ipDst"],
@@ -90,6 +96,7 @@ def apiRulesCreate():
 @rules.route('/<id>', methods=['DELETE'])
 def apiRulesDelete(id=None):
     if id:
+        dbManager = initDb()
         dbManager.queryInsert(
             "DELETE FROM RuleFirewall WHERE id = ?", [id])
         return success.return_response(status=200,message="Rule deleted successfully")

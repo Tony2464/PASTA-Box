@@ -39,10 +39,7 @@ def apiGetDeviceAlerts():
         d["idDevice"] = row[5]
         objects_list.append(d)
     dbManager.close()
-    if(len(objects_list) == 1):
-        return jsonify(objects_list[0])
-    else:
-        return jsonify(objects_list)
+    return jsonify(objects_list)
 
 
 # GET ALL BASED ON DEVICE
@@ -52,7 +49,7 @@ def apiGetDeviceAlerts():
 def apiGetDeviceAlertsId(id=None):
     dbManager = initDb()
     data = dbManager.queryGet(
-        "SELECT * FROM DeviceAlert HERE idDevice = ?", [id])
+        "SELECT * FROM DeviceAlert WHERE idDevice = ?", [id])
     objects_list = []
     for row in data:
         d = {}
@@ -64,10 +61,7 @@ def apiGetDeviceAlertsId(id=None):
         d["idDevice"] = row[5]
         objects_list.append(d)
     dbManager.close()
-    if(len(objects_list) == 1):
-        return jsonify(objects_list[0])
-    else:
-        return jsonify(objects_list)
+    return jsonify(objects_list)
 
 
 # POST
@@ -96,7 +90,7 @@ def apiPostDeviceAlert():
 
         dbManager.queryInsert("INSERT INTO `DeviceAlert` (`level`, `date`, `type`, `description`, `idDevice`) VALUES (?, ?, ?, ?, ?)",
                               [
-                                  alert["role"],
+                                  alert["level"],
                                   alert["date"],
                                   alert["type"],
                                   alert["description"],
@@ -108,9 +102,32 @@ def apiPostDeviceAlert():
         return error.return_response(status=400, message="Need JSON data")
 
 
-# DELETE
+# DELETE ALERT
 
 @alertDevices.route('/', methods=['DELETE'])
 @alertDevices.route('/<id>', methods=['DELETE'])
-def apiDeleteDeviceAlert(id=None):
-    return 0
+def apiDeleteDeviceAlerts(id=None):
+    if id:
+        dbManager = initDb()
+        dbManager.queryInsert(
+            "DELETE FROM DeviceAlert WHERE id = ?", [id])
+        return success.return_response(status=200, message="Alert deleted successfully")
+    else:
+        return error.return_response(status=400, message="Need an ID")
+
+# Get number of alerts by time
+
+
+@alertDevices.route('/alertsByDate', methods=['GET'])
+def apiGetAlertsByDate():
+    dbManager = initDb()
+    req = 'SELECT DATE_FORMAT(date,"%m-%e-%Y"), COUNT(1) as alerts FROM DeviceAlert GROUP BY date ORDER BY date DESC limit 7'
+    data = dbManager.queryGet(req, [])
+    objects_list = []
+    for row in data:
+        d = {}
+        d["date"] = row[0]
+        d["alerts"] = row[1]
+        objects_list.append(d)
+    dbManager.close()
+    return jsonify(objects_list)

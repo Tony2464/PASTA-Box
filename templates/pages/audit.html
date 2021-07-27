@@ -48,7 +48,7 @@
                 </div>
                 <div id="des2" class="row description" style="display: none;">
                     <legend class="col-form-label pt-0"><u>Description :</u></legend>
-                    <p>In the semi-automatic audit mode, you can scanned all your devices whenever you want manually.
+                    <p>In the semi-automatic audit mode, you can scan all your devices whenever you want manually.
                         All your devices from your network will be concerned.</p>
                 </div>
                 <div id="des3" class="row description" style="display: none;">
@@ -74,7 +74,8 @@
                 <input type="text" onkeyup="checkIP('specificIpAddr')" class="form-control" id="specificIpAddr"
                     placeholder="IP address">
             </div>
-            <button type="submit" class="btn btn-primary mb-2" style="margin: 0 auto;">Scan</button>
+            <button type="button" onclick="scanSpecificIP()" class="btn btn-primary mb-2"
+                style="margin: 0 auto;">Scan</button>
         </form>
     </div>
 </div>

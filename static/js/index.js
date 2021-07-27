@@ -5,10 +5,6 @@ function getServicesOccurrence() {
         url: '/api/frames/servicesOccurrence',
         success: function (response) {
             serviceBar(response)
-            $.each(response, function (index) {
-                // console.log(response[index].occurrence, response[index].protocolLayerApplicaction)
-            })
-            // console.log(response)
         },
         error: function (error) {
             console.log(error);
@@ -16,28 +12,40 @@ function getServicesOccurrence() {
     });
 }
 
-getServicesOccurrence()
+
+function sum(obj) {
+    var sum = 0;
+    for (var el in obj) {
+        if (obj.hasOwnProperty(el)) {
+            sum += parseFloat(obj[el]);
+        }
+    }
+    return sum;
+}
 
 // Protocols
 function serviceBar(data) {
-    services = []
-    occurrence = []
+    services = {}
     $.each(data, function (index) {
-        // console.log(data[index].occurrence, data[index].protocolLayerApplicaction)
-        services.push(data[index].protocolLayerApplicaction)
-        occurrence.push(data[index].occurrence)
+        services[data[index].protocolLayerApplicaction] = data[index].occurrence
     })
 
-    console.log(services)
-    console.log(occurrence)
+    delete services["null"]
+
+    totalOccurrence = sum(services)
+
+    occurrence = []
+    for (let i in services) {
+        occurrence.push(services[i] * 100 / totalOccurrence)
+    }
 
     var ctx = document.getElementById("chartProtocols");
     var myLineChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: services,
+            labels: Object.keys(services),
             datasets: [{
-                label: "Protocols",
+                label: "Protocols (%)",
                 backgroundColor: "#8892CA",
                 borderColor: "#111111",
                 data: occurrence,
@@ -46,60 +54,147 @@ function serviceBar(data) {
         },
     });
 }
-// Bar Chart Example
-var ctx = document.getElementById("myBarChart");
-var myLineChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ["January", "February", "March", "April", "May", "June"],
-        datasets: [{
-            label: "Frames captured",
-            backgroundColor: "#8892CA",
-            borderColor: "#111111",
-            data: [4215, 5312, 6251, 7841, 9821, 14984],
-            barThickness: 40,
-        }],
-    },
-    options: {
-        scales: {
-            xAxes: [{
-                time: {
-                    unit: 'month'
-                },
-                gridLines: {
-                    display: false
-                },
-                ticks: {
-                    maxTicksLimit: 6
-                }
-            }],
-            yAxes: [{
-                ticks: {
-                    min: 0,
-                    max: 15000,
-                    maxTicksLimit: 5
-                },
-                gridLines: {
-                    display: true
-                }
-            }],
-        },
-        legend: {
-            display: false
-        }
-    }
-});
 
-// Pie Chart Example
-var ctx = document.getElementById("myPieChart");
-var myPieChart = new Chart(ctx, {
-    type: 'pie',
-    data: {
-        labels: ["Blue", "Red", "Yellow", "Green"],
-        datasets: [{
-            data: [12.21, 15.58, 11.25, 8.32],
-            backgroundColor: ['#007bff', '#dc3545', '#ffc107', '#28a745'],
-        }],
-        aspectratio: 0.5,
-    },
-});
+
+// Number of alerts
+
+function getAlertsByTime() {
+    $.ajax({
+        method: "GET",
+        url: '/api/alert_devices/alertsByDate',
+        success: function (response) {
+            alertsBar(response)
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    });
+}
+
+function alertsBar(data) {
+
+    alerts = {}
+    $.each(data, function (index) {
+        alerts[data[index].date] = data[index].alerts
+    })
+
+    occurrence = []
+    for (let i in alerts) {
+        occurrence.push(alerts[i])
+    }
+
+    var ctx = document.getElementById("alertsBar");
+    var myLineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: Object.keys(alerts),
+            datasets: [{
+                data: occurrence,
+                label: "Alerts",
+                borderColor: "#8892CA",
+                fill: false
+            }]
+        },
+        options: {
+            title: {
+                display: true,
+                text: 'HI'
+            },
+            scale: {
+                ticks: {
+                    precision: 0
+                }
+            }
+        }
+    });
+}
+
+function getOsRepartition() {
+    $.ajax({
+        method: "GET",
+        url: '/api/devices/osRepartition',
+        success: function (response) {
+            osPie(response)
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    });
+}
+
+function osPie(data) {
+    systems = {}
+    $.each(data, function (index) {
+        systems[data[index].systemOS] = data[index].occurrence
+    })
+
+    delete systems["null"]
+
+    occurrence = []
+    for (let i in systems) {
+        occurrence.push(systems[i])
+    }
+
+    // Pie Chart Example
+    var ctx = document.getElementById("myPieChart");
+    var myPieChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(systems),
+            datasets: [
+                {
+                    label: "Hi",
+                    backgroundColor: ["#fcb316", "#16a0fc", "#fc6a49", "#424242"],
+                    data: occurrence
+                }
+            ]
+        },
+        options: {
+            title: {
+                display: true,
+                text: 'Hi'
+            }
+        }
+    });
+}
+
+
+function alert(score) {
+    if (score < 4) {
+        return '<div class="badge bg-success">LOW</div>'
+    } else if (alert < 7) {
+        return '<div class="badge bg-warning">MEDIUM</div>'
+    } else if (alert < 10) {
+        return '<div class="badge bg-danger">HIGH</div>'
+    } else {
+        return '<div class="badge bg-danger">CRITICAL</div>'
+    }
+}
+
+function getAlertsTabs() {
+    $.ajax({
+        method: "GET",
+        url: '/api/alert_devices/',
+        success: function (response) {
+            // $('#alertTabs').empty();
+            $.each(response, function (index) {
+                $('#alertTabs').append(
+                    '<tr>' +
+                    '<th scope="row">' + index + '</th>' +
+                    '<td>' + alert(response[index].level) + '</td>' +
+                    '<td>' + response[index].type + '</td>' +
+                    '</tr>'
+                )
+            });
+            console.log(response)
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    });
+}
+
+getServicesOccurrence()
+getAlertsByTime()
+getOsRepartition()
+getAlertsTabs()

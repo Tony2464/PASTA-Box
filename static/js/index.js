@@ -158,6 +158,43 @@ function osPie(data) {
     });
 }
 
+
+function alert(score) {
+    if (score < 4) {
+        return '<div class="badge bg-success">LOW</div>'
+    } else if (alert < 7) {
+        return '<div class="badge bg-warning">MEDIUM</div>'
+    } else if (alert < 10) {
+        return '<div class="badge bg-danger">HIGH</div>'
+    } else {
+        return '<div class="badge bg-danger">CRITICAL</div>'
+    }
+}
+
+function getAlertsTabs() {
+    $.ajax({
+        method: "GET",
+        url: '/api/alert_devices/',
+        success: function (response) {
+            // $('#alertTabs').empty();
+            $.each(response, function (index) {
+                $('#alertTabs').append(
+                    '<tr>' +
+                    '<th scope="row">' + index + '</th>' +
+                    '<td>' + alert(response[index].level) + '</td>' +
+                    '<td>' + response[index].type + '</td>' +
+                    '</tr>'
+                )
+            });
+            console.log(response)
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    });
+}
+
 getServicesOccurrence()
 getAlertsByTime()
 getOsRepartition()
+getAlertsTabs()

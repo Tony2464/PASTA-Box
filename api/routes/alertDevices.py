@@ -39,10 +39,7 @@ def apiGetDeviceAlerts():
         d["idDevice"] = row[5]
         objects_list.append(d)
     dbManager.close()
-    if(len(objects_list) == 1):
-        return jsonify(objects_list[0])
-    else:
-        return jsonify(objects_list)
+    return jsonify(objects_list)
 
 
 # GET ALL BASED ON DEVICE
@@ -52,7 +49,7 @@ def apiGetDeviceAlerts():
 def apiGetDeviceAlertsId(id=None):
     dbManager = initDb()
     data = dbManager.queryGet(
-        "SELECT * FROM DeviceAlert HERE idDevice = ?", [id])
+        "SELECT * FROM DeviceAlert WHERE idDevice = ?", [id])
     objects_list = []
     for row in data:
         d = {}
@@ -64,10 +61,7 @@ def apiGetDeviceAlertsId(id=None):
         d["idDevice"] = row[5]
         objects_list.append(d)
     dbManager.close()
-    if(len(objects_list) == 1):
-        return jsonify(objects_list[0])
-    else:
-        return jsonify(objects_list)
+    return jsonify(objects_list)
 
 
 # POST

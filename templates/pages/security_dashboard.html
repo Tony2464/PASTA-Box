@@ -8,9 +8,68 @@
         <h1 style="text-align: center;">SECURITY DASHBOARD</h1>
         <div class="divider div-transparent div-arrow-down"></div>
     </div>
-    
+    <div style="padding-right:inherit;" class="container col-md-8 mb-5">
+        <table class="table table-bordered">
+            <thead>
+                <tr style="text-align: center;">
+                    <th style="vertical-align: middle;" scope="col">Delete alert</th>
+                    <th style="vertical-align: middle;" scope="col">Criticity</th>
+                    <th style="vertical-align: middle;" scope="col">Device n°</th>
+                    <th style="vertical-align: middle;" scope="col">Date</th>
+                    <th style="vertical-align: middle;" scope="col">Type</th>
+                    <th style="vertical-align: middle;" scope="col">Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for alert in content %}
+                <tr class="table">
+                    <td style="text-align: center;">
+                        <div class="col-">
+                            <button style="text-align:center; border-color: black !important;" type="button"
+                                class="btn btn-secondary"><img src="{{ url_for('static', filename='icons/trash.svg') }}"
+                                    alt=""></button>
+                        </div>
+                    </td>
+                    <td style="text-align: center;">
+                            
+                            {% if alert.level < 4 %}
+                            <div class="badge bg-success">LOW</div>
+                            {% elif alert.level < 7 %}
+                            <div class="badge bg-warning">MEDIUM</div>
+                            {% elif alert.level < 10 %}
+                            <div class="badge bg-danger">HIGH</div>
+                            {% else %}
+                            <div class="badge bg-danger">CRITICAL</div>
+                            {% endif %}
+                        
+                    </td>
+                    <td style="text-align: center;">{{alert.idDevice}}</td>
+                    <td style="text-align: center;">{{alert.date}}</td>
+                    <td style="text-align: center;">{{alert.type}}</td>
+                    <td style="width: 45%;">
+                        <div class="accordion accordion-flush" id="accordionFlushExample{{alert.id}}">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="flush-heading{{alert.id}}">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapse{{alert.id}}" aria-expanded="false"
+                                        aria-controls="flush-collapse{{alert.id}}">
+                                        More Info
+                                    </button>
+                                </h2>
+                                <div id="flush-collapse{{alert.id}}" class="accordion-collapse collapse"
+                                    aria-labelledby="flush-heading{{alert.id}}" data-bs-parent="#accordionFlush{{alert.id}}">
+                                    <div style="text-align: justify; white-space: pre-line;" class="accordion-body">{{alert.description}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-{% endblock %}
-{% block js %}
+    {% endblock %}
+    {% block js %}
 
-{% endblock %}
+    {% endblock %}

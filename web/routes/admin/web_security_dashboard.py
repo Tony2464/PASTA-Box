@@ -22,7 +22,7 @@ web_security_dashboard = Blueprint("web_security_dashboard", __name__)
 @web_security_dashboard.route('/')
 @web_connect.web_connection_required
 def securityHomepage():
-    #data = requests.get('http://localhost/api/devices/')
-    #return render_template('pages/security_dashboard.html', content=data)
-    return render_template('pages/security_dashboard.html')
+    r = requests.get('http://localhost/api/alert_devices/')
+    data = r.json()
+    return render_template('pages/security_dashboard.html', content=data)
 

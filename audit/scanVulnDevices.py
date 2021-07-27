@@ -112,7 +112,7 @@ def insertAlert(alerts, id):
             # "date": date.strftime('%Y-%m-%d %H:%M:%S'),
             "date": alerts[i].date,
             "type": alerts[i].type,
-            "description": unescape(alerts[i].description),
+            "description": alerts[i].description,
             "idDevice": id
         }
         jsonDeviceData = json.dumps(data)
@@ -146,13 +146,13 @@ def parseNmapXMLService():
 
             for j in range(len(scripts)):
                 newAlert = DeviceAlert(1, date.strftime(
-                    '%Y-%m-%d %H:%M:%S'), scripts[j].attrib.get('id'), scripts[j].attrib.get('output'))
+                    '%Y-%m-%d %H:%M:%S'), scripts[j].attrib.get('id'), unescape(scripts[j].attrib.get('output')))
                 alerts.append(newAlert)
 
     if(hostscript != None):
         for script in hostscript.findall('script'):
             newAlert = DeviceAlert(1, date.strftime(
-                '%Y-%m-%d %H:%M:%S'), script.attrib.get('id'), script.attrib.get('output'))
+                '%Y-%m-%d %H:%M:%S'), script.attrib.get('id'), unescape(script.attrib.get('output')))
             alerts.append(newAlert)
 
     return alerts
@@ -187,14 +187,14 @@ def scanServices(device: Device, id):
 
 def getCVE(CVE: str):
     data = crawler.get_cve_detail(CVE)
-    description = data[0][1]
+    description = unescape(data[0][1]) + "\n"
     for i in range(2, len(data[0])):
         if(type(data[0][i]) is list):
             for j in range(len(data[0][i])):
                 description += "\n"
-                description += data[0][i][j]
+                description += unescape(data[0][i][j])
         else:
-            description += data[0][i]
+            description += unescape(data[0][i])
 
     return description
 

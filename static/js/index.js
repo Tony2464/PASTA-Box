@@ -31,14 +31,14 @@ function serviceBar(data) {
     })
 
     delete services["null"]
-    
+
     totalOccurrence = sum(services)
-    
+
     occurrence = []
     for (let i in services) {
-        occurrence.push(services[i]*100/totalOccurrence)
+        occurrence.push(services[i] * 100 / totalOccurrence)
     }
-    
+
     var ctx = document.getElementById("chartProtocols");
     var myLineChart = new Chart(ctx, {
         type: 'bar',
@@ -58,7 +58,7 @@ function serviceBar(data) {
 
 // Number of alerts
 
-function getAlertsByTime(){
+function getAlertsByTime() {
     $.ajax({
         method: "GET",
         url: '/api/alert_devices/alertsByDate',
@@ -71,7 +71,7 @@ function getAlertsByTime(){
     });
 }
 
-function alertsBar(data){
+function alertsBar(data) {
 
     alerts = {}
     $.each(data, function (index) {
@@ -82,8 +82,6 @@ function alertsBar(data){
     for (let i in alerts) {
         occurrence.push(alerts[i])
     }
-
-    console.log(data)
 
     var ctx = document.getElementById("alertsBar");
     var myLineChart = new Chart(ctx, {
@@ -111,28 +109,55 @@ function alertsBar(data){
     });
 }
 
-
-// Pie Chart Example
-var ctx = document.getElementById("myPieChart");
-var myPieChart = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-        labels: ["Unix/Linux", "Windows", "MacOS", "Other"],
-        datasets: [
-            {
-                label: "Population (%)",
-                backgroundColor: ["#fcb316", "#16a0fc", "#fc6a49", "#424242"],
-                data: [15, 75, 5, 5]
-            }
-        ]
-    },
-    options: {
-        title: {
-            display: true,
-            text: 'Predicted world population (millions) in 2050'
+function getOsRepartition() {
+    $.ajax({
+        method: "GET",
+        url: '/api/devices/osRepartition',
+        success: function (response) {
+            osPie(response)
+        },
+        error: function (error) {
+            console.log(error);
         }
+    });
+}
+
+function osPie(data) {
+    systems = {}
+    $.each(data, function (index) {
+        systems[data[index].systemOS] = data[index].occurrence
+    })
+
+    delete systems["null"]
+
+    occurrence = []
+    for (let i in systems) {
+        occurrence.push(systems[i])
     }
-});
+
+    // Pie Chart Example
+    var ctx = document.getElementById("myPieChart");
+    var myPieChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(systems),
+            datasets: [
+                {
+                    label: "Hi",
+                    backgroundColor: ["#fcb316", "#16a0fc", "#fc6a49", "#424242"],
+                    data: occurrence
+                }
+            ]
+        },
+        options: {
+            title: {
+                display: true,
+                text: 'Hi'
+            }
+        }
+    });
+}
 
 getServicesOccurrence()
 getAlertsByTime()
+getOsRepartition()

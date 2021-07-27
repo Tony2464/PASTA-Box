@@ -170,11 +170,8 @@ function drawMap(devices) {
                 opacity: 1,
             });
             edges.push({ from: "thirdRange", to: deviceId, length: EDGE_LENGTH_SUB });
-
             createModal()
         }
-        // console.log(devices[i].ipAddr)
-        // console.log(ipPrivateClass(devices[i].ipAddr))
     }
 
     // create a network

@@ -302,3 +302,18 @@ def checkIP(IP):
         return 1 if type(ipaddress.ip_address(IP)) is ipaddress.IPv4Address else 2
     except ValueError:
         return 3
+
+
+@devices.route('/osRepartition', methods=['GET'])
+def apiGetOsRepartition():
+    dbManager = initDb()
+    req = 'SELECT systemOS, COUNT(1) as occurrence FROM Device GROUP BY systemOS ORDER BY occurrence'
+    data = dbManager.queryGet(req, [])
+    objects_list = []
+    for row in data:
+        d = {}
+        d["systemOS"] = row[0]
+        d["occurrence"] = row[1]
+        objects_list.append(d)
+    dbManager.close()
+    return jsonify(objects_list)

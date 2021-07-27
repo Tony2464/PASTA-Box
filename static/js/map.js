@@ -99,7 +99,7 @@ function drawMap(devices) {
             deviceIp = devices[i].ipAddr
             nodes.push({
                 id: deviceId,
-                label: "Device\n" + deviceIp,
+                label: "Device n°" + deviceId + "\n" + deviceIp,
                 image: DIR + "laptop.svg",
                 shape: "image",
                 group: "computer",
@@ -128,7 +128,7 @@ function drawMap(devices) {
             deviceIp = devices[i].ipAddr
             nodes.push({
                 id: deviceId,
-                label: "Device\n" + deviceIp,
+                label: "Device n°" + deviceId + "\n" + deviceIp,
                 image: DIR + "laptop.svg",
                 shape: "image",
                 group: "computer",
@@ -163,7 +163,7 @@ function drawMap(devices) {
             deviceLastConnection = devices[i].lastConnection
             nodes.push({
                 id: deviceId,
-                label: "Device\n" + deviceIp,
+                label: "Device n°" + deviceId + "\n" + deviceIp,
                 image: DIR + "laptop.svg",
                 shape: "image",
                 group: "computer",
@@ -229,7 +229,7 @@ function createModal() {
             `)
 }
 
-function createPastaModal(){
+function createPastaModal() {
     var pastaInfo = getPastaIP()
     $("#modals").append(`
             <div class="modal fade" id="modal-1">

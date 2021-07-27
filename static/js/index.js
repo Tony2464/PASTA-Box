@@ -55,26 +55,62 @@ function serviceBar(data) {
     });
 }
 
-// Bar Chart Example
-var ctx = document.getElementById("myBarChart");
-var myLineChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: ["07/02/2021", "07/03/2021", "07/04/2021", "07/05/2021", "07/06/2021"],
-        datasets: [{
-            data: [2, 10, 3, 1, 15],
-            label: "Alerts",
-            borderColor: "#8892CA",
-            fill: false
-        }]
-    },
-    options: {
-        title: {
-            display: true,
-            text: 'World population per region (in millions)'
+
+// Number of alerts
+
+function getAlertsByTime(){
+    $.ajax({
+        method: "GET",
+        url: '/api/alert_devices/alertsByDate',
+        success: function (response) {
+            alertsBar(response)
+        },
+        error: function (error) {
+            console.log(error);
         }
+    });
+}
+
+function alertsBar(data){
+
+    alerts = {}
+    $.each(data, function (index) {
+        alerts[data[index].date] = data[index].alerts
+    })
+
+    occurrence = []
+    for (let i in alerts) {
+        occurrence.push(alerts[i])
     }
-});
+
+    console.log(data)
+
+    var ctx = document.getElementById("alertsBar");
+    var myLineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: Object.keys(alerts),
+            datasets: [{
+                data: occurrence,
+                label: "Alerts",
+                borderColor: "#8892CA",
+                fill: false
+            }]
+        },
+        options: {
+            title: {
+                display: true,
+                text: 'HI'
+            },
+            scale: {
+                ticks: {
+                    precision: 0
+                }
+            }
+        }
+    });
+}
+
 
 // Pie Chart Example
 var ctx = document.getElementById("myPieChart");
@@ -99,3 +135,4 @@ var myPieChart = new Chart(ctx, {
 });
 
 getServicesOccurrence()
+getAlertsByTime()

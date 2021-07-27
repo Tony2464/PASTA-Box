@@ -52,7 +52,7 @@ def apiGetDeviceAlerts():
 def apiGetDeviceAlertsId(id=None):
     dbManager = initDb()
     data = dbManager.queryGet(
-        "SELECT * FROM DeviceAlert HERE idDevice = ?", [id])
+        "SELECT * FROM DeviceAlert WHERE idDevice = ?", [id])
     objects_list = []
     for row in data:
         d = {}
@@ -121,3 +121,20 @@ def apiDeleteDeviceAlerts(id=None):
     else:
         return error.return_response(status=400, message="Need an ID")
     return 0
+
+# Get number of alerts by time
+
+
+@alertDevices.route('/alertsByDate', methods=['GET'])
+def apiGetAlertsByDate():
+    dbManager = initDb()
+    req = 'SELECT DATE_FORMAT(date,"%m-%e-%Y"), COUNT(1) as alerts FROM DeviceAlert GROUP BY date ORDER BY date DESC limit 7'
+    data = dbManager.queryGet(req, [])
+    objects_list = []
+    for row in data:
+        d = {}
+        d["date"] = row[0]
+        d["alerts"] = row[1]
+        objects_list.append(d)
+    dbManager.close()
+    return jsonify(objects_list)

@@ -264,7 +264,7 @@ def apiGetMacToInsert():
 @frames.route('/servicesOccurrence', methods=['GET'])
 def apiGetServiceOccurrence():
     dbManager = initDb()
-    req = "SELECT protocolLayerApplication, COUNT(1) as occurrence FROM Frame GROUP BY protocolLayerApplication"
+    req = "SELECT protocolLayerApplication, COUNT(1) as occurrence FROM Frame GROUP BY protocolLayerApplication ORDER BY occurrence"
     data = dbManager.queryGet(req, [])
     objects_list = []
     for row in data:

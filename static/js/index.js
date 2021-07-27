@@ -5,10 +5,6 @@ function getServicesOccurrence() {
         url: '/api/frames/servicesOccurrence',
         success: function (response) {
             serviceBar(response)
-            $.each(response, function (index) {
-                // console.log(response[index].occurrence, response[index].protocolLayerApplicaction)
-            })
-            // console.log(response)
         },
         error: function (error) {
             console.log(error);
@@ -16,28 +12,40 @@ function getServicesOccurrence() {
     });
 }
 
-getServicesOccurrence()
+
+function sum(obj) {
+    var sum = 0;
+    for (var el in obj) {
+        if (obj.hasOwnProperty(el)) {
+            sum += parseFloat(obj[el]);
+        }
+    }
+    return sum;
+}
 
 // Protocols
 function serviceBar(data) {
-    services = []
-    occurrence = []
+    services = {}
     $.each(data, function (index) {
-        // console.log(data[index].occurrence, data[index].protocolLayerApplicaction)
-        services.push(data[index].protocolLayerApplicaction)
-        occurrence.push(data[index].occurrence)
+        services[data[index].protocolLayerApplicaction] = data[index].occurrence
     })
 
-    console.log(services)
-    console.log(occurrence)
-
+    delete services["null"]
+    
+    totalOccurrence = sum(services)
+    
+    occurrence = []
+    for (let i in services) {
+        occurrence.push(services[i]*100/totalOccurrence)
+    }
+    
     var ctx = document.getElementById("chartProtocols");
     var myLineChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: services,
+            labels: Object.keys(services),
             datasets: [{
-                label: "Protocols",
+                label: "Protocols (%)",
                 backgroundColor: "#8892CA",
                 borderColor: "#111111",
                 data: occurrence,
@@ -46,46 +54,24 @@ function serviceBar(data) {
         },
     });
 }
+
 // Bar Chart Example
 var ctx = document.getElementById("myBarChart");
 var myLineChart = new Chart(ctx, {
-    type: 'bar',
+    type: 'line',
     data: {
-        labels: ["January", "February", "March", "April", "May", "June"],
+        labels: ["07/02/2021", "07/03/2021", "07/04/2021", "07/05/2021", "07/06/2021"],
         datasets: [{
-            label: "Frames captured",
-            backgroundColor: "#8892CA",
-            borderColor: "#111111",
-            data: [4215, 5312, 6251, 7841, 9821, 14984],
-            barThickness: 40,
-        }],
+            data: [2, 10, 3, 1, 15],
+            label: "Alerts",
+            borderColor: "#8892CA",
+            fill: false
+        }]
     },
     options: {
-        scales: {
-            xAxes: [{
-                time: {
-                    unit: 'month'
-                },
-                gridLines: {
-                    display: false
-                },
-                ticks: {
-                    maxTicksLimit: 6
-                }
-            }],
-            yAxes: [{
-                ticks: {
-                    min: 0,
-                    max: 15000,
-                    maxTicksLimit: 5
-                },
-                gridLines: {
-                    display: true
-                }
-            }],
-        },
-        legend: {
-            display: false
+        title: {
+            display: true,
+            text: 'World population per region (in millions)'
         }
     }
 });
@@ -93,13 +79,23 @@ var myLineChart = new Chart(ctx, {
 // Pie Chart Example
 var ctx = document.getElementById("myPieChart");
 var myPieChart = new Chart(ctx, {
-    type: 'pie',
+    type: 'doughnut',
     data: {
-        labels: ["Blue", "Red", "Yellow", "Green"],
-        datasets: [{
-            data: [12.21, 15.58, 11.25, 8.32],
-            backgroundColor: ['#007bff', '#dc3545', '#ffc107', '#28a745'],
-        }],
-        aspectratio: 0.5,
+        labels: ["Unix/Linux", "Windows", "MacOS", "Other"],
+        datasets: [
+            {
+                label: "Population (%)",
+                backgroundColor: ["#fcb316", "#16a0fc", "#fc6a49", "#424242"],
+                data: [15, 75, 5, 5]
+            }
+        ]
     },
+    options: {
+        title: {
+            display: true,
+            text: 'Predicted world population (millions) in 2050'
+        }
+    }
 });
+
+getServicesOccurrence()

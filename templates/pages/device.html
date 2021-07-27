@@ -25,7 +25,17 @@
             </ul>
             <ul class="list-group list-group-horizontal-sm justify-content-center">
                 <li class="list-group-item w-25">Security score</li>
-                <li class="list-group-item w-25">{{device["securityScore"]}}</li>
+                {% block securityScore %}
+                {% if max < 4 %}
+                <li class="list-group-item w-25"><div class="badge bg-success">GOOD</div></li>
+                {% elif max < 7 %}
+                <li class="list-group-item w-25"><div class="badge bg-warning">MEDIUM</div></li>
+                {% elif max < 10 %}
+                <li class="list-group-item w-25"><div class="badge bg-danger">BAD</div></li>
+                {% else %}
+                <li class="list-group-item w-25"><div class="badge bg-danger">CRITICAL</div></li>
+                {% endif %}
+                {% endblock %}
             </ul>
             <ul class="list-group list-group-horizontal-sm justify-content-center">
                 <li class="list-group-item w-25">Hostname</li>
@@ -40,17 +50,17 @@
                 <li class="list-group-item w-25">{{device["lastConnection"]}}</li>
             </ul>
             <br>
-            <button data-bs-toggle="modal" data-bs-target="#Modal" type="button" class="btn btn-primary shadow mb-3" {% if device["activeStatus"] == 2 %} disabled {% endif %}>Security Audit <img
+            <button id="scanButton" data-bs-toggle="modal" data-bs-target="#Modal" type="button" class="btn btn-primary shadow mb-3" {% if device["activeStatus"] != 1 %} disabled {% endif %}>Security Audit <img
                     src="{{ url_for('static', filename='icons/bug-fill-white.svg') }}" alt=""></button>
             <br>
         </div>
         <div class="card-footer text-muted">
             {% if device["activeStatus"] == 0 %}
-            Status : Inactive
+            Status : Inactive (This device cannot be scanned yet)
             {% elif device["activeStatus"] == 1 %}
             Status : Active
             {% else %}
-            Status : Being scanned
+            Status : No available (Still being scanned)
             {% endif %}
         </div>
     </div>

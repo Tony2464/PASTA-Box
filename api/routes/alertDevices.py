@@ -39,10 +39,7 @@ def apiGetDeviceAlerts():
         d["idDevice"] = row[5]
         objects_list.append(d)
     dbManager.close()
-    if(len(objects_list) == 1):
-        return jsonify(objects_list[0])
-    else:
-        return jsonify(objects_list)
+    return jsonify(objects_list)
 
 
 # GET ALL BASED ON DEVICE
@@ -64,10 +61,7 @@ def apiGetDeviceAlertsId(id=None):
         d["idDevice"] = row[5]
         objects_list.append(d)
     dbManager.close()
-    if(len(objects_list) == 1):
-        return jsonify(objects_list[0])
-    else:
-        return jsonify(objects_list)
+    return jsonify(objects_list)
 
 
 # POST
@@ -108,7 +102,7 @@ def apiPostDeviceAlert():
         return error.return_response(status=400, message="Need JSON data")
 
 
-# DELETE ALERTS FROM A DEVICE
+# DELETE ALERT
 
 @alertDevices.route('/', methods=['DELETE'])
 @alertDevices.route('/<id>', methods=['DELETE'])
@@ -116,11 +110,10 @@ def apiDeleteDeviceAlerts(id=None):
     if id:
         dbManager = initDb()
         dbManager.queryInsert(
-            "DELETE FROM DeviceAlert WHERE idDevice = ?", [id])
-        return success.return_response(status=200, message="Alert(s) deleted successfully")
+            "DELETE FROM DeviceAlert WHERE id = ?", [id])
+        return success.return_response(status=200, message="Alert deleted successfully")
     else:
         return error.return_response(status=400, message="Need an ID")
-    return 0
 
 # Get number of alerts by time
 

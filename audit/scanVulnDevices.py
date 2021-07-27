@@ -92,7 +92,7 @@ def createOutdatedAlert(service):
 
     date = datetime.datetime.now()
     alert = {
-        "level": 2,
+        "level": 4,
         "date": date.strftime('%Y-%m-%d %H:%M:%S'),
         "type": "Outdated protocol",
         "description": descriptions.get(service["numberPort"], 1),
@@ -145,13 +145,13 @@ def parseNmapXMLService():
                 continue
 
             for j in range(len(scripts)):
-                newAlert = DeviceAlert(2, date.strftime(
+                newAlert = DeviceAlert(1, date.strftime(
                     '%Y-%m-%d %H:%M:%S'), scripts[j].attrib.get('id'), scripts[j].attrib.get('output'))
                 alerts.append(newAlert)
 
     if(hostscript != None):
         for script in hostscript.findall('script'):
-            newAlert = DeviceAlert(2, date.strftime(
+            newAlert = DeviceAlert(1, date.strftime(
                 '%Y-%m-%d %H:%M:%S'), script.attrib.get('id'), script.attrib.get('output'))
             alerts.append(newAlert)
 
@@ -250,9 +250,9 @@ def parseNmapXMLVulners(id):
                         if(isCVE == True):
                             for elem in elems:
                                 if(elem.attrib.get('key') == "cvss"):
-                                    scoreCVSS += float(elem.text)
+                                    scoreCVSS = round(float(elem.text))
                             CVEDescription = getCVE(CVE)
-                            newAlert = DeviceAlert(3, date.strftime(
+                            newAlert = DeviceAlert(scoreCVSS, date.strftime(
                                 '%Y-%m-%d %H:%M:%S'), "Vulnerability : " + CVE, CVEDescription)
                             alerts.append(newAlert)
                         isCVE = False

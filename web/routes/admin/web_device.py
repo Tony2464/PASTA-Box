@@ -29,7 +29,15 @@ def getDevice(id=None):
         return redirect("/admin/map", code=400)
     r = requests.get('http://localhost/api/devices/' + id)
     data = r.json()
-    return render_template('pages/device.html', device=data)
+    r2 = requests.get('http://localhost/api/alert_devices/' + id)
+    content = r2.json()
+
+    temp = 0
+    for i in range(len(content)):
+        if(content[i]["level"] > temp):
+            temp = content[i]["level"]
+
+    return render_template('pages/device.html', device=data, max=temp)
 
 
 # Scan the device

@@ -25,7 +25,17 @@
             </ul>
             <ul class="list-group list-group-horizontal-sm justify-content-center">
                 <li class="list-group-item w-25">Security score</li>
-                <li class="list-group-item w-25">{{device["securityScore"]}}</li>
+                {% block securityScore %}
+                {% if max < 4 %}
+                <li class="list-group-item w-25"><div class="badge bg-success">GOOD</div></li>
+                {% elif max < 7 %}
+                <li class="list-group-item w-25"><div class="badge bg-warning">MEDIUM</div></li>
+                {% elif max < 10 %}
+                <li class="list-group-item w-25"><div class="badge bg-danger">BAD</div></li>
+                {% else %}
+                <li class="list-group-item w-25"><div class="badge bg-danger">CRITICAL</div></li>
+                {% endif %}
+                {% endblock %}
             </ul>
             <ul class="list-group list-group-horizontal-sm justify-content-center">
                 <li class="list-group-item w-25">Hostname</li>

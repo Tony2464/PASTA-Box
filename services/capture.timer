@@ -1,0 +1,9 @@
+[Unit]
+Description=Capture devices
+
+[Timer]
+OnBootSec=2s
+# OnUnitActiveSec=5m
+
+[Install]
+WantedBy=timers.target

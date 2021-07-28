@@ -111,6 +111,7 @@ def apiDeleteDeviceAlerts(id=None):
         dbManager = initDb()
         dbManager.queryInsert(
             "DELETE FROM DeviceAlert WHERE id = ?", [id])
+        dbManager.close()
         return success.return_response(status=200, message="Alert deleted successfully")
     else:
         return error.return_response(status=400, message="Need an ID")

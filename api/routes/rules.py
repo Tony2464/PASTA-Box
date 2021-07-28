@@ -36,6 +36,7 @@ def apiRules():
         d["protocol"] = row[5]
         d["ipVersion"] = row[6]
         objects_list.append(d)
+    dbManager.close()
     return jsonify(objects_list)
 
 
@@ -56,6 +57,7 @@ def apiRulesId(id=None):
         d["portSrc"] = data[0][4]
         d["protocol"] = data[0][5]
         d["ipVersion"] = data[0][6]
+        dbManager.close()
         return jsonify(d)
     else:
         return error.return_response(status=400,message="Need an ID")
@@ -85,6 +87,7 @@ def apiRulesCreate():
                                   rule["protocol"],
                                   rule["ipVersion"]
                               ])
+        dbManager.close()
         return success.return_response(status=200,message="Rule added successfully")
     else:
         return error.return_response(status=400,message="Need JSON data")
@@ -99,6 +102,7 @@ def apiRulesDelete(id=None):
         dbManager = initDb()
         dbManager.queryInsert(
             "DELETE FROM RuleFirewall WHERE id = ?", [id])
+        dbManager.close()
         return success.return_response(status=200,message="Rule deleted successfully")
     else:
         return error.return_response(status=400,message="Need an ID")

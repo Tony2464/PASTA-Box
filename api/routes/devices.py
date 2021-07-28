@@ -236,7 +236,7 @@ def apiPutDevice(id=None):
                     finalReq += req[i]
 
             # final id
-            finalReq += " WHERE `Device`.`id` = ?"
+            finalReq += ' WHERE id = ?'
             params.append(str(id))
             dbManager.queryInsert(finalReq, params)
             dbManager.close()
@@ -277,7 +277,7 @@ def apiMapDevices():
         d["lastConnection"] = row[9]
         d["lastScan"] = row[10]
         d["systemOS"] = row[11]
-        if d["ipAddr"] != None and checkIP(d["ipAddr"]) != 3 and ipaddress.ip_address(d["ipAddr"]).is_private:
+        if d["ipAddr"] != None and checkIP(d["ipAddr"]) != 3 and ipaddress.ip_address(d["ipAddr"]).is_private and d["macAddr"] != None:
             objects_list.append(d)
     dbManager.close()
     return jsonify(objects_list)

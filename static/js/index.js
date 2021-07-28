@@ -162,9 +162,9 @@ function osPie(data) {
 function alert(score) {
     if (score < 4) {
         return '<div class="badge bg-success">LOW</div>'
-    } else if (alert < 7) {
+    } else if (score < 7) {
         return '<div class="badge bg-warning">MEDIUM</div>'
-    } else if (alert < 10) {
+    } else if (score < 10) {
         return '<div class="badge bg-danger">HIGH</div>'
     } else {
         return '<div class="badge bg-danger">CRITICAL</div>'

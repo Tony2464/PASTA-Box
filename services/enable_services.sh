@@ -4,7 +4,7 @@ services=$(ls | grep './*\.\(service\|timer\)')
 
 for service in $services
 do
-   sudo cp -rf $service /lib/systemd/system/
+   sudo cp -rf $service /etc/systemd/system/
 done
 
 # sudo systemctl daemon-reload

@@ -121,6 +121,7 @@ def register():
             d["id"] = row[0]
             userDb.append(d)
         if userDb:
+            dbManager.close()
             return error.return_response(status=409, message="User exists already")
         else:
             # Check to do with all json data

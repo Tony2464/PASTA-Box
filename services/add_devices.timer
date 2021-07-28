@@ -3,7 +3,7 @@ Description=Run devices
 
 [Timer]
 OnBootSec=1s
-OnUnitActiveSec=5m
+OnUnitActiveSec=30s
 
 [Install]
 WantedBy=timers.target

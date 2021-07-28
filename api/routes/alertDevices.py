@@ -106,12 +106,25 @@ def apiPostDeviceAlert():
 
 @alertDevices.route('/', methods=['DELETE'])
 @alertDevices.route('/<id>', methods=['DELETE'])
+def apiDeleteAlert(id=None):
+    if id:
+        dbManager = initDb()
+        dbManager.queryInsert(
+            "DELETE FROM DeviceAlert WHERE id= ?", [id])
+        dbManager.close()
+        return success.return_response(status=200, message="Alert deleted successfully")
+    else:
+        return error.return_response(status=400, message="Need an ID")
+
+
+@alertDevices.route('/device/<id>', methods=['DELETE'])
 def apiDeleteDeviceAlerts(id=None):
     if id:
         dbManager = initDb()
         dbManager.queryInsert(
-            "DELETE FROM DeviceAlert WHERE id = ?", [id])
-        return success.return_response(status=200, message="Alert deleted successfully")
+            "DELETE FROM DeviceAlert WHERE idDevice = ?", [id])
+        dbManager.close()
+        return success.return_response(status=200, message="Alert(s) deleted successfully")
     else:
         return error.return_response(status=400, message="Need an ID")
 

@@ -294,7 +294,7 @@ def deleteTempFile():
 
 def main(device: Device, id):
     setScannedStatus(id)
-    requests.delete('http://localhost/api/alert_devices/' + str(id))
+    requests.delete('http://localhost/api/alert_devices/device' + str(id))
     scanServices(device, id)
     vulnersScan(device, id)
     unsetScannedStatus(id)

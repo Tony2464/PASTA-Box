@@ -6,7 +6,6 @@ import os
 import subprocess
 import xml.etree.ElementTree as ET
 from html import unescape
-from mitrecve import crawler
 from audit.objects.Device import Device
 from audit.objects.DeviceAlert import DeviceAlert
 
@@ -186,15 +185,19 @@ def scanServices(device: Device, id):
 # Get CVE info from http://cve.mitre.org/
 
 def getCVE(CVE: str):
-    data = crawler.get_cve_detail(CVE)
-    description = unescape(data[0][1]) + "\n"
-    for i in range(2, len(data[0])):
-        if(type(data[0][i]) is list):
-            for j in range(len(data[0][i])):
-                description += "\n"
-                description += unescape(data[0][i][j])
-        else:
-            description += unescape(data[0][i])
+    description = ""
+    result = subprocess.run(['/home/nicolas/.local/bin/mitrecve', '-d', CVE], stdout=subprocess.PIPE)
+    array = result.stdout.decode('utf-8').split("\n")
+    for i in range(len(array)):
+        if("CVE : " + CVE in array[i]):
+            i += 1
+            description += array[i] + '\n'
+
+        if("NVD LINK" in array[i]):
+            description += array[i] + "\n"
+
+        if("CVE REFERENCE" in array[i]):
+            description += array[i].strip() + "\n"
 
     return description
 
@@ -291,7 +294,7 @@ def deleteTempFile():
 
 def main(device: Device, id):
     setScannedStatus(id)
-    requests.delete('http://localhost/api/alert_devices/' + str(id))
+    requests.delete('http://localhost/api/alert_devices/device' + str(id))
     scanServices(device, id)
     vulnersScan(device, id)
     unsetScannedStatus(id)

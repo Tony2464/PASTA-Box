@@ -40,3 +40,13 @@ Need a conf site in `/etc/apache2/sites-available/`, replace USERNAME and GROUP_
 </Directory>
 </VirtualHost>
 ```
+
+4. Add this to the `/etc/sudoers` file, replace USERNAME by your current user :
+``` text
+USERNAME ALL=(ALL) NOPASSWD: /usr/bin/nmap
+USERNAME ALL=(ALL) NOPASSWD: /usr/sbin/ebtables
+USERNAME ALL=(ALL) NOPASSWD: /usr/sbin/ebtables-nft
+USERNAME ALL=(ALL) NOPASSWD: /PASTA-Box/settings/change_hostname.sh
+USERNAME ALL=(ALL) NOPASSWD: /PASTA-Box/settings/change_IP.sh
+USERNAME ALL=(ALL) NOPASSWD: /PASTA-Box/settings/execute_command.sh
+```

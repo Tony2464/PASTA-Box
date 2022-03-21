@@ -10,7 +10,7 @@ Content example :
 ``` text
 dbLogin = "adminPasta"  
 dBpassword = "PASTA-Box"  
-secretKey = "pastaforver"
+secretKey = "pastaforever"
 ```  
 
 2.  flask conf
